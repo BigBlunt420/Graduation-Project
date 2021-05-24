@@ -14,6 +14,8 @@ public class MainActivity extends AppCompatActivity {
     private Button eSignUp;
 
 
+
+
     /* onCreate是程式初始化時呼叫的
         通常情況下，我們需要在onCreate()中呼叫setContentView(int)函式填充螢幕的UI
         子類在重寫onCreate()方法的時候必須呼叫父類的onCreate()方法，即super.onCreate()，否則會丟擲異常。
