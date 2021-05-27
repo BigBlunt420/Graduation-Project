@@ -7,11 +7,118 @@
     android:layout_height="match_parent"
     tools:context=".SignUpPage">
 
+
+  <EditText
+      android:id="@+id/PasswordofSignUpPage"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="24dp"
+      android:background="@drawable/input_background"
+      android:drawableLeft="@drawable/ic_security"
+      android:drawablePadding="10dp"
+      android:ems="10"
+      android:hint="請輸入密碼"
+      android:inputType="textPassword"
+      android:paddingLeft="20dp"
+      android:paddingTop="10dp"
+      android:paddingRight="10dp"
+      android:paddingBottom="10dp"
+      android:textSize="24sp"
+      app:layout_constraintEnd_toEndOf="@+id/PhoneNumberofSignUpPage"
+      app:layout_constraintStart_toStartOf="@+id/PhoneNumberofSignUpPage"
+      app:layout_constraintTop_toBottomOf="@+id/PhoneNumberofSignUpPage" />
+
+  <EditText
+      android:id="@+id/PhoneNumberofSignUpPage"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="56dp"
+      android:layout_marginLeft="56dp"
+      android:layout_marginEnd="56dp"
+      android:layout_marginRight="56dp"
+      android:background="@drawable/input_background"
+      android:drawableLeft="@drawable/ic_phone"
+      android:drawablePadding="10dp"
+      android:ems="10"
+      android:hint="請輸入手機號碼"
+      android:inputType="phone"
+      android:paddingLeft="20dp"
+      android:paddingTop="10dp"
+      android:paddingRight="10dp"
+      android:paddingBottom="10dp"
+      android:textSize="24sp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.0"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.618" />
+
   <Button
-      android:id="@+id/button"
+      android:id="@+id/SignUpButtonofSignUpPage"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="24dp"
+      android:background="@drawable/button_background"
+      android:text="註冊並登入"
+      android:textSize="24sp"
+      app:backgroundTint="@color/purple_200"
+      app:layout_constraintEnd_toEndOf="@+id/PasswordofSignUpPage"
+      app:layout_constraintStart_toStartOf="@+id/PasswordofSignUpPage"
+      app:layout_constraintTop_toBottomOf="@+id/PasswordofSignUpPage" />
+
+  <TextView
+      android:id="@+id/SignUpText"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="Button"
-      tools:layout_editor_absoluteX="226dp"
-      tools:layout_editor_absoluteY="314dp" />
+      android:layout_marginTop="16dp"
+      android:text="用戶註冊"
+      android:textColor="@color/black"
+      android:textSize="30sp"
+      android:textStyle="bold"
+      app:layout_constraintEnd_toEndOf="@+id/TempIcon"
+      app:layout_constraintStart_toStartOf="@+id/TempIcon"
+      app:layout_constraintTop_toBottomOf="@+id/TempIcon" />
+
+  <ImageView
+      android:id="@+id/TempIcon"
+      android:layout_width="151dp"
+      android:layout_height="143dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.149"
+      app:srcCompat="@drawable/ic_mainic" />
+
+  <TextView
+      android:id="@+id/AlreadyhaveAccount"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      android:text="已有帳戶 立即登入"
+      android:textSize="20sp"
+      app:layout_constraintStart_toStartOf="@+id/SignUpButtonofSignUpPage"
+      app:layout_constraintTop_toBottomOf="@+id/SignUpButtonofSignUpPage" />
+
+  <EditText
+      android:id="@+id/UsernameofSignUpPage"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="24dp"
+      android:background="@drawable/input_background"
+      android:drawableLeft="@drawable/ic_person"
+      android:drawablePadding="10dp"
+      android:ems="10"
+      android:hint="請輸入姓名"
+      android:inputType="textPersonName"
+      android:paddingLeft="20dp"
+      android:paddingTop="10dp"
+      android:paddingRight="10dp"
+      android:paddingBottom="10dp"
+      android:textSize="24sp"
+      app:layout_constraintBottom_toTopOf="@+id/PhoneNumberofSignUpPage"
+      app:layout_constraintEnd_toEndOf="@+id/PhoneNumberofSignUpPage"
+      app:layout_constraintStart_toStartOf="@+id/PhoneNumberofSignUpPage" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
