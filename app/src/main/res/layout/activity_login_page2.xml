@@ -7,12 +7,80 @@
     tools:context=".LoginPage">
 
     <EditText
-        android:id="@+id/editTextTextPassword"
-        android:layout_width="wrap_content"
+        android:id="@+id/PasswordofLoginPage"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/input_background"
+        android:drawableLeft="@drawable/ic_security"
+        android:drawablePadding="10dp"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="243dp" />
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/PhoneNumberofLoginPage"
+        app:layout_constraintStart_toStartOf="@+id/PhoneNumberofLoginPage"
+        app:layout_constraintTop_toBottomOf="@+id/PhoneNumberofLoginPage" />
+
+    <EditText
+        android:id="@+id/PhoneNumberofLoginPage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:layout_marginLeft="56dp"
+        android:layout_marginEnd="56dp"
+        android:layout_marginRight="56dp"
+        android:background="@drawable/input_background"
+        android:drawableLeft="@drawable/ic_phone"
+        android:drawablePadding="10dp"
+        android:ems="10"
+        android:hint="Mobile Number"
+        android:inputType="phone"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.515" />
+
+    <Button
+        android:id="@+id/LoginButtonofLoginPage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/button_background"
+        android:text="Login"
+        app:backgroundTint="@color/purple_200"
+        app:layout_constraintEnd_toEndOf="@+id/PasswordofLoginPage"
+        app:layout_constraintStart_toStartOf="@+id/PasswordofLoginPage"
+        app:layout_constraintTop_toBottomOf="@+id/PasswordofLoginPage" />
+
+    <TextView
+        android:id="@+id/WelcomeTextofLoginPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome,"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/PhoneNumberofLoginPage"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.18" />
+
+    <TextView
+        android:id="@+id/WelcomeText2ofLoginPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login to continue!"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/PhoneNumberofLoginPage"
+        app:layout_constraintTop_toBottomOf="@+id/WelcomeTextofLoginPage" />
 </androidx.constraintlayout.widget.ConstraintLayout>
