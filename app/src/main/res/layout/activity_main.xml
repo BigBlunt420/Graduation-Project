@@ -52,6 +52,7 @@
         app:layout_constraintStart_toStartOf="@+id/TempIcon"
         app:layout_constraintTop_toBottomOf="@+id/TempIcon" />
 
+
     <ImageView
         android:id="@+id/TempIcon"
         android:layout_width="151dp"
