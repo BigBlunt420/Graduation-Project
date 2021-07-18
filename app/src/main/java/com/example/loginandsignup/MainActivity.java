@@ -1,9 +1,6 @@
-
-
-
-
 package com.example.loginandsignup;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -11,12 +8,24 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.jetbrains.annotations.NotNull;
+
 public class MainActivity extends AppCompatActivity {
 
     //定義UI上的elements
     private Button eLogin;
     private Button eSignUp;
+    /*
+    private FirebaseAuth mAuth;
+    //private FirebaseAnalytics mFirebaseAnalytics;
 
+    //初始化firebase身份驗證
+    mAuth = FirebaseAuth.getInstance();
+    */
 
 
 
@@ -35,6 +44,25 @@ public class MainActivity extends AppCompatActivity {
         eLogin= findViewById(R.id.LoginButton);
         eSignUp= findViewById(R.id.SignUpButton);
 
+        /*
+        //開啟程式時監看使用者的登入狀態
+        FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull @NotNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if(user != null)
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+        }
+        */
+
+
         /*Button要呼叫onClick(點擊)事件需要透過OnClickListener來監聽
           多個Button監聽寫法：https://ithelp.ithome.com.tw/articles/10242545*/
         eLogin.setOnClickListener(new View.OnClickListener() {
@@ -52,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         eSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent2 = new Intent(MainActivity.this, SignUpPage.class);
+                Intent intent2 = new Intent(MainActivity.this, OTP_MessageforSignUp.class);
                 startActivity(intent2);
             }
         });

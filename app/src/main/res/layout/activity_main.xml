@@ -40,7 +40,7 @@
         app:layout_constraintVertical_bias="0.675" />
 
     <TextView
-        android:id="@+id/SignUpText"
+        android:id="@+id/LoginText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -61,7 +61,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.149"
+        app:layout_constraintVertical_bias="0.13"
         app:srcCompat="@drawable/ic_mainic" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

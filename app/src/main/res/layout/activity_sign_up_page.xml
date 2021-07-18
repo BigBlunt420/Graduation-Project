@@ -24,55 +24,51 @@
       android:paddingRight="10dp"
       android:paddingBottom="10dp"
       android:textSize="24sp"
-      app:layout_constraintEnd_toEndOf="@+id/PhoneNumberofSignUpPage"
-      app:layout_constraintStart_toStartOf="@+id/PhoneNumberofSignUpPage"
-      app:layout_constraintTop_toBottomOf="@+id/PhoneNumberofSignUpPage" />
+      app:layout_constraintEnd_toEndOf="@+id/UsernameofSignUpPage"
+      app:layout_constraintStart_toStartOf="@+id/UsernameofSignUpPage"
+      app:layout_constraintTop_toBottomOf="@+id/UsernameofSignUpPage" />
 
   <EditText
-      android:id="@+id/PhoneNumberofSignUpPage"
+      android:id="@+id/ConfirmPasswordofSignUpPage"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:layout_marginStart="56dp"
-      android:layout_marginLeft="56dp"
-      android:layout_marginEnd="56dp"
-      android:layout_marginRight="56dp"
+      android:layout_marginTop="24dp"
       android:background="@drawable/input_background"
-      android:drawableLeft="@drawable/ic_phone"
+      android:drawableLeft="@drawable/ic_security"
       android:drawablePadding="10dp"
       android:ems="10"
-      android:hint="請輸入手機號碼"
-      android:inputType="phone"
+      android:hint="再次輸入密碼"
+      android:inputType="textPassword"
       android:paddingLeft="20dp"
       android:paddingTop="10dp"
       android:paddingRight="10dp"
       android:paddingBottom="10dp"
       android:textSize="24sp"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.0"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintVertical_bias="0.618" />
+      app:layout_constraintEnd_toEndOf="@+id/PasswordofSignUpPage"
+      app:layout_constraintStart_toStartOf="@+id/PasswordofSignUpPage"
+      app:layout_constraintTop_toBottomOf="@+id/PasswordofSignUpPage" />
+
+
 
   <Button
-      android:id="@+id/SignUpButtonofSignUpPage"
+      android:id="@+id/ButtonofSignUpPage"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginTop="24dp"
       android:background="@drawable/button_background"
-      android:text="註冊並登入"
+      android:text="註  冊"
       android:textSize="24sp"
       app:backgroundTint="@color/purple_200"
-      app:layout_constraintEnd_toEndOf="@+id/PasswordofSignUpPage"
-      app:layout_constraintStart_toStartOf="@+id/PasswordofSignUpPage"
-      app:layout_constraintTop_toBottomOf="@+id/PasswordofSignUpPage" />
+      app:layout_constraintEnd_toEndOf="@+id/ConfirmPasswordofSignUpPage"
+      app:layout_constraintStart_toStartOf="@+id/ConfirmPasswordofSignUpPage"
+      app:layout_constraintTop_toBottomOf="@+id/ConfirmPasswordofSignUpPage" />
 
   <TextView
       android:id="@+id/SignUpText"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginTop="16dp"
-      android:text="用戶註冊"
+      android:text="用戶資料"
       android:textColor="@color/black"
       android:textSize="30sp"
       android:textStyle="bold"
@@ -88,24 +84,21 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintVertical_bias="0.149"
+      app:layout_constraintVertical_bias="0.13999999"
       app:srcCompat="@drawable/ic_mainic" />
 
-  <TextView
-      android:id="@+id/AlreadyhaveAccount"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="16dp"
-      android:text="已有帳戶 立即登入"
-      android:textSize="20sp"
-      app:layout_constraintStart_toStartOf="@+id/SignUpButtonofSignUpPage"
-      app:layout_constraintTop_toBottomOf="@+id/SignUpButtonofSignUpPage" />
+
+
 
   <EditText
       android:id="@+id/UsernameofSignUpPage"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="24dp"
+      android:layout_marginStart="56dp"
+      android:layout_marginLeft="56dp"
+      android:layout_marginTop="24dp"
+      android:layout_marginEnd="56dp"
+      android:layout_marginRight="56dp"
       android:background="@drawable/input_background"
       android:drawableLeft="@drawable/ic_person"
       android:drawablePadding="10dp"
@@ -117,8 +110,25 @@
       android:paddingRight="10dp"
       android:paddingBottom="10dp"
       android:textSize="24sp"
-      app:layout_constraintBottom_toTopOf="@+id/PhoneNumberofSignUpPage"
-      app:layout_constraintEnd_toEndOf="@+id/PhoneNumberofSignUpPage"
-      app:layout_constraintStart_toStartOf="@+id/PhoneNumberofSignUpPage" />
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/SignUpText" />
+
+  <ImageView
+      android:id="@+id/BackofSignUpPage"
+      android:layout_width="59dp"
+      android:layout_height="56dp"
+      android:layout_marginStart="8dp"
+      android:layout_marginLeft="8dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toStartOf="@+id/TempIcon"
+      app:layout_constraintHorizontal_bias="0.126"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.023"
+      app:srcCompat="@drawable/ic_back" />
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
