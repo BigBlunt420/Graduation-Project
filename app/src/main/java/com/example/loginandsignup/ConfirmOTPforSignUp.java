@@ -115,6 +115,7 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
 
     }
 
+    //send out verification code to user's phone
     private void startPhoneNumberVerification(String ePhone) {
         Toast.makeText(ConfirmOTPforSignUp.this,"驗證碼傳送中",Toast.LENGTH_SHORT).show();
 
@@ -123,12 +124,13 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
                         .setPhoneNumber(ePhone)
                         .setTimeout(60L, TimeUnit.SECONDS)
                         .setActivity(this)
-                        .setCallbacks(mCallBacks)
+                        .setCallbacks(mCallBacks) //call the call backs to check the code is sent or not
                         .build();
 
         PhoneAuthProvider.verifyPhoneNumber(options);
     }
 
+    //verify verification code
     private void verifyPhoneNumberWithCodes(String verificationId, String code) {
         Toast.makeText(ConfirmOTPforSignUp.this,"正在驗證驗證碼",Toast.LENGTH_SHORT).show();
 
@@ -136,6 +138,7 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
         singInWithPhoneAuthCredential(credential);
     }
 
+    //resend verification code
     private void resendCode(String ePhone, PhoneAuthProvider.ForceResendingToken token) {
         Toast.makeText(ConfirmOTPforSignUp.this,"驗證碼傳送中",Toast.LENGTH_SHORT).show();
 
@@ -144,13 +147,14 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
                         .setPhoneNumber(ePhone)
                         .setTimeout(60L, TimeUnit.SECONDS)
                         .setActivity(this)
-                        .setCallbacks(mCallBacks)
+                        .setCallbacks(mCallBacks) //call the call backs to check the code is sent or not
                         .setForceResendingToken(token)
                         .build();
 
         PhoneAuthProvider.verifyPhoneNumber(options);
     }
 
+    //after verified, sign in with phone number
     private void singInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         Toast.makeText(ConfirmOTPforSignUp.this,"登入中",Toast.LENGTH_SHORT).show();
 
@@ -158,11 +162,13 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
+                        //toast when user signed in successfully
                         Toast.makeText(ConfirmOTPforSignUp.this,"已登入",Toast.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull @NotNull Exception e) {
+                //get the message when failed to sign in
                 Toast.makeText(ConfirmOTPforSignUp.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
             }
         });
