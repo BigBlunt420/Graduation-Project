@@ -108,92 +108,14 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
         eResendOTP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resentCode(ePhone, forceResendingToken);
+                resendCode(ePhone, forceResendingToken);
             }
         });
-//        eButtonofConfirmOTPPage.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(eOTPfConfirmOTPPage.getText().toString().trim().isEmpty())
-//                {
-//                    Toast.makeText(ConfirmOTPforSignUp.this,"請輸入有效驗證碼",Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                String code = eOTPfConfirmOTPPage.getText().toString().trim();
-//
-//                if(eOTPid != null)
-//                {
-//                    eProgressBar.setVisibility(View.VISIBLE);
-//                    eButtonofConfirmOTPPage.setVisibility(View.INVISIBLE);
-//                    PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(
-//                            eOTPid,
-//                            code
-//                    );
-//                    FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
-//                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                                @Override
-//                                public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
-//                                    eProgressBar.setVisibility(View.GONE);
-//                                    eButtonofConfirmOTPPage .setVisibility(View.VISIBLE);
-//                                    if(task.isSuccessful())
-//                                    {
-//                                        Intent intent = new Intent(getApplicationContext(),SignUpPage.class);
-//                                        /*setFlags用法
-//                                        FLAG_ACTIVITY_CLEAR_TASK和FLAG_ACTIVITY_NEW_TASK通常連用
-//                                        http://dbhills.blogspot.com/2015/01/androidactivity.html*/
-//                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                                        startActivity(intent);
-//                                    }
-//                                    else
-//                                    {
-//                                        Toast.makeText(ConfirmOTPforSignUp.this,"驗證碼錯誤",Toast.LENGTH_SHORT).show();
-//                                    }
-//                                }
-//                            });
-//                }
-//            }
-//        });
         
-        //再次傳送驗證碼
-//        eResendOTP.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                PhoneAuthProvider.getInstance().verifyPhoneNumber(
-//                        "+886"+getIntent().getStringExtra("PhoneNumber"),
-//                        60,
-//                        TimeUnit.SECONDS,
-//                         ConfirmOTPforSignUp .this,
-//                        new PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
-//
-//                            @Override
-//                            public void onVerificationCompleted(@NonNull @NotNull PhoneAuthCredential phoneAuthCredential) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onVerificationFailed(@NonNull @NotNull FirebaseException e) {
-//                                Toast.makeText(ConfirmOTPforSignUp.this,e.getMessage(),Toast.LENGTH_SHORT).show();
-//                            }
-//
-//                            @Override
-//                            public void onCodeSent(@NonNull @NotNull String NewOTPid, @NonNull @NotNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-//                                eOTPid = NewOTPid;
-//                                Toast.makeText(ConfirmOTPforSignUp.this,"驗證碼已再次發送",Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                );
-//            }
-//        });
 
-//        eBackofConfirmOTPPage.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent1 = new Intent(ConfirmOTPforSignUp.this,OTP_MessageforSignUp.class);
-//                startActivity(intent1);
-//            }
-//        });
     }
 
+    //send out verification code to user's phone
     private void startPhoneNumberVerification(String ePhone) {
         Toast.makeText(ConfirmOTPforSignUp.this,"驗證碼傳送中",Toast.LENGTH_SHORT).show();
 
@@ -202,12 +124,13 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
                         .setPhoneNumber(ePhone)
                         .setTimeout(60L, TimeUnit.SECONDS)
                         .setActivity(this)
-                        .setCallbacks(mCallBacks)
+                        .setCallbacks(mCallBacks) //call the call backs to check the code is sent or not
                         .build();
 
         PhoneAuthProvider.verifyPhoneNumber(options);
     }
 
+    //verify verification code
     private void verifyPhoneNumberWithCodes(String verificationId, String code) {
         Toast.makeText(ConfirmOTPforSignUp.this,"正在驗證驗證碼",Toast.LENGTH_SHORT).show();
 
@@ -215,7 +138,8 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
         singInWithPhoneAuthCredential(credential);
     }
 
-    private void resentCode(String ePhone, PhoneAuthProvider.ForceResendingToken token) {
+    //resend verification code
+    private void resendCode(String ePhone, PhoneAuthProvider.ForceResendingToken token) {
         Toast.makeText(ConfirmOTPforSignUp.this,"驗證碼傳送中",Toast.LENGTH_SHORT).show();
 
         PhoneAuthOptions options =
@@ -223,13 +147,14 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
                         .setPhoneNumber(ePhone)
                         .setTimeout(60L, TimeUnit.SECONDS)
                         .setActivity(this)
-                        .setCallbacks(mCallBacks)
+                        .setCallbacks(mCallBacks) //call the call backs to check the code is sent or not
                         .setForceResendingToken(token)
                         .build();
 
         PhoneAuthProvider.verifyPhoneNumber(options);
     }
 
+    //after verified, sign in with phone number
     private void singInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         Toast.makeText(ConfirmOTPforSignUp.this,"登入中",Toast.LENGTH_SHORT).show();
 
@@ -237,11 +162,13 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
+                        //toast when user signed in successfully
                         Toast.makeText(ConfirmOTPforSignUp.this,"已登入",Toast.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull @NotNull Exception e) {
+                //get the message when failed to sign in
                 Toast.makeText(ConfirmOTPforSignUp.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
             }
         });
