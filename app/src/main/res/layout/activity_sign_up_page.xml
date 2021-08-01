@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#02FFFFFF"
     tools:context=".SignUpPage">
 
 
@@ -49,7 +49,6 @@
       app:layout_constraintTop_toBottomOf="@+id/PasswordofSignUpPage" />
 
 
-
   <Button
       android:id="@+id/ButtonofSignUpPage"
       android:layout_width="0dp"
@@ -86,8 +85,6 @@
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="0.13999999"
       app:srcCompat="@drawable/ic_mainic" />
-
-
 
 
   <EditText
@@ -127,8 +124,6 @@
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="0.023"
       app:srcCompat="@drawable/ic_back" />
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
