@@ -24,9 +24,10 @@
       android:paddingRight="10dp"
       android:paddingBottom="10dp"
       android:textSize="24sp"
-      app:layout_constraintEnd_toEndOf="@+id/UsernameofSignUpPage"
-      app:layout_constraintStart_toStartOf="@+id/UsernameofSignUpPage"
-      app:layout_constraintTop_toBottomOf="@+id/UsernameofSignUpPage" />
+      app:layout_constraintEnd_toEndOf="@+id/EmailofSignUpPage"
+      app:layout_constraintHorizontal_bias="0.0"
+      app:layout_constraintStart_toStartOf="@+id/EmailofSignUpPage"
+      app:layout_constraintTop_toBottomOf="@+id/EmailofSignUpPage" />
 
   <EditText
       android:id="@+id/ConfirmPasswordofSignUpPage"
@@ -111,19 +112,25 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/SignUpText" />
 
-  <ImageView
-      android:id="@+id/BackofSignUpPage"
-      android:layout_width="59dp"
-      android:layout_height="56dp"
-      android:layout_marginStart="8dp"
-      android:layout_marginLeft="8dp"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toStartOf="@+id/TempIcon"
-      app:layout_constraintHorizontal_bias="0.126"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintVertical_bias="0.023"
-      app:srcCompat="@drawable/ic_back" />
+  <EditText
+      android:id="@+id/EmailofSignUpPage"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="24dp"
+      android:background="@drawable/input_background"
+      android:drawableLeft="@drawable/ic_email"
+      android:drawablePadding="10dp"
+      android:ems="10"
+      android:hint="請輸入信箱"
+      android:inputType="textEmailAddress"
+      android:paddingLeft="20dp"
+      android:paddingTop="10dp"
+      android:paddingRight="10dp"
+      android:paddingBottom="10dp"
+      android:textSize="24sp"
+      app:layout_constraintEnd_toEndOf="@+id/UsernameofSignUpPage"
+      app:layout_constraintStart_toStartOf="@+id/UsernameofSignUpPage"
+      app:layout_constraintTop_toBottomOf="@+id/UsernameofSignUpPage" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

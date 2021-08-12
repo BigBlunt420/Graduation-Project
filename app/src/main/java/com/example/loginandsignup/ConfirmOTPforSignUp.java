@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,13 +24,19 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class ConfirmOTPforSignUp extends AppCompatActivity {
 
+    public static final String MOBILE_KEY = "Mobile";
+    public static final String TAG = "MobileQuote";
     private TextView eUserMobile;
     private Button eButtonofConfirmOTPPage;
     private EditText eOTPfConfirmOTPPage;
@@ -39,15 +46,20 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
     private ImageView eBackofConfirmOTPPage;
     private String mVerificationId;
     private String ePhone;
+    private String eMobile;
     private FirebaseAuth firebaseAuth;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallBacks;
     private PhoneAuthProvider.ForceResendingToken forceResendingToken;
+    private FirebaseFirestore fsdb;
+    String UserID;
+    private String tenPhoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_otpfor_sign_up);
 
+        fsdb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
         eUserMobile = findViewById(R.id.UserMobile);
@@ -57,6 +69,9 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
         eResendOTP = findViewById(R.id.ResendOTP);
         eBackofConfirmOTPPage = findViewById(R.id.BackofConfirmOTPPage);
         ePhone = getIntent().getStringExtra("PhoneNumber");
+        eMobile = getIntent().getStringExtra("PhoneNumberDisplay");
+
+        tenPhoneNumber = 0 + eMobile;
 
         //定義驗證碼
         eOTPid = getIntent().getStringExtra("OTPid");
@@ -111,6 +126,14 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
                 resendCode(ePhone, forceResendingToken);
             }
         });
+
+        eBackofConfirmOTPPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ConfirmOTPforSignUp.this, OTP_MessageforSignUp.class);
+                startActivity(intent);
+            }
+        });
         
 
     }
@@ -156,14 +179,30 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
 
     //after verified, sign in with phone number
     private void singInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        Toast.makeText(ConfirmOTPforSignUp.this,"登入中",Toast.LENGTH_SHORT).show();
-
+        //Toast.makeText(ConfirmOTPforSignUp.this,"註冊中...",Toast.LENGTH_SHORT).show();
         firebaseAuth.signInWithCredential(credential)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
                         //toast when user signed in successfully
-                        Toast.makeText(ConfirmOTPforSignUp.this,"已登入",Toast.LENGTH_SHORT).show();
+
+                        //將手機號碼寫入firestore
+                        UserID = firebaseAuth.getCurrentUser().getUid();
+                        DocumentReference documentReference = fsdb.collection("Users").document(UserID);
+                        Map<String,Object> SaveMobile = new HashMap<String, Object>();
+                        SaveMobile.put(MOBILE_KEY,tenPhoneNumber);
+                        documentReference.set(SaveMobile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Log.d(TAG,"Successful:User Profile is created for " + UserID);
+                                }else {
+                                    Log.w(TAG,"Fail:",task.getException());
+                                }
+                            }
+                        });
+                        Toast.makeText(ConfirmOTPforSignUp.this,"驗證成功！",Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(ConfirmOTPforSignUp.this,SignUpPage.class));
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
