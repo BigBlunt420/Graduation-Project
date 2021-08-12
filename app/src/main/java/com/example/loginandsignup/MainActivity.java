@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         eSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent2 = new Intent(MainActivity.this, OTP_MessageforSignUp.class);
+                Intent intent2 = new Intent(MainActivity.this,OTP_MessageforSignUp.class);
                 startActivity(intent2);
             }
         });
