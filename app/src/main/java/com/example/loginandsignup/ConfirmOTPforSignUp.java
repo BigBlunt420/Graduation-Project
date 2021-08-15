@@ -50,7 +50,7 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallBacks;
     private PhoneAuthProvider.ForceResendingToken forceResendingToken;
-    private FirebaseFirestore fsdb;
+    private FirebaseFirestore firestoredb;
     String UserID;
     private String tenPhoneNumber;
 
@@ -59,7 +59,7 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_otpfor_sign_up);
 
-        fsdb = FirebaseFirestore.getInstance();
+        firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
         eUserMobile = findViewById(R.id.UserMobile);
@@ -188,7 +188,7 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
 
                         //將手機號碼寫入firestore
                         UserID = firebaseAuth.getCurrentUser().getUid();
-                        DocumentReference documentReference = fsdb.collection("Users").document(UserID);
+                        DocumentReference documentReference = firestoredb.collection("Users").document(UserID);
                         Map<String,Object> SaveMobile = new HashMap<String, Object>();
                         SaveMobile.put(MOBILE_KEY,tenPhoneNumber);
                         documentReference.set(SaveMobile).addOnCompleteListener(new OnCompleteListener<Void>() {
