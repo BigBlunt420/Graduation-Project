@@ -41,7 +41,7 @@ public class SignUpPage extends AppCompatActivity{
     private EditText eUsernameofSignUpPage,eEmailofSignUpPage,ePasswordofSignUpPage,eConfirmPasswordofSignUpPage;
     private Button eButtonofSignUpPage;
     private FirebaseAuth firebaseAuth ;
-    private FirebaseFirestore fsdb;
+    private FirebaseFirestore firestoredb;
     String UserID;
 
     @Override
@@ -49,7 +49,7 @@ public class SignUpPage extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_page);
 
-        fsdb = FirebaseFirestore.getInstance();
+        firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
 
@@ -111,7 +111,7 @@ public class SignUpPage extends AppCompatActivity{
 
         //將資料寫進firestore
         UserID = firebaseAuth.getCurrentUser().getUid();
-        DocumentReference documentReference = fsdb.collection("Users").document(UserID);
+        DocumentReference documentReference = firestoredb.collection("Users").document(UserID);
         Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
         SaveUserProfile.put(USERNAME_KEY,Username);
         SaveUserProfile.put(EMAIL_KEY,Email);
