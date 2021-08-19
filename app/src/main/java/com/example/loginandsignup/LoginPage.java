@@ -25,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class LoginPage extends AppCompatActivity {
 
-    private ImageView eBackofLoginPage;
-    private TextView eSignUpNow;
+
+    private TextView eSignUpNow,eForgetPassword;
     private EditText eEmailofLoginPage,ePasswordofLoginPage;
     private Button eButtonofLoginPage;
 
@@ -38,27 +38,28 @@ public class LoginPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page2);
 
-        eBackofLoginPage = findViewById(R.id.BackofLoginPage);
         eSignUpNow = findViewById(R.id.SignUpNow);
         eEmailofLoginPage = findViewById(R.id.EmailofLoginPage);
         ePasswordofLoginPage = findViewById(R.id.PasswordofLoginPage);
         eButtonofLoginPage = findViewById(R.id.ButtonofLoginPage);
+        eForgetPassword = findViewById(R.id.ForgetPassword);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        //返回箭頭
-        eBackofLoginPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginPage.this,MainActivity.class));
-            }
-        });
 
         //立即登入
         eSignUpNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginPage.this,OTP_MessageforSignUp.class));
+            }
+        });
+
+        //忘記密碼
+        eForgetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginPage.this,ForgotPassword.class));
             }
         });
 

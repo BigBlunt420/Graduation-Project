@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#02FFFFFF"
-    tools:context=".SignUpPage">
+    tools:context=".LoginPage">
 
 
     <EditText
@@ -103,19 +103,7 @@
         app:layout_constraintStart_toStartOf="@+id/ButtonofLoginPage"
         app:layout_constraintTop_toBottomOf="@+id/ButtonofLoginPage" />
 
-    <ImageView
-        android:id="@+id/BackofLoginPage"
-        android:layout_width="59dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/TempIcon"
-        app:layout_constraintHorizontal_bias="0.126"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
-        app:srcCompat="@drawable/ic_back" />
+
 
     <TextView
         android:id="@+id/NoAccountText"

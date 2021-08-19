@@ -20,6 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LoginandSignUp"
         android:usesCleartextTraffic="true">
+        <activity android:name=".ForgotPassword"></activity>
         <activity android:name=".ConfirmOTPforSignUp" />
         <activity android:name=".OTP_MessageforSignUp" />
         <!--

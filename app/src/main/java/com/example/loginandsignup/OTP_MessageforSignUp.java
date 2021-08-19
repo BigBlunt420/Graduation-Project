@@ -23,11 +23,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
-public class OTP_MessageforSignUp extends AppCompatActivity implements View.OnClickListener{
+public class OTP_MessageforSignUp extends AppCompatActivity{
 
     //定義UI上的elements
     private TextView eLoginNow;
-    private ImageView eBackofOTPPage;
     private Button eButtonofOTPPage;
     private ProgressBar eProgressBar;
     private EditText ePhoneNumberofOTPPage;
@@ -40,11 +39,6 @@ public class OTP_MessageforSignUp extends AppCompatActivity implements View.OnCl
 
 
         eLoginNow = findViewById(R.id.LoginNow);
-        eLoginNow.setOnClickListener(this);
-
-        eBackofOTPPage = findViewById(R.id.BackofOTPPage);
-        eBackofOTPPage.setOnClickListener(this);
-
         ePhoneNumberofOTPPage = findViewById(R.id.PhoneNumberofOTPPage);
         eButtonofOTPPage = findViewById(R.id.ButtonofOTPPage);
         eProgressBar = findViewById(R.id.progressBar);
@@ -69,20 +63,14 @@ public class OTP_MessageforSignUp extends AppCompatActivity implements View.OnCl
                 }
             }
         });
+
+        //立即登入
+        eLoginNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(OTP_MessageforSignUp.this,LoginPage.class));
+            }
+        });
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            //立即登入
-            case R.id.LoginNow:
-                startActivity(new Intent(this,LoginPage.class));
-                break;
-            //返回箭頭
-            case R.id.BackofOTPPage:
-                startActivity(new Intent(this,MainActivity.class));
-                break;
-        }
-
-    }
 }

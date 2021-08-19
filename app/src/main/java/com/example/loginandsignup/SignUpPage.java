@@ -115,7 +115,7 @@ public class SignUpPage extends AppCompatActivity{
         Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
         SaveUserProfile.put(USERNAME_KEY,Username);
         SaveUserProfile.put(EMAIL_KEY,Email);
-        SaveUserProfile.put(PASSWORD_KEY,Password);
+        //SaveUserProfile.put(PASSWORD_KEY,Password);
 
         documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -135,7 +135,9 @@ public class SignUpPage extends AppCompatActivity{
             @Override
             public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
+                    //註冊完成，導向HomePage
                     Log.d("EmailLink","linkWithCredential:success");
+                    startActivity(new Intent(SignUpPage.this,HomePage.class));
                 }else {
                     Log.w("EmailLink", "linkWithCredential:failure", task.getException());
                     Toast.makeText(SignUpPage.this, "Authentication failed.", Toast.LENGTH_SHORT).show();

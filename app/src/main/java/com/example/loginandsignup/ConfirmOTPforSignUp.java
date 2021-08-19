@@ -35,7 +35,8 @@ import java.util.concurrent.TimeUnit;
 
 public class ConfirmOTPforSignUp extends AppCompatActivity {
 
-    public static final String MOBILE_KEY = "Mobile";
+    public static final String TEN_PHONE_NUMBER_KEY = "tenPhoneNumber";
+    public static final String NINE_PHONE_NUMBER_KEY = "NinePhoneNumber";
     public static final String TAG = "MobileQuote";
     private TextView eUserMobile;
     private Button eButtonofConfirmOTPPage;
@@ -190,7 +191,9 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
                         UserID = firebaseAuth.getCurrentUser().getUid();
                         DocumentReference documentReference = firestoredb.collection("Users").document(UserID);
                         Map<String,Object> SaveMobile = new HashMap<String, Object>();
-                        SaveMobile.put(MOBILE_KEY,tenPhoneNumber);
+                        SaveMobile.put(TEN_PHONE_NUMBER_KEY,tenPhoneNumber);
+                        SaveMobile.put(NINE_PHONE_NUMBER_KEY,eMobile);
+
                         documentReference.set(SaveMobile).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull @NotNull Task<Void> task) {
@@ -201,6 +204,7 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
                                 }
                             }
                         });
+
                         Toast.makeText(ConfirmOTPforSignUp.this,"驗證成功！",Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(ConfirmOTPforSignUp.this,SignUpPage.class));
                     }
