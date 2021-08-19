@@ -7,19 +7,6 @@
     android:background="#02FFFFFF"
     tools:context=".OTP_MessageforSignUp">
 
-    <ImageView
-        android:id="@+id/BackofOTPPage"
-        android:layout_width="59dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/TempIcon"
-        app:layout_constraintHorizontal_bias="0.126"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
-        app:srcCompat="@drawable/ic_back" />
 
     <ImageView
         android:id="@+id/TempIcon"
