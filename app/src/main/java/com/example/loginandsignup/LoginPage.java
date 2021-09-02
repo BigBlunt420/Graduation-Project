@@ -23,12 +23,16 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
+
 public class LoginPage extends AppCompatActivity {
 
 
     private TextView eSignUpNow,eForgetPassword;
     private EditText eEmailofLoginPage,ePasswordofLoginPage;
     private Button eButtonofLoginPage;
+
+    private Button button;
 
     private FirebaseAuth firebaseAuth ;
 
@@ -46,6 +50,14 @@ public class LoginPage extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
+        button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginPage.this,HomePage.class);
+                startActivity(intent);
+            }
+        });
 
         //立即登入
         eSignUpNow.setOnClickListener(new View.OnClickListener() {
