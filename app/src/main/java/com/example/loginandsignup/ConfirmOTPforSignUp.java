@@ -205,6 +205,7 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
                             }
                         });
 
+
                         Toast.makeText(ConfirmOTPforSignUp.this,"驗證成功！",Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(ConfirmOTPforSignUp.this,SignUpPage.class));
                     }

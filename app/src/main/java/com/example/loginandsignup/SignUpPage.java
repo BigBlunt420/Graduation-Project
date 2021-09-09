@@ -94,10 +94,17 @@ public class SignUpPage extends AppCompatActivity{
             return;
         }
         if(Password.length() < 6){
-            ePasswordofSignUpPage.setError("密碼需長度為6~12字元");
+            ePasswordofSignUpPage.setError("密碼需長度為6~25字元");
             ePasswordofSignUpPage.requestFocus();
             return;
         }
+
+        if(Password.length() >= 25){
+            ePasswordofSignUpPage.setError("密碼需長度為6~25字元");
+            ePasswordofSignUpPage.requestFocus();
+            return;
+        }
+
         if(ConfirmPassword.isEmpty()){
             eConfirmPasswordofSignUpPage.setError("此欄不得為空");
             eConfirmPasswordofSignUpPage.requestFocus();
