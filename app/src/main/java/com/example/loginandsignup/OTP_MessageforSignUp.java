@@ -13,11 +13,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +33,7 @@ public class OTP_MessageforSignUp extends AppCompatActivity{
     private Button eButtonofOTPPage;
     private ProgressBar eProgressBar;
     private EditText ePhoneNumberofOTPPage;
-
+    private FirebaseFirestore firestoredb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,23 +47,14 @@ public class OTP_MessageforSignUp extends AppCompatActivity{
         eProgressBar = findViewById(R.id.progressBar);
 
 
+        firestoredb = FirebaseFirestore.getInstance();
+
+
         /*按下取得驗證碼*/
         eButtonofOTPPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ePhoneNumberofOTPPage.getText().toString().trim().isEmpty())
-                {
-                    Toast.makeText(OTP_MessageforSignUp.this,"請輸入電話號碼",Toast.LENGTH_SHORT).show();
-                }else{
-                    /*getApplicationContext():獲取當前Activity所在的應用的Context對象
-                    https://spicyboyd.blogspot.com/2018/04/appcontext.html*/
-                    Intent intent =new Intent(getApplicationContext(),ConfirmOTPforSignUp.class);
-                    /*putExtra:不同Activity間傳遞數據
-                    https://ithelp.ithome.com.tw/articles/10232005*/
-                    intent.putExtra("PhoneNumberDisplay",ePhoneNumberofOTPPage.getText().toString());
-                    intent.putExtra("PhoneNumber","+886"+ePhoneNumberofOTPPage.getText().toString());
-                    startActivity(intent);
-                }
+                CheckPhoneNumber();
             }
         });
 
@@ -71,6 +65,39 @@ public class OTP_MessageforSignUp extends AppCompatActivity{
                 startActivity(new Intent(OTP_MessageforSignUp.this,LoginPage.class));
             }
         });
+    }
+
+    private void CheckPhoneNumber() {
+        String Mobile = ePhoneNumberofOTPPage.getText().toString().trim();
+
+        if (Mobile.isEmpty()){
+            ePhoneNumberofOTPPage.setError("此欄不得為空");
+            ePhoneNumberofOTPPage.requestFocus();
+            return;
+        }
+
+        if (Mobile.length() != 9){
+            ePhoneNumberofOTPPage.setError("請填入9位手機號碼");
+            ePhoneNumberofOTPPage.requestFocus();
+            return;
+        }
+
+        firestoredb.collection("Users")
+                .whereEqualTo("NinePhoneNumber",Mobile)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Toast.makeText(OTP_MessageforSignUp.this,"此號碼已註冊，請立即登入!",Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(OTP_MessageforSignUp.this,LoginPage.class));
+                    }
+                });
+
+        Intent intent =new Intent(getApplicationContext(),ConfirmOTPforSignUp.class);
+        intent.putExtra("PhoneNumberDisplay",ePhoneNumberofOTPPage.getText().toString());
+        intent.putExtra("PhoneNumber","+886"+ePhoneNumberofOTPPage.getText().toString());
+        startActivity(intent);
+
     }
 
 }
