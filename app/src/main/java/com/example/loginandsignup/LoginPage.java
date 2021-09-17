@@ -32,7 +32,7 @@ public class LoginPage extends AppCompatActivity {
     private EditText eEmailofLoginPage,ePasswordofLoginPage;
     private Button eButtonofLoginPage;
 
-    private Button button;
+    private Button button;      /////////////////////for testing
 
     private FirebaseAuth firebaseAuth ;
 
@@ -50,6 +50,7 @@ public class LoginPage extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
+        ///////////////////////////for testing
         button = findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
