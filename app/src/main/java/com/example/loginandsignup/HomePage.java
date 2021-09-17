@@ -16,6 +16,9 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 //import com.example.loginandsignup.databinding.ActivityMapsBinding;
@@ -39,7 +42,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     private static int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private Toolbar toolbar;
     private GoogleMap mMap;
-    private FusedLocationProviderClient fusedLocationProviderClient;
+    private float zoomLevel = 16.0f;
     //private ActivityMapsBinding binding;
     LocationManager locationManager;
     LocationListener locationListener;
@@ -110,7 +113,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 Manifest.permission.ACCESS_FINE_LOCATION};
 
         //ask for location permission
-        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q){
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q){  //check if the android version == 10
             if(ContextCompat.checkSelfPermission(this.getApplicationContext(),permissions[1])
                     == PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this.getApplicationContext(),permissions[0])
@@ -177,6 +180,21 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if(id == R.id.profile){
+
+        }else if(id == R.id.joinedGroup){
+
+        }else if(id == R.id.signOut){
+
+        }
+        //return super.onOptionsItemSelected(item);
+        return true;
+    }
+
 
     /*
     Run google map, and update the location from user
@@ -204,6 +222,9 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
             return;
         }
 
+
+
+        /////location change
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
@@ -211,12 +232,13 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                     userLatLong = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.clear();   //clear the old location marker on the map
                     mMap.addMarker(new MarkerOptions().position(userLatLong).title("Your location"));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(userLatLong));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLong, zoomLevel));
                 }catch (SecurityException e){
                     e.printStackTrace();
                 }
 
             }
+
 //
 //            @Override
 //            public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -246,8 +268,25 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 //            mMap.addMarker(new MarkerOptions().position(userLatLong).title("Your location"));
 //            mMap.moveCamera(CameraUpdateFactory.newLatLng(userLatLong));
 //        }
+
+          ///get current location
+
         try{
+            //Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+//            userLatLong = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+//            if(userLatLong == null){
+//                if(Build.VERSION.SDK_INT >= 11){
+//                    recreate();
+//                }else{
+//                    Intent intent = getIntent();
+//                    finish();
+//                    startActivity(intent);
+//                }
+//            }
+//            mMap.clear();   //clear the old location marker on the map
+//            mMap.addMarker(new MarkerOptions().position(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude())).title("Your location"));
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), zoomLevel));
         }catch (SecurityException e){
             e.printStackTrace();
         }
