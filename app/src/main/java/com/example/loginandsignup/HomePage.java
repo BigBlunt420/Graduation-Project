@@ -80,6 +80,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
 
+        //relead the activity
         reloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +97,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         if(MotionEvent.ACTION_DOWN == 0){
             move = 0;
         }
+        
         //checking if the version of device is able to use google map api
         if(checkPlayService()==true){
             initialMap();       //ask for permission
