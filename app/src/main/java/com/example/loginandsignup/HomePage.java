@@ -60,6 +60,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     LocationManager locationManager;
     LocationListener locationListener;
     LatLng userLatLong;
+    LatLng addresLatLng;
     int move = 1;
     private FloatingActionButton reloadButton;
     private static boolean rLocationGranted = false ;
@@ -78,6 +79,19 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
+
+        reloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Build.VERSION.SDK_INT >= 11){
+                    recreate();
+                }else{
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
+            }
+        });
 
         if(MotionEvent.ACTION_DOWN == 0){
             move = 0;
@@ -255,6 +269,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                     userLatLong = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.clear();   //clear the old location marker on the map
                     mMap.addMarker(new MarkerOptions().position(userLatLong).title("Your location"));
+                    if(addresLatLng != null){
+                        mMap.addMarker(new MarkerOptions()
+                                .position(addresLatLng).title("Searched location"));
+                    }
                     if(move == 1 ){
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLong,zoomLevel));
                     }
@@ -325,10 +343,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                         e.printStackTrace();
                     }
                     Address address = addressList.get(0);
-                    LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                    addresLatLng = new LatLng(address.getLatitude(), address.getLongitude());
                     mMap.addMarker(new MarkerOptions()
-                            .position(latLng).title("Searched location"));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoomLevel));
+                            .position(addresLatLng).title("Searched location"));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(addresLatLng,zoomLevel));
 
                 }
                 return false;
@@ -340,18 +358,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
             }
         });
 
-        reloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(Build.VERSION.SDK_INT >= 11){
-                    recreate();
-                }else{
-                    Intent intent = getIntent();
-                    finish();
-                    startActivity(intent);
-                }
-            }
-        });
+
 
 
 //        Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
