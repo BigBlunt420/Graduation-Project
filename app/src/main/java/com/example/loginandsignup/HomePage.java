@@ -79,9 +79,20 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
 
-        if(MotionEvent.ACTION_DOWN == 0){
-            move = 0;
-        }
+        //relead the activity
+        reloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Build.VERSION.SDK_INT >= 11){
+                    recreate();
+                }else{
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
+            }
+        });
+        
         //checking if the version of device is able to use google map api
         if(checkPlayService()==true){
             initialMap();       //ask for permission
@@ -340,18 +351,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
             }
         });
 
-        reloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(Build.VERSION.SDK_INT >= 11){
-                    recreate();
-                }else{
-                    Intent intent = getIntent();
-                    finish();
-                    startActivity(intent);
-                }
-            }
-        });
+        
 
 
 //        Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
