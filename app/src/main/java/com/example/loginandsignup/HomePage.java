@@ -10,6 +10,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,8 +19,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 //import com.example.loginandsignup.databinding.ActivityMapsBinding;
@@ -33,20 +37,31 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.List;
 
 public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
     private static int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private Toolbar toolbar;
     private GoogleMap mMap;
+    private SearchView searchView;
+    private Geocoder geocoder;
+
     private float zoomLevel = 16.0f;
+    private String shLocation;
+    private List<Address> addressList = null;
     //private ActivityMapsBinding binding;
     LocationManager locationManager;
     LocationListener locationListener;
     LatLng userLatLong;
+    int move = 1;
+    private FloatingActionButton reloadButton;
     private static boolean rLocationGranted = false ;
     private int count = 0;
 
@@ -58,9 +73,15 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
+        searchView = findViewById(R.id.sch_location);
+        reloadButton = findViewById(R.id.reload);
+
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
 
+        if(MotionEvent.ACTION_DOWN == 0){
+            move = 0;
+        }
         //checking if the version of device is able to use google map api
         if(checkPlayService()==true){
             initialMap();       //ask for permission
@@ -68,10 +89,12 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
         if(rLocationGranted == true){
             // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map1);
             mapFragment.getMapAsync(this);
         }
+
 
 
 
@@ -204,7 +227,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         mMap = googleMap;
 
 
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
 
         //ask for location permission
 
@@ -232,12 +255,18 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                     userLatLong = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.clear();   //clear the old location marker on the map
                     mMap.addMarker(new MarkerOptions().position(userLatLong).title("Your location"));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLong, zoomLevel));
+                    if(move == 1 ){
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLong,zoomLevel));
+                    }
+
                 }catch (SecurityException e){
                     e.printStackTrace();
                 }
 
             }
+
+
+
 
 //
 //            @Override
@@ -259,20 +288,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 //
         };
 
-//        Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//        if(lastLocation==null){
-//            locationManager.requestLocationUpdates(
-//                    LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-//            userLatLong = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-//            mMap.clear();   //clear the old location marker on the map
-//            mMap.addMarker(new MarkerOptions().position(userLatLong).title("Your location"));
-//            mMap.moveCamera(CameraUpdateFactory.newLatLng(userLatLong));
-//        }
-
-          ///get current location
-
+        //get current location at the first time when the app was opened
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         try{
-            //Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
 //            userLatLong = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
 //            if(userLatLong == null){
@@ -284,31 +303,55 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 //                    startActivity(intent);
 //                }
 //            }
-//            mMap.clear();   //clear the old location marker on the map
-//            mMap.addMarker(new MarkerOptions().position(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude())).title("Your location"));
-//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), zoomLevel));
+            mMap.clear();   //clear the old location marker on the map
+            mMap.addMarker(new MarkerOptions().position(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude())).title("Your location"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), zoomLevel));
         }catch (SecurityException e){
             e.printStackTrace();
         }
 
 
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                shLocation = searchView.getQuery().toString();
+                addressList = null;
+                if(shLocation != null || !shLocation.equals("")){
+                    geocoder = new Geocoder(HomePage.this);
+                    try{
+                        addressList = geocoder.getFromLocationName(shLocation, 1);
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+                    Address address = addressList.get(0);
+                    LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                    mMap.addMarker(new MarkerOptions()
+                            .position(latLng).title("Searched location"));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoomLevel));
 
+                }
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
 
-
-//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-//
-//        fusedLocationProviderClient.getLastLocation()
-//                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-//                    @Override
-//                    public void onSuccess(Location location) {
-//                        // Got last known location. In some rare situations this can be null.
-//                        if (location != null) {
-//                            // Logic to handle location object
-//                        }
-//                    }
-//                });
+        reloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Build.VERSION.SDK_INT >= 11){
+                    recreate();
+                }else{
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
+            }
+        });
 
 
 //        Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
