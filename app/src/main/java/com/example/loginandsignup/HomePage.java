@@ -93,6 +93,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
             }
         });
         
+        if(MotionEvent.ACTION_DOWN == 0){
+            move = 0;
+        }
+        
         //checking if the version of device is able to use google map api
         if(checkPlayService()==true){
             initialMap();       //ask for permission
