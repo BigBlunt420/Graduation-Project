@@ -5,8 +5,14 @@
             android:id="@+id/profile"
             android:title="My profile" />
         <item
+            android:id="@+id/mappage"
+            android:title="地圖主頁" />
+        <item
             android:id="@+id/joinedGroup"
             android:title="Joined Groups" />
+        <item
+            android:id="@+id/setTimeAndLocation"
+            android:title="設定時間與位置" />
         <item
             android:id="@+id/signOut"
             android:title="Signed Out" />

@@ -1,10 +1,16 @@
 package com.example.loginandsignup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.Context;
@@ -38,6 +44,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 import org.jetbrains.annotations.NotNull;
@@ -65,6 +73,9 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     private FloatingActionButton reloadButton;
     private static boolean rLocationGranted = false ;
     private int count = 0;
+    private FirebaseAuth firebaseAuth;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +83,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         setContentView(R.layout.activity_home_page);
 
         toolbar = findViewById(R.id.main_toolbar);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+
+        // 用toolbar做為APP的ActionBar
         setSupportActionBar(toolbar);
 
         searchView = findViewById(R.id.sch_location);
@@ -79,6 +94,46 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
+
+        /*--navigation drawer menu--*/
+        navigationView.bringToFront();
+        // 將drawerLayout和toolbar整合，會出現「三」按鈕
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        //為NavigationView設置點擊事件
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
+                // 取得選項id
+                int id = item.getItemId();
+
+                // 依照id判斷點了哪個項目並做相應事件
+                if(id == R.id.profile){
+
+                    return true;
+                }else if(id == R.id.mappage){
+
+                    return true;
+                } else if(id == R.id.joinedGroup){
+
+                    return true;
+                }else if(id == R.id.setTimeAndLocation){
+                    //replaceFragment(new setTimeAndLocationFragment());
+                    startActivity(new Intent(HomePage.this,setTimeAndLocation.class));
+                    return true;
+                }else if (id == R.id.signOut){
+                    firebaseAuth = FirebaseAuth.getInstance();
+                    firebaseAuth.signOut();
+                    Toast.makeText(HomePage.this, "用戶已登出", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(HomePage.this,LoginPage.class));
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
 
         //relead the activity
         reloadButton.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +180,21 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 //            }
 //        }
 
+    }
+
+//    private void replaceFragment(Fragment fragment){
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.frameLayout,fragment);
+//        fragmentTransaction.commit();
+//    }
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }else {
+            super.onBackPressed();
+        }
     }
 
 
@@ -211,7 +281,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 //            }
 //        }
 //    }
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -234,7 +304,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         return true;
     }
 
-
+*/
     /*
     Run google map, and update the location from user
      */
