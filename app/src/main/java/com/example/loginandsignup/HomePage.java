@@ -83,14 +83,15 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         setContentView(R.layout.activity_home_page);
 
         toolbar = findViewById(R.id.main_toolbar);
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
-
         // 用toolbar做為APP的ActionBar
         setSupportActionBar(toolbar);
 
         searchView = findViewById(R.id.sch_location);
         reloadButton = findViewById(R.id.reload);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+
 
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
@@ -105,6 +106,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
+                // 點選時收起選單
+                drawerLayout.closeDrawer(GravityCompat.START);
                 // 取得選項id
                 int id = item.getItemId();
 
@@ -113,14 +116,14 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
                     return true;
                 }else if(id == R.id.mappage){
-
+                    replaceFragment(new MapFragment());
                     return true;
                 } else if(id == R.id.joinedGroup){
 
                     return true;
                 }else if(id == R.id.setTimeAndLocation){
-                    //replaceFragment(new setTimeAndLocationFragment());
-                    startActivity(new Intent(HomePage.this,setTimeAndLocation.class));
+                    replaceFragment(new SetTimeAndLocationFragment());
+                    //startActivity(new Intent(HomePage.this,setTimeAndLocation.class));
                     return true;
                 }else if (id == R.id.signOut){
                     firebaseAuth = FirebaseAuth.getInstance();
@@ -182,12 +185,13 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
     }
 
-//    private void replaceFragment(Fragment fragment){
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.frameLayout,fragment);
-//        fragmentTransaction.commit();
-//    }
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.changeFrameLayout,fragment);
+        fragmentTransaction.commit();
+    }
+
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)){

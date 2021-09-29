@@ -15,11 +15,13 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/main_menu" />
+        app:menu="@menu/main_menu"
+        tools:visibility="gone" />
 
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
@@ -32,38 +34,46 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <fragment
-        android:id="@+id/map1"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".HomePage" />
-
-    <SearchView
-        android:id="@+id/sch_location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_below="@+id/appBarLayout"
-        android:layout_margin="10dp"
-        android:elevation="5dp"
-        android:iconifiedByDefault="false"
-        android:queryHint="Search..."
-        android:background="@drawable/searchview_bkground"
-        />
+        android:id="@+id/changeFrameLayout">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/reload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="28dp"
-        android:layout_marginRight="28dp"
-        android:layout_marginBottom="26dp"
-        android:clickable="true"
-        app:backgroundTint="#DC89F3"
-        app:srcCompat="@android:drawable/ic_popup_sync" />
+        <FrameLayout
+            android:id="@+id/mapLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <fragment
+                android:id="@+id/map1"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".HomePage" />
+
+            <SearchView
+                android:id="@+id/sch_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/appBarLayout"
+                android:layout_margin="10dp"
+                android:background="@drawable/searchview_bkground"
+                android:elevation="5dp"
+                android:iconifiedByDefault="false"
+                android:queryHint="Search..." />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/reload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                android:clickable="true"
+                app:backgroundTint="#DC89F3"
+                app:srcCompat="@android:drawable/ic_popup_sync" />
+        </FrameLayout>
+    </FrameLayout>
 
 
 </RelativeLayout>
