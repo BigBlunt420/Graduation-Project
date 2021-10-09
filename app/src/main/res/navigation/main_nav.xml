@@ -5,14 +5,32 @@
     android:id="@+id/main_nav"
     app:startDestination="@id/mapFragment">
 
-    <fragment
-        android:id="@+id/setTimeAndLocationFragment"
-        android:name="com.example.loginandsignup.SetTimeAndLocationFragment"
-        android:label="fragment_set_time_and_location"
-        tools:layout="@layout/fragment_set_time_and_location" />
+
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.loginandsignup.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_mapFragment_to_homePage3"
+            app:destination="@id/homePage" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/schedule"
+        android:name="com.example.loginandsignup.Schedule"
+        android:label="fragment_schedule"
+        tools:layout="@layout/fragment_schedule" >
+        <action
+            android:id="@+id/action_schedule_to_homePage"
+            app:destination="@id/homePage" />
+    </fragment>
+
+    <activity
+        android:id="@+id/homePage"
+        android:name="com.example.loginandsignup.HomePage"
+        android:label="activity_home_page"
+        tools:layout="@layout/activity_home_page" >
+
+    </activity>
 </navigation>

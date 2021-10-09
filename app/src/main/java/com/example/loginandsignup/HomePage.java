@@ -2,6 +2,7 @@ package com.example.loginandsignup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -13,7 +14,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -23,12 +27,19 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 //import com.example.loginandsignup.databinding.ActivityMapsBinding;
@@ -42,16 +53,24 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
@@ -76,6 +95,18 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     private FirebaseAuth firebaseAuth;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    //Dialog的元件
+    private TextView inputStartTime,inputEndTime;
+    private int starthour,startminute,endhour,endminute;
+    private TextView inputDate;
+    DatePickerDialog datePickerDialog;
+    private Button addDetail,cancelDetail;
+    private FirebaseFirestore firestoredb;
+    String UserID;
+    private EditText inputTile,inputDescribe;
+    String date;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +122,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+
 
 
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
@@ -122,8 +154,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
                     return true;
                 }else if(id == R.id.setTimeAndLocation){
-                    replaceFragment(new SetTimeAndLocationFragment());
-                    //startActivity(new Intent(HomePage.this,setTimeAndLocation.class));
+                    replaceFragment(new Schedule());
                     return true;
                 }else if (id == R.id.signOut){
                     firebaseAuth = FirebaseAuth.getInstance();
@@ -138,7 +169,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
 
 
-        //relead the activity
+        //reload the activity
         reloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -434,6 +465,43 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
             }
         });
 
+        //詢問是否要將位置加入行程
+        //if(shLocation!=null){
+            //搜尋位置後delay
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable(){
+
+                @Override
+                public void run() {
+
+                    //過兩秒後要做的事情
+                    AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+
+                    builder.setMessage("是否要將此位置 "+shLocation+" 加入行程中？");
+                    //點選空白處不會返回
+                    builder.setCancelable(false);
+
+                    builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //按下是之後要做的事
+                            setDetailSchedule();
+                        }
+                    });
+
+                    builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //按下否之後要做的事
+                            dialog.dismiss();
+                        }
+                    });
+
+                    AlertDialog alert = builder.create();
+                    alert.show();
+
+
+                }}, 2000);
+
+        //}
 
 
 
@@ -446,6 +514,164 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         ////LatLng sydney = new LatLng(-34, 151);
         ////mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         //// mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    //確認要位置要加入行程後，跳出建立詳細行程的Dialog
+    private void setDetailSchedule() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+        LayoutInflater inflater = LayoutInflater.from(this);
+
+        View myView = inflater.inflate(R.layout.input_detail_schedule,null);
+        builder.setView(myView);
+
+        inputTile = myView.findViewById(R.id.inputTile);
+        inputDescribe = myView.findViewById(R.id.inputDescribe);
+        inputStartTime = myView.findViewById(R.id.inputStartTime);
+        inputEndTime = myView.findViewById(R.id.inputEndTime);
+        inputDate = myView.findViewById(R.id.inputDate);
+        addDetail = myView.findViewById(R.id.addDetail);
+        cancelDetail = myView.findViewById(R.id.cancelDetail);
+
+        //取得當前時間
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        month = month+1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute =calendar.get(Calendar.MINUTE);
+        inputDate.setText(makeDateString(year,month,day));
+        inputStartTime.setText(String.format("%01d:%02d",hour,minute));
+        inputEndTime.setText(String.format("%01d:%02d",hour,minute));
+
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+
+        dialog.show();
+
+        //設定起始時間
+        inputStartTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int setHour, int setMinute) {
+                        starthour = setHour;
+                        startminute = setMinute;
+                        inputStartTime.setText(String.format(Locale.getDefault(),"%01d:%02d",starthour,startminute));
+                    }
+                };
+                TimePickerDialog timePickerDialog = new TimePickerDialog(HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,starthour,startminute,true);
+
+                timePickerDialog.show();
+            }
+        });
+
+        //設定結束時間
+        inputEndTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int setHour, int setMinute) {
+                        endhour = setHour;
+                        endminute = setMinute;
+                        inputEndTime.setText(String.format(Locale.getDefault(),"%02d:%02d",endhour,endminute));
+                    }
+                };
+                TimePickerDialog timePickerDialog = new TimePickerDialog(HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,endhour,endminute,true);
+
+                timePickerDialog.show();
+            }
+        });
+
+        //設定日期
+        inputDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        month = month+1;
+                        date = makeDateString(year,month,day);
+                        inputDate.setText(date);
+                    }
+                };
+
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                datePickerDialog = new DatePickerDialog(HomePage.this, android.app.AlertDialog.THEME_DEVICE_DEFAULT_LIGHT,dateSetListener,year,month,day);
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis()-1000);
+
+                datePickerDialog.show();
+            }
+        });
+
+        addDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String Tile = inputTile.getText().toString().trim();
+                String Describe = inputDescribe.getText().toString().trim();
+                //檢查起始時間和結束時間
+                if(starthour<hour || (starthour==hour && startminute<minute)){
+                    inputStartTime.requestFocus();
+                    inputStartTime.setError("起始時間已過");
+                    return;
+                }
+                if(starthour>endhour){
+                    inputEndTime.requestFocus();
+                    inputEndTime.setError("結束時間不得比起始時間早");
+                    return;
+                }
+                if(starthour==endhour && startminute>endminute){
+                    inputEndTime.requestFocus();
+                    inputEndTime.setError("結束時間不得比起始時間");
+                    return;
+                }
+                //將資料加進firestore
+                UserID = firebaseAuth.getCurrentUser().getUid();
+                DocumentReference documentReference = firestoredb.collection("Schedule").document(UserID);
+                Map<String,Object> SaveDetailSchedule = new HashMap<String, Object>();
+                SaveDetailSchedule.put("Title",Tile);
+                SaveDetailSchedule.put("Describe",Describe);
+                SaveDetailSchedule.put("Date",date);
+                String setStartTime = makeTimeString(starthour,startminute);
+                String setEndTime = makeTimeString(endhour,endminute);
+                SaveDetailSchedule.put("StartTime",setStartTime);
+                SaveDetailSchedule.put("EndTime",setEndTime);
+
+                documentReference.set(SaveDetailSchedule).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Log.d("SaveDetailSchedule","Successful:User Profile is created for " + UserID);
+                        }else {
+                            Log.w("SaveDetailSchedule","Fail:",task.getException());
+                        }
+                    }
+                });
+
+                dialog.dismiss();
+            }
+        });
+        cancelDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+    }
+
+    //設定日期顯示樣式
+    private String makeDateString(int year, int month, int day) {
+        return year + "年" + month + "月" + day + "日";
+    }
+    private String makeTimeString(int hour,int minute){
+        return hour+":"+minute;
     }
 
 
