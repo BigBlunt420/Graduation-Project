@@ -466,7 +466,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         });
 
         //詢問是否要將位置加入行程
-        //if(shLocation!=null){
+        if(shLocation!=null){
             //搜尋位置後delay
             Handler handler = new Handler();
             handler.postDelayed(new Runnable(){
@@ -501,7 +501,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
                 }}, 2000);
 
-        //}
+        }
 
 
 
