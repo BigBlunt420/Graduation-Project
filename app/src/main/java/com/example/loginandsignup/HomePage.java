@@ -541,8 +541,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute =calendar.get(Calendar.MINUTE);
         inputDate.setText(makeDateString(year,month,day));
-        inputStartTime.setText(String.format("%01d:%02d",hour,minute));
-        inputEndTime.setText(String.format("%01d:%02d",hour,minute));
+        inputStartTime.setText(String.format("%02d:%02d",hour,minute));
+        inputEndTime.setText(String.format("%02d:%02d",hour,minute));
 
         AlertDialog dialog = builder.create();
         dialog.setCancelable(false);
@@ -558,7 +558,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                     public void onTimeSet(TimePicker view, int setHour, int setMinute) {
                         starthour = setHour;
                         startminute = setMinute;
-                        inputStartTime.setText(String.format(Locale.getDefault(),"%01d:%02d",starthour,startminute));
+                        inputStartTime.setText(String.format(Locale.getDefault(),"%02d:%02d",starthour,startminute));
                     }
                 };
                 TimePickerDialog timePickerDialog = new TimePickerDialog(HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,starthour,startminute,true);
