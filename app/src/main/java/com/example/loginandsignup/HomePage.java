@@ -124,6 +124,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         navigationView = findViewById(R.id.nav_view);
 
 
+        firebaseAuth = FirebaseAuth.getInstance();
 
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
@@ -632,6 +633,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                     return;
                 }
                 //將資料加進firestore
+                firestoredb = FirebaseFirestore.getInstance();
+                firebaseAuth = FirebaseAuth.getInstance();
                 UserID = firebaseAuth.getCurrentUser().getUid();
                 DocumentReference documentReference = firestoredb.collection("Schedule").document(UserID);
                 Map<String,Object> SaveDetailSchedule = new HashMap<String, Object>();
