@@ -455,6 +455,38 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                     mMap.addMarker(new MarkerOptions()
                             .position(addresLatLng).title("Searched location"));
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(addresLatLng,zoomLevel));
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable(){
+
+                        @Override
+                        public void run() {
+
+                            //過兩秒後要做的事情
+                            AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+
+                            builder.setMessage("是否要將此位置 "+shLocation+" 加入行程中？");
+                            //點選空白處不會返回
+                            builder.setCancelable(false);
+
+                            builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //按下是之後要做的事
+                                    setDetailSchedule(address.getLatitude(), address.getLongitude());
+                                }
+                            });
+
+                            builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //按下否之後要做的事
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            AlertDialog alert = builder.create();
+                            alert.show();
+
+
+                        }}, 2000);
 
                 }
                 return false;
@@ -467,42 +499,42 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         });
 
         //詢問是否要將位置加入行程
-        if(shLocation!=null){
-            //搜尋位置後delay
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable(){
-
-                @Override
-                public void run() {
-
-                    //過兩秒後要做的事情
-                    AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
-
-                    builder.setMessage("是否要將此位置 "+shLocation+" 加入行程中？");
-                    //點選空白處不會返回
-                    builder.setCancelable(false);
-
-                    builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            //按下是之後要做的事
-                            setDetailSchedule();
-                        }
-                    });
-
-                    builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            //按下否之後要做的事
-                            dialog.dismiss();
-                        }
-                    });
-
-                    AlertDialog alert = builder.create();
-                    alert.show();
-
-
-                }}, 2000);
-
-        }
+//        if(shLocation!=null){
+//            //搜尋位置後delay
+//            Handler handler = new Handler();
+//            handler.postDelayed(new Runnable(){
+//
+//                @Override
+//                public void run() {
+//
+//                    //過兩秒後要做的事情
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+//
+//                    builder.setMessage("是否要將此位置 "+shLocation+" 加入行程中？");
+//                    //點選空白處不會返回
+//                    builder.setCancelable(false);
+//
+//                    builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int id) {
+//                            //按下是之後要做的事
+//                            setDetailSchedule();
+//                        }
+//                    });
+//
+//                    builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int id) {
+//                            //按下否之後要做的事
+//                            dialog.dismiss();
+//                        }
+//                    });
+//
+//                    AlertDialog alert = builder.create();
+//                    alert.show();
+//
+//
+//                }}, 2000);
+//
+//        }
 
 
 
@@ -518,7 +550,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     }
 
     //確認要位置要加入行程後，跳出建立詳細行程的Dialog
-    private void setDetailSchedule() {
+    private void setDetailSchedule(double Latitude, double Longitude) {
         AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
         LayoutInflater inflater = LayoutInflater.from(this);
 
@@ -645,7 +677,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 String setEndTime = makeTimeString(endhour,endminute);
                 SaveDetailSchedule.put("StartTime",setStartTime);
                 SaveDetailSchedule.put("EndTime",setEndTime);
-
+                SaveDetailSchedule.put("Latitude",setStartTime);
+                SaveDetailSchedule.put("Longitude",setEndTime);
                 documentReference.set(SaveDetailSchedule).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull @NotNull Task<Void> task) {
