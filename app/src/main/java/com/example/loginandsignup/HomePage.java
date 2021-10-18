@@ -677,8 +677,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 String setEndTime = makeTimeString(endhour,endminute);
                 SaveDetailSchedule.put("StartTime",setStartTime);
                 SaveDetailSchedule.put("EndTime",setEndTime);
-                SaveDetailSchedule.put("Latitude",setStartTime);
-                SaveDetailSchedule.put("Longitude",setEndTime);
+                SaveDetailSchedule.put("Latitude",Latitude);
+                SaveDetailSchedule.put("Longitude",Longitude);
                 documentReference.set(SaveDetailSchedule).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull @NotNull Task<Void> task) {
