@@ -53,7 +53,7 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
     private PhoneAuthProvider.ForceResendingToken forceResendingToken;
     private FirebaseFirestore firestoredb;
     String UserID;
-    private String tenPhoneNumber;
+    private String PhoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +72,7 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
         ePhone = getIntent().getStringExtra("PhoneNumber");
         eMobile = getIntent().getStringExtra("PhoneNumberDisplay");
 
-        tenPhoneNumber = 0 + eMobile;
+        PhoneNumber = 0 + eMobile;
 
         //定義驗證碼
         eOTPid = getIntent().getStringExtra("OTPid");
@@ -191,8 +191,7 @@ public class ConfirmOTPforSignUp extends AppCompatActivity {
                         UserID = firebaseAuth.getCurrentUser().getUid();
                         DocumentReference documentReference = firestoredb.collection("Users").document(UserID);
                         Map<String,Object> SaveMobile = new HashMap<String, Object>();
-                        SaveMobile.put(TEN_PHONE_NUMBER_KEY,tenPhoneNumber);
-                        SaveMobile.put(NINE_PHONE_NUMBER_KEY,eMobile);
+                        SaveMobile.put(TEN_PHONE_NUMBER_KEY,PhoneNumber);
 
                         documentReference.set(SaveMobile).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override

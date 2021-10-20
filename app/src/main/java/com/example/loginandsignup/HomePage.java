@@ -71,6 +71,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
@@ -105,6 +106,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     String UserID;
     private EditText inputTile,inputDescribe;
     String date;
+    String ScheduleID;
 
 
 
@@ -499,8 +501,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         });
 
         //詢問是否要將位置加入行程
-//        if(shLocation!=null){
-//            //搜尋位置後delay
+ //       if(shLocation!=null){
+            //搜尋位置後delay
 //            Handler handler = new Handler();
 //            handler.postDelayed(new Runnable(){
 //
@@ -533,7 +535,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 //
 //
 //                }}, 2000);
-//
 //        }
 
 
@@ -636,7 +637,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 int month = calendar.get(Calendar.MONTH);
                 int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-                datePickerDialog = new DatePickerDialog(HomePage.this, android.app.AlertDialog.THEME_DEVICE_DEFAULT_LIGHT,dateSetListener,year,month,day);
+                datePickerDialog = new DatePickerDialog(HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT,dateSetListener,year,month,day);
                 datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis()-1000);
 
                 datePickerDialog.show();
@@ -668,8 +669,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 firestoredb = FirebaseFirestore.getInstance();
                 firebaseAuth = FirebaseAuth.getInstance();
                 UserID = firebaseAuth.getCurrentUser().getUid();
-                DocumentReference documentReference = firestoredb.collection("Schedule").document(UserID);
+                ScheduleID = UUID.randomUUID().toString();
+                DocumentReference documentReference = firestoredb.collection("Users").document(UserID).collection("Schedule").document(ScheduleID);
                 Map<String,Object> SaveDetailSchedule = new HashMap<String, Object>();
+                SaveDetailSchedule.put("ScheduleID",ScheduleID);
                 SaveDetailSchedule.put("Title",Tile);
                 SaveDetailSchedule.put("Describe",Describe);
                 SaveDetailSchedule.put("Date",date);
