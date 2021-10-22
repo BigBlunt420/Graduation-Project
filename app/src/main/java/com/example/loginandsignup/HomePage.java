@@ -151,7 +151,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
                     return true;
                 }else if(id == R.id.mappage){
-                    replaceFragment(new MapFragment());
+                    startActivity(new Intent(HomePage.this,HomePage.class));
                     return true;
                 } else if(id == R.id.joinedGroup){
 
@@ -457,14 +457,16 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                     mMap.addMarker(new MarkerOptions()
                             .position(addresLatLng).title("Searched location"));
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(addresLatLng,zoomLevel));
+
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable(){
 
                         @Override
                         public void run() {
 
-                            //過兩秒後要做的事情
+                            //過四秒後要做的事情
                             AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+
 
                             builder.setMessage("是否要將此位置 "+shLocation+" 加入行程中？");
                             //點選空白處不會返回
@@ -473,6 +475,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                             builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     //按下是之後要做的事
+                                    dialog.dismiss();
                                     setDetailSchedule(address.getLatitude(), address.getLongitude());
                                 }
                             });
@@ -487,8 +490,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                             AlertDialog alert = builder.create();
                             alert.show();
 
-
-                        }}, 2000);
+                        }}, 4000);
 
                 }
                 return false;
@@ -501,8 +503,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         });
 
         //詢問是否要將位置加入行程
- //       if(shLocation!=null){
-            //搜尋位置後delay
+//        if(shLocation != null || !shLocation.equals("")){
+//            //搜尋位置後delay
 //            Handler handler = new Handler();
 //            handler.postDelayed(new Runnable(){
 //
@@ -519,7 +521,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 //                    builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
 //                        public void onClick(DialogInterface dialog, int id) {
 //                            //按下是之後要做的事
-//                            setDetailSchedule();
+//                            //setDetailSchedule();
+//                            dialog.dismiss();
 //                        }
 //                    });
 //
@@ -535,6 +538,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 //
 //
 //                }}, 2000);
+
 //        }
 
 
@@ -558,6 +562,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         View myView = inflater.inflate(R.layout.input_detail_schedule,null);
         builder.setView(myView);
 
+
         inputTile = myView.findViewById(R.id.inputTile);
         inputDescribe = myView.findViewById(R.id.inputDescribe);
         inputStartTime = myView.findViewById(R.id.inputStartTime);
@@ -574,6 +579,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute =calendar.get(Calendar.MINUTE);
+        date = makeDateString(year,month,day);
         inputDate.setText(makeDateString(year,month,day));
         inputStartTime.setText(String.format("%02d:%02d",hour,minute));
         inputEndTime.setText(String.format("%02d:%02d",hour,minute));
