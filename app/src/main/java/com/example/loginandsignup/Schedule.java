@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,6 +83,7 @@ public class Schedule extends Fragment {
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        modelList.clear();
                         progressDialog.dismiss();
                         //顯示資料
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
@@ -104,6 +106,24 @@ public class Schedule extends Fragment {
                     public void onFailure(@NonNull @NotNull Exception e) {
                         progressDialog.dismiss();
                         Toast.makeText(getActivity(),e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    public void deleteData(int position){
+        firebaseAuth = FirebaseAuth.getInstance();
+        UserID = firebaseAuth.getCurrentUser().getUid();
+        firestoredb.collection("Users").document(UserID).collection("Schedule").document(modelList.get(position).getId())
+                .delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            showScheduleList();
+                            Log.d("DeleteDetailSchedule","Successful:User Profile is deleted for " + UserID);
+                        }else {
+                            Log.w("DeleteDetailSchedule","Fail:",task.getException());
+                        }
                     }
                 });
     }

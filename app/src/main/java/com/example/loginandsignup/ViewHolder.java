@@ -40,6 +40,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         endTime = itemView.findViewById(R.id.endtime);
         Location = itemView.findViewById(R.id.location);
         Description = itemView.findViewById(R.id.description);
+        Date = itemView.findViewById(R.id.date);
 
     }
     private ViewHolder.ClickListener ClickListener;

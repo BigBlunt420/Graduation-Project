@@ -109,7 +109,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                         }
                         if (which == 1){
                             //刪除資料
-
+                            scheduleList.deleteData(position);
                         }
                     }
                 }).create().show();
@@ -258,7 +258,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                             @Override
                             public void onComplete(@NonNull @NotNull Task<Void> task) {
                                 if(task.isSuccessful()){
-                                    Log.d("UpdateDetailSchedule","Successful:User Profile is created for " + UserID);
+                                    Log.d("UpdateDetailSchedule","Successful:User Profile is updated for " + UserID);
                                 }else {
                                     Log.w("UpdateDetailSchedule","Fail:",task.getException());
                                 }
