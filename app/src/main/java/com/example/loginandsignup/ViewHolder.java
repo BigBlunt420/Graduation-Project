@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ViewHolder extends RecyclerView.ViewHolder {
 
-    TextView Title,startTime,endTime,Location,Description;
+    TextView Title,startTime,endTime,Location,Description,Date;
     View view;
 
     public ViewHolder(@NonNull @NotNull View itemView) {

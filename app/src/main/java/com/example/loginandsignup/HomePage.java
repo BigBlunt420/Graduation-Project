@@ -99,6 +99,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     //Dialog的元件
     private TextView inputStartTime,inputEndTime;
     private int starthour,startminute,endhour,endminute;
+    int setYear,setMonth,setDay,month;
     private TextView inputDate;
     DatePickerDialog datePickerDialog;
     private Button addDetail,cancelDetail;
@@ -556,8 +557,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
     //確認要位置要加入行程後，跳出建立詳細行程的Dialog
     private void setDetailSchedule(double Latitude, double Longitude) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
-        LayoutInflater inflater = LayoutInflater.from(this);
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(HomePage.this);
+        LayoutInflater inflater = LayoutInflater.from(HomePage.this);
 
         View myView = inflater.inflate(R.layout.input_detail_schedule,null);
         builder.setView(myView);
@@ -571,11 +572,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         addDetail = myView.findViewById(R.id.addDetail);
         cancelDetail = myView.findViewById(R.id.cancelDetail);
 
-        //取得當前時間
+        //取得當日日期時間
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        month = month+1;
+        month = calendar.get(Calendar.MONTH);
+        month = month + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute =calendar.get(Calendar.MINUTE);
@@ -584,7 +585,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         inputStartTime.setText(String.format("%02d:%02d",hour,minute));
         inputEndTime.setText(String.format("%02d:%02d",hour,minute));
 
-        AlertDialog dialog = builder.create();
+        androidx.appcompat.app.AlertDialog dialog = builder.create();
         dialog.setCancelable(false);
 
         dialog.show();
@@ -601,7 +602,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                         inputStartTime.setText(String.format(Locale.getDefault(),"%02d:%02d",starthour,startminute));
                     }
                 };
-                TimePickerDialog timePickerDialog = new TimePickerDialog(HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,starthour,startminute,true);
+                Calendar calendar = Calendar.getInstance();
+                int setStarthour = calendar.get(Calendar.HOUR_OF_DAY);
+                int setStartminute =calendar.get(Calendar.MINUTE);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,setStarthour,setStartminute,true);
 
                 timePickerDialog.show();
             }
@@ -619,7 +624,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                         inputEndTime.setText(String.format(Locale.getDefault(),"%02d:%02d",endhour,endminute));
                     }
                 };
-                TimePickerDialog timePickerDialog = new TimePickerDialog(HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,endhour,endminute,true);
+                Calendar calendar = Calendar.getInstance();
+                int setEndHour = calendar.get(Calendar.HOUR_OF_DAY);
+                int setEndMinute =calendar.get(Calendar.MINUTE);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,setEndHour,setEndMinute,true);
 
                 timePickerDialog.show();
             }
@@ -639,11 +648,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 };
 
                 Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH);
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                setYear = calendar.get(Calendar.YEAR);
+                setMonth = calendar.get(Calendar.MONTH);
+                setDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-                datePickerDialog = new DatePickerDialog(HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT,dateSetListener,year,month,day);
+                datePickerDialog = new DatePickerDialog(HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT,dateSetListener,setYear,setMonth,setDay);
                 datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis()-1000);
 
                 datePickerDialog.show();
@@ -656,10 +665,12 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 String Tile = inputTile.getText().toString().trim();
                 String Describe = inputDescribe.getText().toString().trim();
                 //檢查起始時間和結束時間
-                if(starthour<hour || (starthour==hour && startminute<minute)){
-                    inputStartTime.requestFocus();
-                    inputStartTime.setError("起始時間已過");
-                    return;
+                while(year==setYear && month==setMonth&& day==setDay) {
+                    if (starthour < hour || (starthour == hour && startminute < minute)) {
+                        inputStartTime.requestFocus();
+                        inputStartTime.setError("起始時間已過");
+                        return;
+                    }
                 }
                 if(starthour>endhour){
                     inputEndTime.requestFocus();
@@ -668,7 +679,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 }
                 if(starthour==endhour && startminute>endminute){
                     inputEndTime.requestFocus();
-                    inputEndTime.setError("結束時間不得比起始時間");
+                    inputEndTime.setError("結束時間不得比起始時間早");
                     return;
                 }
                 //將資料加進firestore
@@ -681,6 +692,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 SaveDetailSchedule.put("ScheduleID",ScheduleID);
                 SaveDetailSchedule.put("Title",Tile);
                 SaveDetailSchedule.put("Describe",Describe);
+                SaveDetailSchedule.put("Location",shLocation);
                 SaveDetailSchedule.put("Date",date);
                 String setStartTime = makeTimeString(starthour,startminute);
                 String setEndTime = makeTimeString(endhour,endminute);
@@ -688,6 +700,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 SaveDetailSchedule.put("EndTime",setEndTime);
                 SaveDetailSchedule.put("Latitude",Latitude);
                 SaveDetailSchedule.put("Longitude",Longitude);
+
                 documentReference.set(SaveDetailSchedule).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull @NotNull Task<Void> task) {

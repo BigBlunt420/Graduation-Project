@@ -1,19 +1,20 @@
 package com.example.loginandsignup;
 
 public class Model {
-    String id,title,description,startTime,endTime,location;
+    String id,title,description,startTime,endTime,location,date;
 
     public Model(){
 
     }
 
-    public Model(String id, String tile, String description, String startTime, String endTime, String location) {
+    public Model(String id, String tile, String description, String startTime, String endTime, String location,String date) {
         this.id = id;
         this.title = tile;
         this.description = description;
         this.startTime = startTime;
         this.endTime = endTime;
         this.location = location;
+        this.date = date;
     }
 
     public String getId() {
@@ -62,5 +63,13 @@ public class Model {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

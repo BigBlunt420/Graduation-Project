@@ -87,10 +87,11 @@ public class Schedule extends Fragment {
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
                             Model model = new Model(documentSnapshot.getString("ScheduleId"),
                                     documentSnapshot.getString("Title"),
+                                    documentSnapshot.getString("Describe"),
                                     documentSnapshot.getString("StartTime"),
                                     documentSnapshot.getString("EndTime"),
-                                    documentSnapshot.getString("Date"),
-                                    documentSnapshot.getString("Describe"));
+                                    documentSnapshot.getString("Location"),
+                                    documentSnapshot.getString("Date"));
                             modelList.add(model);
                         }
                         //連接
