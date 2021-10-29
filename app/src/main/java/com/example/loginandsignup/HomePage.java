@@ -51,7 +51,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -379,7 +381,9 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 try{
                     userLatLong = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.clear();   //clear the old location marker on the map
-                    mMap.addMarker(new MarkerOptions().position(userLatLong).title("Your location"));
+                    MarkerOptions options = new MarkerOptions().position(userLatLong).title("Your location");
+                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    mMap.addMarker(options);
                     if(addresLatLng != null){
                         mMap.addMarker(new MarkerOptions()
                                 .position(addresLatLng).title("Searched location"));
@@ -433,7 +437,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 //                }
 //            }
             mMap.clear();   //clear the old location marker on the map
-            mMap.addMarker(new MarkerOptions().position(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude())).title("Your location"));
+            MarkerOptions options = new MarkerOptions().position(new LatLng(lastLocation.getLatitude(),
+                    lastLocation.getLongitude())).title("Your location");
+            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+            mMap.addMarker(options);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), zoomLevel));
         }catch (SecurityException e){
             e.printStackTrace();
