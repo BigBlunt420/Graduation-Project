@@ -29,6 +29,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -88,7 +89,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
             }
 
             @Override
-            public void onItemLongClick(View view, int position) {
+            public void onItemLongClick(View view, final int position) {
                 //long click
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
 
@@ -107,11 +108,13 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                             dbdate = modelList.get(position).getDate();
 
 
-                            updateDetailSchedule(dbid);
+                            updateDetailSchedule();
                         }
                         if (which == 1){
                             //刪除資料
                             scheduleList.deleteData(position);
+                            Intent intent = new Intent(scheduleList, com.example.loginandsignup.scheduleList.class);
+                            scheduleList.startActivity(intent);
                         }
                     }
                 }).create().show();
@@ -120,7 +123,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
         return viewHolder;
     }
 
-    private void updateDetailSchedule(String scheduleid) {
+    private void updateDetailSchedule() {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(scheduleList);
         LayoutInflater inflater = LayoutInflater.from(scheduleList);
 
@@ -254,7 +257,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                 firebaseAuth = FirebaseAuth.getInstance();
                 UserID = firebaseAuth.getCurrentUser().getUid();
 
-                DocumentReference documentReference = firestoredb.collection("Users").document(UserID).collection("Schedule").document(scheduleid);
+                DocumentReference documentReference = firestoredb.collection("Users").document(UserID).collection("Schedule").document(dbid);
                 Map<String,Object> updateSchedule = new HashMap<String, Object>();
                 updateSchedule.put("Title",Title);
                 updateSchedule.put("Describe",Describe);
@@ -264,7 +267,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                 updateSchedule.put("StartTime",setStartTime);
                 updateSchedule.put("EndTime",setEndTime);
 
-                documentReference.update(updateSchedule)
+                documentReference.set(updateSchedule, SetOptions.merge())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -278,8 +281,6 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                                 Log.w("updateDetailSchedule","Fail:"+e.getMessage());
                             }
                         });
-
-
 
 
                 //dialog.dismiss();

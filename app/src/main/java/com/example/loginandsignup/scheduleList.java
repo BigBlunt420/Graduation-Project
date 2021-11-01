@@ -169,7 +169,7 @@ public class scheduleList extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull @NotNull Task<Void> task) {
-                        showScheduleList();
+                        //showScheduleList();
                         Log.d("DeleteDetailSchedule","Successful:User Profile is deleted for " + UserID);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
