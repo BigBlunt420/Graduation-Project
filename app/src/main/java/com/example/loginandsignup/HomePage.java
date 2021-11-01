@@ -51,9 +51,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -108,32 +106,29 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     private FirebaseFirestore firestoredb;
     String UserID;
     private EditText inputTile,inputDescribe;
-    String date;
+    String date,setStartTime,setEndTime;
     String ScheduleID;
 
-    //Chu's PR
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-        toolbar = findViewById(R.id.main_toolbar);
-        // 用toolbar做為APP的ActionBar
-        setSupportActionBar(toolbar);
-
         searchView = findViewById(R.id.sch_location);
         reloadButton = findViewById(R.id.reload);
-
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
-
 
         firebaseAuth = FirebaseAuth.getInstance();
 
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
 
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        toolbar = findViewById(R.id.main_toolbar);
+        // 用toolbar做為APP的ActionBar
+        setSupportActionBar(toolbar);
         /*--navigation drawer menu--*/
         navigationView.bringToFront();
         // 將drawerLayout和toolbar整合，會出現「三」按鈕
@@ -160,7 +155,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
                     return true;
                 }else if(id == R.id.setTimeAndLocation){
-                    replaceFragment(new Schedule());
+                    startActivity(new Intent(HomePage.this,scheduleList.class));
                     return true;
                 }else if (id == R.id.signOut){
                     firebaseAuth = FirebaseAuth.getInstance();
@@ -192,7 +187,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         if(MotionEvent.ACTION_DOWN == 0){
             move = 0;
         }
-        
+
         //checking if the version of device is able to use google map api
         if(checkPlayService()==true){
             initialMap();       //ask for permission
@@ -305,7 +300,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
     }
 
-//    @Override
+    //    @Override
 //    public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
 //        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 //        rLocationGranted = false;
@@ -381,9 +376,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 try{
                     userLatLong = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.clear();   //clear the old location marker on the map
-                    MarkerOptions options = new MarkerOptions().position(userLatLong).title("Your location");
-                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                    mMap.addMarker(options);
+                    mMap.addMarker(new MarkerOptions().position(userLatLong).title("Your location"));
                     if(addresLatLng != null){
                         mMap.addMarker(new MarkerOptions()
                                 .position(addresLatLng).title("Searched location"));
@@ -437,10 +430,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 //                }
 //            }
             mMap.clear();   //clear the old location marker on the map
-            MarkerOptions options = new MarkerOptions().position(new LatLng(lastLocation.getLatitude(),
-                    lastLocation.getLongitude())).title("Your location");
-            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-            mMap.addMarker(options);
+            mMap.addMarker(new MarkerOptions().position(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude())).title("Your location"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), zoomLevel));
         }catch (SecurityException e){
             e.printStackTrace();
@@ -588,6 +578,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute =calendar.get(Calendar.MINUTE);
         date = makeDateString(year,month,day);
+        setStartTime = makeTimeString(hour,minute);
+        setEndTime = makeTimeString(hour,minute);
         inputDate.setText(makeDateString(year,month,day));
         inputStartTime.setText(String.format("%02d:%02d",hour,minute));
         inputEndTime.setText(String.format("%02d:%02d",hour,minute));
@@ -701,8 +693,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 SaveDetailSchedule.put("Describe",Describe);
                 SaveDetailSchedule.put("Location",shLocation);
                 SaveDetailSchedule.put("Date",date);
-                String setStartTime = makeTimeString(starthour,startminute);
-                String setEndTime = makeTimeString(endhour,endminute);
+                setStartTime = makeTimeString(starthour,startminute);
+                setEndTime = makeTimeString(endhour,endminute);
                 SaveDetailSchedule.put("StartTime",setStartTime);
                 SaveDetailSchedule.put("EndTime",setEndTime);
                 SaveDetailSchedule.put("Latitude",Latitude);

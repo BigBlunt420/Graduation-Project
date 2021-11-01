@@ -35,7 +35,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        Title = itemView.findViewById(R.id.tile);
+        Title = itemView.findViewById(R.id.title);
         startTime = itemView.findViewById(R.id.starttime);
         endTime = itemView.findViewById(R.id.endtime);
         Location = itemView.findViewById(R.id.location);

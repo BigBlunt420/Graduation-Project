@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.service.quicksettings.Tile;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -39,7 +41,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
-    Schedule scheduleList;
+    scheduleList scheduleList;
     List<Model> modelList;
     Context context;
     FirebaseFirestore firestoredb;
@@ -53,10 +55,9 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
     String UserID;
     private EditText inputTile,inputDescribe;
     String date;
-    String ScheduleID;
     String dbtitle,dbstartTime,dbendTime,dblocation,dbdescription,dbdate,dbid;
 
-    public UserAdapter(Schedule scheduleList, List<Model> modelList) {
+    public UserAdapter(scheduleList scheduleList, List<Model> modelList) {
         this.scheduleList = scheduleList;
         this.modelList = modelList;
     }
@@ -82,7 +83,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                 String location = modelList.get(position).getLocation();
                 String description = modelList.get(position).getDescription();
                 String date = modelList.get(position).getDate();
-                Toast.makeText(scheduleList.getActivity(), title+"  "+date+"\n"+startTime+"-"+endTime+"  "+location+"\n"+description,Toast.LENGTH_LONG).show();
+                Toast.makeText(scheduleList, title+"  "+date+"\n"+startTime+"-"+endTime+"  "+location+"\n"+description,Toast.LENGTH_LONG).show();
 
             }
 
@@ -105,7 +106,8 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                             dbdescription = modelList.get(position).getDescription();
                             dbdate = modelList.get(position).getDate();
 
-                            setDetailSchedule();
+
+                            updateDetailSchedule(dbid);
                         }
                         if (which == 1){
                             //刪除資料
@@ -118,9 +120,9 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
         return viewHolder;
     }
 
-    private void setDetailSchedule() {
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(scheduleList.getActivity());
-        LayoutInflater inflater = LayoutInflater.from(scheduleList.getActivity());
+    private void updateDetailSchedule(String scheduleid) {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(scheduleList);
+        LayoutInflater inflater = LayoutInflater.from(scheduleList);
 
         View myView = inflater.inflate(R.layout.input_detail_schedule,null);
         builder.setView(myView);
@@ -141,6 +143,12 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
         inputEndTime.setText(dbendTime);
         inputDate.setText(dbdate);
 
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute =calendar.get(Calendar.MINUTE);
 
         androidx.appcompat.app.AlertDialog dialog = builder.create();
         dialog.setCancelable(false);
@@ -163,7 +171,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                 int setStarthour = calendar.get(Calendar.HOUR_OF_DAY);
                 int setStartminute =calendar.get(Calendar.MINUTE);
 
-                TimePickerDialog timePickerDialog = new TimePickerDialog(scheduleList.getActivity(), android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,setStarthour,setStartminute,true);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(scheduleList, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,setStarthour,setStartminute,true);
 
                 timePickerDialog.show();
             }
@@ -185,7 +193,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                 int setEndHour = calendar.get(Calendar.HOUR_OF_DAY);
                 int setEndMinute =calendar.get(Calendar.MINUTE);
 
-                TimePickerDialog timePickerDialog = new TimePickerDialog(scheduleList.getActivity(), android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,setEndHour,setEndMinute,true);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(scheduleList, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,setEndHour,setEndMinute,true);
 
                 timePickerDialog.show();
             }
@@ -209,7 +217,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                 setMonth = calendar.get(Calendar.MONTH);
                 setDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-                datePickerDialog = new DatePickerDialog(scheduleList.getActivity(), android.app.AlertDialog.THEME_HOLO_LIGHT,dateSetListener,setYear,setMonth,setDay);
+                datePickerDialog = new DatePickerDialog(scheduleList, android.app.AlertDialog.THEME_HOLO_LIGHT,dateSetListener,setYear,setMonth,setDay);
                 datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis()-1000);
 
                 datePickerDialog.show();
@@ -219,19 +227,12 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
         addDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String Tile = inputTile.getText().toString().trim();
+                String Title = inputTile.getText().toString().trim();
                 String Describe = inputDescribe.getText().toString().trim();
-                String setStartTime = makeTimeString(starthour,startminute);
-                String setEndTime = makeTimeString(endhour,endminute);
+                //String setStartTime = makeTimeString(starthour,startminute);
+                //String setEndTime = makeTimeString(endhour,endminute);
                 //檢查起始時間和結束時間
-                Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                month = calendar.get(Calendar.MONTH);
-                month = month + 1;
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
-                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute =calendar.get(Calendar.MINUTE);
-                while(year==setYear && month==setMonth&& day==setDay) {
+                while(year==setYear && (month+1)==setMonth&& day==setDay) {
                     if (starthour < hour || (starthour == hour && startminute < minute)) {
                         inputStartTime.requestFocus();
                         inputStartTime.setError("起始時間已過");
@@ -252,23 +253,36 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                 firestoredb = FirebaseFirestore.getInstance();
                 firebaseAuth = FirebaseAuth.getInstance();
                 UserID = firebaseAuth.getCurrentUser().getUid();
-                firestoredb.collection("Users").document(UserID).collection("Schedule").document(dbid)
-                        .update("Title",Tile,"Describe",Describe,"Date",date,"StartTime",setStartTime,"EndTime",setEndTime)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull @NotNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Log.d("UpdateDetailSchedule","Successful:User Profile is updated for " + UserID);
-                                }else {
-                                    Log.w("UpdateDetailSchedule","Fail:",task.getException());
-                                }
 
+                DocumentReference documentReference = firestoredb.collection("Users").document(UserID).collection("Schedule").document(scheduleid);
+                Map<String,Object> updateSchedule = new HashMap<String, Object>();
+                updateSchedule.put("Title",Title);
+                updateSchedule.put("Describe",Describe);
+                updateSchedule.put("Date",date);
+                String setStartTime = makeTimeString(starthour,startminute);
+                String setEndTime = makeTimeString(endhour,endminute);
+                updateSchedule.put("StartTime",setStartTime);
+                updateSchedule.put("EndTime",setEndTime);
+
+                documentReference.update(updateSchedule)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                scheduleList.showScheduleList();
+                                Log.d("updateDetailSchedule","Successful:User Profile is created for " + UserID);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull @NotNull Exception e) {
+                                Log.w("updateDetailSchedule","Fail:"+e.getMessage());
                             }
                         });
 
 
 
-                dialog.dismiss();
+
+                //dialog.dismiss();
             }
         });
         cancelDetail.setOnClickListener(new View.OnClickListener() {
@@ -279,12 +293,15 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
         });
 
     }
+
+    private String makeTimeString(int hour, int minute) {
+        return hour+":"+minute;
+    }
+
     private String makeDateString(int year, int month, int day) {
         return year + "年" + month + "月" + day + "日";
     }
-    private String makeTimeString(int hour,int minute){
-        return hour+":"+minute;
-    }
+
 
 
     @Override
