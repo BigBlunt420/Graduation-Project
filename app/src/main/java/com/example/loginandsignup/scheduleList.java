@@ -138,7 +138,8 @@ public class scheduleList extends AppCompatActivity {
                         progressDialog.dismiss();
                         //顯示資料
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
-                            Model model = new Model(documentSnapshot.getString("ScheduleId"),
+                            Model model = new Model(
+                                    documentSnapshot.getString("id"),
                                     documentSnapshot.getString("Title"),
                                     documentSnapshot.getString("Describe"),
                                     documentSnapshot.getString("StartTime"),
@@ -160,24 +161,25 @@ public class scheduleList extends AppCompatActivity {
                     }
                 });
     }
-    public void deleteData(int position){
-        firebaseAuth = FirebaseAuth.getInstance();
-        firestoredb = FirebaseFirestore.getInstance();
-        UserID = firebaseAuth.getCurrentUser().getUid();
-        DocumentReference documentReference = firestoredb.collection("Users").document(UserID).collection("Schedule").document(modelList.get(position).getId());
-        documentReference.delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull @NotNull Task<Void> task) {
-                        //showScheduleList();
-                        Log.d("DeleteDetailSchedule","Successful:User Profile is deleted for " + UserID);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull @NotNull Exception e) {
-                Log.w("DeleteDetailSchedule","Fail:"+e.getMessage());
-            }
-        });
-    }
+//    public void deleteData(int position){
+//        firebaseAuth = FirebaseAuth.getInstance();
+//        firestoredb = FirebaseFirestore.getInstance();
+//        UserID = firebaseAuth.getCurrentUser().getUid();
+//        DocumentReference documentReference = firestoredb.collection("Users").document(UserID);
+//                documentReference.collection("Schedule").document(modelList.get(position).getId());
+//        documentReference.delete()
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+//                        //showScheduleList();
+//                        Log.d("DeleteDetailSchedule","Successful:User Profile is deleted for " + UserID);
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull @NotNull Exception e) {
+//                Log.w("DeleteDetailSchedule","Fail:"+e.getMessage());
+//            }
+//        });
+//    }
 
 }

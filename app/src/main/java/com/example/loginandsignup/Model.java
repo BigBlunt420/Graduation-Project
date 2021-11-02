@@ -7,9 +7,9 @@ public class Model {
 
     }
 
-    public Model(String id, String tile, String description, String startTime, String endTime, String location,String date) {
+    public Model(String id, String title, String description, String startTime, String endTime, String location,String date) {
         this.id = id;
-        this.title = tile;
+        this.title = title;
         this.description = description;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -30,7 +30,7 @@ public class Model {
     }
 
     public void setTile(String tile) {
-        this.title = tile;
+        this.title = title;
     }
 
     public String getDescription() {
