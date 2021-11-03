@@ -5,4 +5,5 @@
     <string name="navigation_drawer_close">CloseNavigationDrawer</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    Places.initialize(getApplicationContext(),AIzaSyA2XaBs3AcjylYv0MZHeegPccaGY7pAoIY);
 </resources>
