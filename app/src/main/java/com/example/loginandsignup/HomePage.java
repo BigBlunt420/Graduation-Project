@@ -56,13 +56,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
 import org.jetbrains.annotations.NotNull;
@@ -82,6 +85,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     private GoogleMap mMap;
     private SearchView searchView;
     private Geocoder geocoder;
+    private boolean inRange = true;
 
     private float zoomLevel = 16.0f;
     private String shLocation;
@@ -110,6 +114,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     private EditText inputTile,inputDescribe;
     String date;
     String ScheduleID;
+    String setStartTime,setEndTime;
+
+    String getDate;
+    String getStTime;
+    String getEndTime;
 
 
 
@@ -209,16 +218,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
 
 
-//        if(count == 0){
-//            count=1;
-//            if(Build.VERSION.SDK_INT >= 11){
-//                recreate();
-//            }else{
-//                Intent intent = getIntent();
-//                finish();
-//                startActivity(intent);
-//            }
-//        }
 
     }
 
@@ -384,6 +383,9 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                     MarkerOptions options = new MarkerOptions().position(userLatLong).title("Your location");
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                     mMap.addMarker(options);
+
+                    stayInRange(location.getLatitude(), location.getLongitude());
+
                     if(addresLatLng != null){
                         mMap.addMarker(new MarkerOptions()
                                 .position(addresLatLng).title("Searched location"));
@@ -426,16 +428,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         try{
             Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-//            userLatLong = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-//            if(userLatLong == null){
-//                if(Build.VERSION.SDK_INT >= 11){
-//                    recreate();
-//                }else{
-//                    Intent intent = getIntent();
-//                    finish();
-//                    startActivity(intent);
-//                }
-//            }
             mMap.clear();   //clear the old location marker on the map
             MarkerOptions options = new MarkerOptions().position(new LatLng(lastLocation.getLatitude(),
                     lastLocation.getLongitude())).title("Your location");
@@ -509,57 +501,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 return false;
             }
         });
-
-        //詢問是否要將位置加入行程
-//        if(shLocation != null || !shLocation.equals("")){
-//            //搜尋位置後delay
-//            Handler handler = new Handler();
-//            handler.postDelayed(new Runnable(){
-//
-//                @Override
-//                public void run() {
-//
-//                    //過兩秒後要做的事情
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
-//
-//                    builder.setMessage("是否要將此位置 "+shLocation+" 加入行程中？");
-//                    //點選空白處不會返回
-//                    builder.setCancelable(false);
-//
-//                    builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int id) {
-//                            //按下是之後要做的事
-//                            //setDetailSchedule();
-//                            dialog.dismiss();
-//                        }
-//                    });
-//
-//                    builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int id) {
-//                            //按下否之後要做的事
-//                            dialog.dismiss();
-//                        }
-//                    });
-//
-//                    AlertDialog alert = builder.create();
-//                    alert.show();
-//
-//
-//                }}, 2000);
-
-//        }
-
-
-
-//        Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//        userLatLong = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-//        mMap.clear();   //clear the old location marker on the map
-//        mMap.addMarker(new MarkerOptions().position(userLatLong).title("Your location"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(userLatLong));
-        // Add a marker in Sydney and move the camera
-        ////LatLng sydney = new LatLng(-34, 151);
-        ////mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        //// mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
     //確認要位置要加入行程後，跳出建立詳細行程的Dialog
@@ -605,7 +546,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                     @Override
                     public void onTimeSet(TimePicker view, int setHour, int setMinute) {
                         setStartTime = makeTimeString(setHour,setMinute);
-                        inputEndTime.setText(setStartTime);
+                        inputStartTime.setText(setStartTime);
                     }
                 };
                 Calendar calendar = Calendar.getInstance();
@@ -632,7 +573,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 Calendar calendar = Calendar.getInstance();
                 int setEndHour = calendar.get(Calendar.HOUR_OF_DAY);
                 int setEndMinute =calendar.get(Calendar.MINUTE);
-
                 TimePickerDialog timePickerDialog = new TimePickerDialog(HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,setEndHour,setEndMinute,true);
 
                 timePickerDialog.show();
@@ -705,8 +645,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
                 SaveDetailSchedule.put("StartTime",setStartTime);
                 SaveDetailSchedule.put("EndTime",setEndTime);
-                SaveDetailSchedule.put("Latitude",Latitude);
-                SaveDetailSchedule.put("Longitude",Longitude);
+                SaveDetailSchedule.put("Latitude",Double.toString(Latitude));
+                SaveDetailSchedule.put("Longitude",Double.toString(Longitude));
+                SaveDetailSchedule.put("Year",year);
+                SaveDetailSchedule.put("Day",day);
+                SaveDetailSchedule.put("Month",month);
 
                 documentReference.set(SaveDetailSchedule).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -729,6 +672,123 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
             }
         });
 
+    }
+
+    /*
+detect if the user is inside the range
+ */
+    private void stayInRange(double Latitude, double Longitude){
+
+        firestoredb = FirebaseFirestore.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        UserID = firebaseAuth.getCurrentUser().getUid();
+        firestoredb.collection("Users").document(UserID).collection("Schedule")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        int year = 0;
+                        int day = 0;
+                        int month = 0;
+                        int stHr = 0;
+                        int stMin = 0;
+                        int endHr = 0;
+                        int endMin = 0;
+                        double rLat ;
+                        double rLong;
+                        final int R = 6371; // Radius of the earth
+                        double latDistance;
+                        double lonDistance;
+                        double a, c, distance, height;
+
+                        Calendar calendar = Calendar.getInstance();
+                        //顯示資料
+                        for(DocumentSnapshot documentSnapshot:task.getResult()){
+                            getDate = documentSnapshot.getString("Date");
+                            rLat = Double.valueOf(
+                                    documentSnapshot.getString("Latitude"));
+                            rLong = Double.valueOf(
+                                    documentSnapshot.getString("Longitude"));
+                            //get the date from a schedule
+                            for(int i = 0 ; i < getDate.length() ; i++){
+                                if(getDate.charAt(i) == '年'){
+                                    year = Integer.valueOf(getDate.substring(0,i));
+                                    month = i+1;
+                                }
+
+                                if(getDate.charAt(i) == '月'){
+                                    month = Integer.valueOf(getDate.substring(month,i));
+                                    day = i+1;
+                                }
+
+                                if(getDate.charAt(i) == '日'){
+                                    day = Integer.valueOf(getDate.substring(day,i));
+                                }
+                            }
+
+                            if(year == calendar.get(Calendar.YEAR)
+                                    && month+1 == calendar.get(Calendar.MONTH)
+                                    && day == calendar.get(Calendar.DAY_OF_MONTH)){
+
+                                Toast.makeText(HomePage.this, "Hello", Toast.LENGTH_LONG).show();
+                                getStTime = documentSnapshot.getString("StartTime");
+                                getEndTime = documentSnapshot.getString("EndTime");
+                                for(int j = 0 ; j < getStTime.length() ; j++){
+
+                                    if(getStTime.charAt(j) == ':'){
+                                        stHr = Integer.valueOf(getStTime.substring(0, j-1));
+                                        stMin = Integer.valueOf(getStTime.substring(j+1,
+                                                getStTime.length()-1));
+                                    }
+                                }
+
+                                for(int l = 0 ; l < getEndTime.length() ; l++){
+                                    if(getEndTime.charAt(l) == ':'){
+                                        endHr = Integer.valueOf(getEndTime.substring(0, l-1));
+                                        endMin = Integer.valueOf(getEndTime.substring(l+1,
+                                                getEndTime.length()-1));
+                                    }
+                                }
+
+                                if(stHr == calendar.get(Calendar.HOUR_OF_DAY) &&
+                                        stMin <= calendar.get(Calendar.MINUTE)
+                                        || stHr <calendar.get(Calendar.HOUR_OF_DAY)){
+
+                                    if(endHr == calendar.get(Calendar.HOUR_OF_DAY) &&
+                                                endMin > calendar.get(Calendar.MINUTE)
+                                            || endHr > calendar.get(Calendar.HOUR_OF_DAY)){
+                                        Toast.makeText(HomePage.this, "calculating the distance", Toast.LENGTH_LONG).show();
+                                        latDistance = Math.toRadians(Latitude
+                                                - rLat);
+                                        lonDistance = Math.toRadians(Longitude
+                                                - rLong);
+                                         a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                                                + Math.cos(Math.toRadians(rLat)) * Math.cos(Math.toRadians(Latitude))
+                                                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+                                         c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                                        distance = R * c * 1000; // convert to meters
+
+                                        if(distance > 200){
+                                            //通知
+                                        }
+
+                                    }
+                                }
+
+
+
+
+                            }
+
+                        }
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                    }
+                });
     }
 
     //設定日期顯示樣式
