@@ -604,9 +604,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int setHour, int setMinute) {
-                        starthour = setHour;
-                        startminute = setMinute;
-                        inputStartTime.setText(String.format(Locale.getDefault(),"%02d:%02d",starthour,startminute));
+                        setStartTime = makeTimeString(setHour,setMinute);
+                        inputEndTime.setText(setStartTime);
                     }
                 };
                 Calendar calendar = Calendar.getInstance();
@@ -626,9 +625,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int setHour, int setMinute) {
-                        endhour = setHour;
-                        endminute = setMinute;
-                        inputEndTime.setText(String.format(Locale.getDefault(),"%02d:%02d",endhour,endminute));
+                        setEndTime = makeTimeString(setHour,setMinute);
+                        inputEndTime.setText(setEndTime);
                     }
                 };
                 Calendar calendar = Calendar.getInstance();
@@ -696,13 +694,15 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 ScheduleID = UUID.randomUUID().toString();
                 DocumentReference documentReference = firestoredb.collection("Users").document(UserID).collection("Schedule").document(ScheduleID);
                 Map<String,Object> SaveDetailSchedule = new HashMap<String, Object>();
-                SaveDetailSchedule.put("ScheduleID",ScheduleID);
+                SaveDetailSchedule.put("id",ScheduleID);
                 SaveDetailSchedule.put("Title",Tile);
                 SaveDetailSchedule.put("Describe",Describe);
                 SaveDetailSchedule.put("Location",shLocation);
                 SaveDetailSchedule.put("Date",date);
+
                 String setStartTime = makeTimeString(starthour,startminute);
                 String setEndTime = makeTimeString(endhour,endminute);
+
                 SaveDetailSchedule.put("StartTime",setStartTime);
                 SaveDetailSchedule.put("EndTime",setEndTime);
                 SaveDetailSchedule.put("Latitude",Latitude);
