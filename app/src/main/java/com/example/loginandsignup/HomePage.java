@@ -742,17 +742,17 @@ detect if the user is inside the range
                                         || stHr <calendar.get(Calendar.HOUR_OF_DAY)){
 
                                     if(endHr == calendar.get(Calendar.HOUR_OF_DAY) &&
-                                                endMin >= calendar.get(Calendar.MINUTE)
+                                            endMin >= calendar.get(Calendar.MINUTE)
                                             || endHr > calendar.get(Calendar.HOUR_OF_DAY)){
                                         Toast.makeText(HomePage.this, "calculating the distance", Toast.LENGTH_LONG).show();
                                         latDistance = Math.toRadians(Latitude
                                                 - rLat);
                                         lonDistance = Math.toRadians(Longitude
                                                 - rLong);
-                                         a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                                        a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
                                                 + Math.cos(Math.toRadians(rLat)) * Math.cos(Math.toRadians(Latitude))
                                                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-                                         c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                                        c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                                         distance = R * c * 1000; // convert to meters
 
                                         if(distance > 200){
