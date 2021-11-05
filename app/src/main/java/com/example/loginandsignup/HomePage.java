@@ -98,7 +98,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     int move = 1;
     private FloatingActionButton reloadButton;
     private static boolean rLocationGranted = false ;
-    private int count = 0;
     private FirebaseAuth firebaseAuth;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -290,17 +289,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                         LOCATION_PERMISSION_REQUEST_CODE);
             }
         }
-
-//        Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//        if(lastLocation == null){
-//            if(Build.VERSION.SDK_INT >= 11){
-//                recreate();
-//            }else{
-//                Intent intent = getIntent();
-//                finish();
-//                startActivity(intent);
-//            }
-//        }
 
     }
 
@@ -754,7 +742,7 @@ detect if the user is inside the range
                                         || stHr <calendar.get(Calendar.HOUR_OF_DAY)){
 
                                     if(endHr == calendar.get(Calendar.HOUR_OF_DAY) &&
-                                                endMin > calendar.get(Calendar.MINUTE)
+                                                endMin >= calendar.get(Calendar.MINUTE)
                                             || endHr > calendar.get(Calendar.HOUR_OF_DAY)){
                                         Toast.makeText(HomePage.this, "calculating the distance", Toast.LENGTH_LONG).show();
                                         latDistance = Math.toRadians(Latitude
