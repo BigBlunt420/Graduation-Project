@@ -144,7 +144,7 @@ public class SignUpPage extends AppCompatActivity{
                 if(task.isSuccessful()){
                     //註冊完成，導向HomePage
                     Log.d("EmailLink","linkWithCredential:success");
-                    startActivity(new Intent(SignUpPage.this,HomePage.class));
+                    startActivity(new Intent(SignUpPage.this,setContactPerson.class));
                 }else {
                     Log.w("EmailLink", "linkWithCredential:failure", task.getException());
                     Toast.makeText(SignUpPage.this, "Authentication failed.", Toast.LENGTH_SHORT).show();

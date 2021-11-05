@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".setContactPerson">
+
+    <ImageView
+        android:id="@+id/BackofSetContactPerson"
+        android:layout_width="59dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/TempIcon"
+        app:layout_constraintHorizontal_bias="0.126"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.023"
+        app:srcCompat="@drawable/ic_back" />
+
+    <ImageView
+        android:id="@+id/TempIcon"
+        android:layout_width="151dp"
+        android:layout_height="143dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.13999999"
+        app:srcCompat="@drawable/ic_mainic" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="設定緊急聯絡人"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/TempIcon"
+        app:layout_constraintStart_toStartOf="@+id/TempIcon"
+        app:layout_constraintTop_toBottomOf="@+id/TempIcon" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="行程通知將會推播給緊急聯絡人\n之後可在個人檔案中修改"
+        android:textSize="20dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="@+id/textView2"
+        app:layout_constraintStart_toStartOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <EditText
+        android:id="@+id/ContactPersonOne"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/input_background"
+        android:drawableLeft="@drawable/ic_phone"
+        android:drawablePadding="10dp"
+        android:ems="10"
+        android:hint="請輸入手機號碼一"
+        android:inputType="number"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/textView3"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/ContactPersonTwo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/input_background"
+        android:drawableLeft="@drawable/ic_phone"
+        android:drawablePadding="10dp"
+        android:ems="10"
+        android:hint="請輸入手機號碼二"
+        android:inputType="number"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/ContactPersonOne"
+        app:layout_constraintStart_toStartOf="@+id/ContactPersonOne"
+        app:layout_constraintTop_toBottomOf="@+id/ContactPersonOne"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/finishSignUpButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/button_background"
+        android:text="完成註冊"
+        android:textSize="24sp"
+        app:backgroundTint="@color/purple_200"
+        app:layout_constraintEnd_toEndOf="@+id/ContactPersonTwo"
+        app:layout_constraintStart_toStartOf="@+id/ContactPersonTwo"
+        app:layout_constraintTop_toBottomOf="@+id/ContactPersonTwo" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

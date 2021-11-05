@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MyProfile"
+    android:id="@+id/drawer_layout">
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:menu="@menu/main_menu"
+            tools:visibility="gone">
+
+        </com.google.android.material.navigation.NavigationView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appBarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/main_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:background="@color/white">
+
+                    <ImageView
+                        android:id="@+id/TempIcon"
+                        android:layout_width="151dp"
+                        android:layout_height="143dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.081"
+                        app:srcCompat="@drawable/ic_mainic" />
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="個人檔案"
+                        android:textColor="@color/black"
+                        android:textSize="30sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/TempIcon"
+                        app:layout_constraintStart_toStartOf="@+id/TempIcon"
+                        app:layout_constraintTop_toBottomOf="@+id/TempIcon" />
+
+                    <TextView
+                        android:id="@+id/Name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:textColor="@color/black"
+
+                        android:textStyle="bold"
+                        android:textSize="30sp"
+                        app:layout_constraintEnd_toEndOf="@+id/textView2"
+                        app:layout_constraintHorizontal_bias="0.489"
+                        app:layout_constraintStart_toStartOf="@+id/textView2"
+                        app:layout_constraintTop_toBottomOf="@+id/textView2"
+                        tools:ignore="MissingConstraints"
+                        tools:text="Joy" />
+
+                    <TextView
+                        android:id="@+id/MyMobile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/browser_actions_title_color"
+                        android:textSize="30sp"
+                        app:layout_constraintEnd_toEndOf="@+id/Name"
+                        app:layout_constraintStart_toStartOf="@+id/Name"
+                        app:layout_constraintTop_toBottomOf="@+id/Name"
+                        tools:ignore="MissingConstraints"
+                        tools:text="0911111111" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="344dp"
+                        android:layout_height="250dp"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="32dp"
+                        android:layout_marginRight="32dp"
+                        android:background="@drawable/input_background"
+                        android:foregroundGravity="center"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.333"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/MyEmail">
+
+                        <TextView
+                            android:id="@+id/Text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="緊急聯絡人"
+                            android:textColor="@color/black"
+                            android:textSize="30sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="MissingConstraints" />
+
+                        <TextView
+                            android:id="@+id/ContactMobileOne"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:textColor="@color/browser_actions_title_color"
+                            android:textSize="30sp"
+                            app:layout_constraintEnd_toEndOf="@+id/Text"
+                            app:layout_constraintStart_toStartOf="@+id/Text"
+                            app:layout_constraintTop_toBottomOf="@+id/Text"
+                            tools:ignore="MissingConstraints"
+                            tools:text="0900000000" />
+
+                        <TextView
+                            android:id="@+id/ContactMobileTwo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/browser_actions_title_color"
+                            android:textSize="30sp"
+                            app:layout_constraintEnd_toEndOf="@+id/ContactMobileOne"
+                            app:layout_constraintStart_toStartOf="@+id/ContactMobileOne"
+                            app:layout_constraintTop_toBottomOf="@+id/ContactMobileOne"
+                            tools:ignore="MissingConstraints"
+                            tools:text="0923423423" />
+
+                        <Button
+                            android:id="@+id/UpdateContactMobileButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:background="@drawable/button_background"
+                            android:drawableLeft="@drawable/ic_edit"
+                            android:text="修改緊急聯絡人"
+                            android:textSize="24sp"
+                            app:backgroundTint="@color/purple_200"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ContactMobileTwo" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/MyEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/browser_actions_title_color"
+                        android:textSize="30sp"
+                        app:layout_constraintEnd_toEndOf="@+id/MyMobile"
+                        app:layout_constraintStart_toStartOf="@+id/MyMobile"
+                        app:layout_constraintTop_toBottomOf="@+id/MyMobile"
+                        tools:ignore="MissingConstraints"
+                        tools:text="aaa@gmail.com" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+
+        </RelativeLayout>
+
+    </androidx.drawerlayout.widget.DrawerLayout>

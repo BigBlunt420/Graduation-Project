@@ -159,15 +159,12 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
                 // 依照id判斷點了哪個項目並做相應事件
                 if(id == R.id.profile){
-
+                    startActivity(new Intent(HomePage.this,MyProfile.class));
                     return true;
                 }else if(id == R.id.mappage){
                     startActivity(new Intent(HomePage.this,HomePage.class));
                     return true;
-                } else if(id == R.id.joinedGroup){
-
-                    return true;
-                }else if(id == R.id.setTimeAndLocation){
+                } else if(id == R.id.setTimeAndLocation){
                     startActivity(new Intent(HomePage.this,scheduleList.class));
                     return true;
                 }else if (id == R.id.signOut){

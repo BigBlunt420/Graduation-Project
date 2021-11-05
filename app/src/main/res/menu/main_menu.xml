@@ -3,18 +3,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/profile"
-            android:title="My profile" />
+            android:title="個人檔案" />
         <item
             android:id="@+id/mappage"
             android:title="地圖主頁" />
-        <item
-            android:id="@+id/joinedGroup"
-            android:title="Joined Groups" />
         <item
             android:id="@+id/setTimeAndLocation"
             android:title="所有行程" />
         <item
             android:id="@+id/signOut"
-            android:title="Signed Out" />
+            android:title="登出" />
     </group>
 </menu>

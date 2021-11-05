@@ -90,7 +90,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
 //                firebaseAuth = FirebaseAuth.getInstance();
 //                UserID = firebaseAuth.getCurrentUser().getUid();
 //                //Toast.makeText(scheduleList, dbid,Toast.LENGTH_LONG).show();
-                Toast.makeText(scheduleList, title+"  "+date+"\n"+startTime+"-"+endTime+"  "+location+"\n"+description,Toast.LENGTH_LONG).show();
+                Toast.makeText(scheduleList, title+"  "+date+"\n"+startTime+"-"+endTime+"  "+location+"\n"+description,Toast.LENGTH_SHORT).show();
 
             }
 

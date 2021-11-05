@@ -81,15 +81,12 @@ public class scheduleList extends AppCompatActivity {
 
                 // 依照id判斷點了哪個項目並做相應事件
                 if(id == R.id.profile){
-
+                    startActivity(new Intent(scheduleList.this,MyProfile.class));
                     return true;
                 }else if(id == R.id.mappage){
                     startActivity(new Intent(scheduleList.this,HomePage.class));
                     return true;
-                } else if(id == R.id.joinedGroup){
-
-                    return true;
-                }else if(id == R.id.setTimeAndLocation){
+                } else if(id == R.id.setTimeAndLocation){
                     startActivity(new Intent(scheduleList.this,scheduleList.class));
                     return true;
                 }else if (id == R.id.signOut){

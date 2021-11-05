@@ -28,7 +28,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LoginandSignUp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".scheduleList"></activity>
+        <activity android:name=".MyProfile"></activity>
+        <activity android:name=".setContactPerson" />
+        <activity android:name=".scheduleList" />
         <activity android:name=".Map" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

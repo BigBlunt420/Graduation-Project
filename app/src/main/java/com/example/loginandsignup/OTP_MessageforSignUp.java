@@ -88,8 +88,10 @@ public class OTP_MessageforSignUp extends AppCompatActivity{
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        Toast.makeText(OTP_MessageforSignUp.this,"此號碼已註冊，請立即登入!",Toast.LENGTH_LONG).show();
-                        startActivity(new Intent(OTP_MessageforSignUp.this,LoginPage.class));
+                        if(!queryDocumentSnapshots.isEmpty()){
+                            Toast.makeText(OTP_MessageforSignUp.this,"此號碼已註冊，請立即登入!",Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(OTP_MessageforSignUp.this,LoginPage.class));
+                        }
                     }
                 });
 
