@@ -553,7 +553,9 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 int setStarthour = calendar.get(Calendar.HOUR_OF_DAY);
                 int setStartminute =calendar.get(Calendar.MINUTE);
 
-                TimePickerDialog timePickerDialog = new TimePickerDialog(HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,setStarthour,setStartminute,true);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(
+                        HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT,
+                        onTimeSetListener,setStarthour,setStartminute,true);
 
                 timePickerDialog.show();
             }
@@ -573,7 +575,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 Calendar calendar = Calendar.getInstance();
                 int setEndHour = calendar.get(Calendar.HOUR_OF_DAY);
                 int setEndMinute =calendar.get(Calendar.MINUTE);
-                TimePickerDialog timePickerDialog = new TimePickerDialog(HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,setEndHour,setEndMinute,true);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(
+                        HomePage.this, android.app.AlertDialog.THEME_HOLO_LIGHT,
+                        onTimeSetListener,setEndHour,setEndMinute,true);
 
                 timePickerDialog.show();
             }
@@ -639,17 +644,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 SaveDetailSchedule.put("Describe",Describe);
                 SaveDetailSchedule.put("Location",shLocation);
                 SaveDetailSchedule.put("Date",date);
-
-                String setStartTime = makeTimeString(starthour,startminute);
-                String setEndTime = makeTimeString(endhour,endminute);
-
                 SaveDetailSchedule.put("StartTime",setStartTime);
                 SaveDetailSchedule.put("EndTime",setEndTime);
                 SaveDetailSchedule.put("Latitude",Double.toString(Latitude));
                 SaveDetailSchedule.put("Longitude",Double.toString(Longitude));
-                SaveDetailSchedule.put("Year",year);
-                SaveDetailSchedule.put("Day",day);
-                SaveDetailSchedule.put("Month",month);
 
                 documentReference.set(SaveDetailSchedule).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
