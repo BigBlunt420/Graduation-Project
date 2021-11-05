@@ -721,11 +721,12 @@ detect if the user is inside the range
 
                                 if(getDate.charAt(i) == '日'){
                                     day = Integer.valueOf(getDate.substring(day,i));
+
                                 }
                             }
 
                             if(year == calendar.get(Calendar.YEAR)
-                                    && month+1 == calendar.get(Calendar.MONTH)
+                                    && month == calendar.get(Calendar.MONTH)+1
                                     && day == calendar.get(Calendar.DAY_OF_MONTH)){
 
                                 Toast.makeText(HomePage.this, "Hello", Toast.LENGTH_LONG).show();
