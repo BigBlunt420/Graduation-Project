@@ -736,17 +736,17 @@ detect if the user is inside the range
                                 for(int j = 0 ; j < getStTime.length() ; j++){
 
                                     if(getStTime.charAt(j) == ':'){
-                                        stHr = Integer.valueOf(getStTime.substring(0, j-1));
+                                        stHr = Integer.valueOf(getStTime.substring(0, j));
                                         stMin = Integer.valueOf(getStTime.substring(j+1,
-                                                getStTime.length()-1));
+                                                getStTime.length()));
                                     }
                                 }
 
                                 for(int l = 0 ; l < getEndTime.length() ; l++){
                                     if(getEndTime.charAt(l) == ':'){
-                                        endHr = Integer.valueOf(getEndTime.substring(0, l-1));
+                                        endHr = Integer.valueOf(getEndTime.substring(0, l));
                                         endMin = Integer.valueOf(getEndTime.substring(l+1,
-                                                getEndTime.length()-1));
+                                                getEndTime.length()));
                                     }
                                 }
 
