@@ -91,7 +91,7 @@ public class setContactPerson extends AppCompatActivity {
                         }
                     }
                 });
-
+                startActivity(new Intent(setContactPerson.this,HomePage.class));
             }
         });
     }
