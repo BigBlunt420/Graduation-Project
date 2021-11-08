@@ -159,12 +159,12 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
                 // 依照id判斷點了哪個項目並做相應事件
                 if(id == R.id.profile){
-                    startActivity(new Intent(HomePage.this,MyProfile.class));
+
                     return true;
                 }else if(id == R.id.mappage){
                     startActivity(new Intent(HomePage.this,HomePage.class));
                     return true;
-                } else if(id == R.id.setTimeAndLocation){
+                }else if(id == R.id.setTimeAndLocation){
                     startActivity(new Intent(HomePage.this,scheduleList.class));
                     return true;
                 }else if (id == R.id.signOut){
@@ -716,7 +716,6 @@ detect if the user is inside the range
                                     && month == calendar.get(Calendar.MONTH)+1
                                     && day == calendar.get(Calendar.DAY_OF_MONTH)){
 
-                                Toast.makeText(HomePage.this, "Hello", Toast.LENGTH_LONG).show();
                                 getStTime = documentSnapshot.getString("StartTime");
                                 getEndTime = documentSnapshot.getString("EndTime");
                                 for(int j = 0 ; j < getStTime.length() ; j++){
@@ -743,7 +742,6 @@ detect if the user is inside the range
                                     if(endHr == calendar.get(Calendar.HOUR_OF_DAY) &&
                                             endMin >= calendar.get(Calendar.MINUTE)
                                             || endHr > calendar.get(Calendar.HOUR_OF_DAY)){
-                                        Toast.makeText(HomePage.this, "calculating the distance", Toast.LENGTH_LONG).show();
                                         latDistance = Math.toRadians(Latitude
                                                 - rLat);
                                         lonDistance = Math.toRadians(Longitude
