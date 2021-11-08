@@ -28,6 +28,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -136,8 +137,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
 
-
         firebaseAuth = FirebaseAuth.getInstance();
+
+
+
 
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
@@ -159,7 +162,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
                 // 依照id判斷點了哪個項目並做相應事件
                 if(id == R.id.profile){
-
+                    startActivity(new Intent(HomePage.this,MyProfile.class));
                     return true;
                 }else if(id == R.id.mappage){
                     startActivity(new Intent(HomePage.this,HomePage.class));
@@ -753,7 +756,8 @@ detect if the user is inside the range
                                         distance = R * c * 1000; // convert to meters
 
                                         if(distance > 200){
-                                            //通知
+                                            SmsManager smsManager = SmsManager.getDefault();
+                                            smsManager.sendTextMessage("0988837008",null,"距離超過安全區域200公尺，請注意",null,null);
                                         }
 
                                     }

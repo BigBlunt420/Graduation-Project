@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#02FFFFFF"
+    android:background="@color/white"
     tools:context=".LoginPage">
 
 
     <EditText
+        android:textColorHint="@color/black"
+        android:textColor="@color/black"
         android:id="@+id/PasswordofLoginPage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -30,6 +32,8 @@
         app:layout_constraintTop_toBottomOf="@+id/EmailofLoginPage" />
 
     <EditText
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
         android:id="@+id/EmailofLoginPage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -56,6 +60,7 @@
         app:layout_constraintTop_toBottomOf="@+id/LoginText" />
 
     <Button
+        android:textColor="@color/black"
         android:id="@+id/ButtonofLoginPage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -106,6 +111,7 @@
 
 
     <TextView
+        android:textColor="@color/black"
         android:id="@+id/NoAccountText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -128,14 +134,14 @@
         app:layout_constraintStart_toEndOf="@+id/NoAccountText"
         app:layout_constraintTop_toTopOf="@+id/NoAccountText" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="9dp"
-        tools:layout_editor_absoluteY="6dp"
-        tools:ignore="MissingConstraints" />
-
+    <!-- <Button
+         android:id="@+id/button"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="Button"
+         tools:layout_editor_absoluteX="9dp"
+         tools:layout_editor_absoluteY="6dp"
+         tools:ignore="MissingConstraints" />
+     -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

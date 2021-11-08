@@ -5,8 +5,11 @@ package com.example.loginandsignup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -47,10 +50,10 @@ public class LoginPage extends AppCompatActivity {
         ePasswordofLoginPage = findViewById(R.id.PasswordofLoginPage);
         eButtonofLoginPage = findViewById(R.id.ButtonofLoginPage);
         eForgetPassword = findViewById(R.id.ForgetPassword);
-
         firebaseAuth = FirebaseAuth.getInstance();
-
+        ActivityCompat.requestPermissions(LoginPage.this,new String[]{Manifest.permission.SEND_SMS,Manifest.permission.READ_SMS}, PackageManager.PERMISSION_GRANTED);
         ///////////////////////////for testing
+        /*
         button = findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,6 +62,7 @@ public class LoginPage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+         */
 
         //立即登入
         eSignUpNow.setOnClickListener(new View.OnClickListener() {
