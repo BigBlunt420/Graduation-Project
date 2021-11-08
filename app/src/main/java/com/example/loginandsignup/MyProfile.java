@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,6 +43,8 @@ public class MyProfile extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     String UserID;
     String dbName,dbMyPhoneNumber,dbMyEmail,dbContactOne,dbContactTwo;
+    ProgressDialog progressDialog;
+
     //toolbar&navigation
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -59,15 +62,15 @@ public class MyProfile extends AppCompatActivity {
         eName = findViewById(R.id.Name);
         eMyMobile = findViewById(R.id.MyMobile);
         eMyEmail = findViewById(R.id.MyEmail);
-        eContactMobileOne = findViewById(R.id.ContactPersonOne);
-        eContactMobileTwo = findViewById(R.id.ContactPersonTwo);
+        eContactMobileOne = findViewById(R.id.ContactMobileOne);
+        eContactMobileTwo = findViewById(R.id.ContactMobileTwo);
         eUpdateContactMobileButton = findViewById(R.id.UpdateContactMobileButton);
 
         firebaseAuth = FirebaseAuth.getInstance();
         firestoredb = FirebaseFirestore.getInstance();
 
 
-        /*---------navigation view and toor bar-------------*/
+        /*---------navigation view and tool bar-------------*/
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
 
@@ -109,7 +112,11 @@ public class MyProfile extends AppCompatActivity {
                 return false;
             }
         });
-        /*---------navigation view and toor bar-------------*/
+        /*---------navigation view and tool bar-------------*/
+
+        progressDialog = new ProgressDialog(MyProfile.this);
+        progressDialog.setTitle("資料載入中...");
+        progressDialog.show();
 
         UserID = firebaseAuth.getCurrentUser().getUid();
         firestoredb.collection("Users").document(UserID)
@@ -117,6 +124,7 @@ public class MyProfile extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        progressDialog.dismiss();
                         if(documentSnapshot.exists()){
                             dbName = documentSnapshot.getString("Username");
                             dbMyPhoneNumber = documentSnapshot.getString("MyPhoneNumber");

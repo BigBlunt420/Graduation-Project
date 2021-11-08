@@ -514,6 +514,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute =calendar.get(Calendar.MINUTE);
         date = makeDateString(year,month,day);
+        setStartTime = makeTimeString(hour,minute);
+        setEndTime = makeTimeString(hour,minute);
         inputDate.setText(makeDateString(year,month,day));
         inputStartTime.setText(String.format("%02d:%02d",hour,minute));
         inputEndTime.setText(String.format("%02d:%02d",hour,minute));
