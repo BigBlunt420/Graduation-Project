@@ -120,6 +120,15 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     String getStTime;
     String getEndTime;
 
+    String dbContactOne;
+    String dbContactTwo;
+    String target_name;
+    String target_phone;
+
+    int max_msgsize=0;
+    int send_hourofday=0;
+    int send_min=0;
+
 
 
     @Override
@@ -689,6 +698,32 @@ detect if the user is inside the range
                         double lonDistance;
                         double a, c, distance, height;
 
+                        UserID = firebaseAuth.getCurrentUser().getUid();
+                        firestoredb.collection("Users").document(UserID)
+                                .get()
+                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if(documentSnapshot.exists()){
+                                            dbContactOne = documentSnapshot.getString("ContactPersonOne");
+                                            dbContactTwo = documentSnapshot.getString("ContactPersonTwo");
+                                            target_name  = documentSnapshot.getString("Username");
+                                            target_phone = documentSnapshot.getString("MyPhonenumber");
+                                        }else{
+                                            Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull @NotNull Exception e) {
+                                        Toast.makeText(HomePage.this,"Fail:"+e.getMessage(),Toast.LENGTH_LONG).show();
+                                    }
+                                });
+
+
+
+
                         Calendar calendar = Calendar.getInstance();
                         //顯示資料
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
@@ -718,9 +753,14 @@ detect if the user is inside the range
                             if(year == calendar.get(Calendar.YEAR)
                                     && month == calendar.get(Calendar.MONTH)+1
                                     && day == calendar.get(Calendar.DAY_OF_MONTH)){
-
                                 getStTime = documentSnapshot.getString("StartTime");
                                 getEndTime = documentSnapshot.getString("EndTime");
+
+
+
+
+
+
                                 for(int j = 0 ; j < getStTime.length() ; j++){
 
                                     if(getStTime.charAt(j) == ':'){
@@ -756,10 +796,26 @@ detect if the user is inside the range
                                         distance = R * c * 1000; // convert to meters
 
                                         if(distance > 200){
-                                            SmsManager smsManager = SmsManager.getDefault();
-                                            smsManager.sendTextMessage("0988837008",null,"距離超過安全區域200公尺，請注意",null,null);
-                                        }
+                                            if(calendar.get(Calendar.HOUR_OF_DAY)>send_hourofday){
+                                                max_msgsize++;
+                                                String fire_location=documentSnapshot.getString("Location");
+                                                SmsManager smsManager = SmsManager.getDefault();
+                                                smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+".\n目前"+target_name+"已偏離"+fire_location+"一定距離，請盡快與其聯繫。\n如要關閉提醒請刪除此行程。",null,null);
+                                                smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+".\n目前"+target_name+"已偏離"+fire_location+"一定距離，請盡快與其聯繫。\n如要關閉提醒請刪除此行程。",null,null);
+                                                send_hourofday=calendar.get(Calendar.HOUR_OF_DAY);
+                                                send_min=calendar.get(Calendar.MINUTE);
+                                            }
+                                            else if((calendar.get(Calendar.HOUR_OF_DAY)==send_hourofday)&& (calendar.get(Calendar.MINUTE)-send_min>=5)){
+                                                max_msgsize++;
+                                                String fire_location = documentSnapshot.getString("Location");
+                                                SmsManager smsManager = SmsManager.getDefault();
+                                                smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+".\n目前"+target_name+"已偏離"+fire_location+"一定距離，請盡快與其聯繫。\n如要關閉提醒請刪除此行程。",null,null);
+                                                smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+".\n目前"+target_name+"已偏離"+fire_location+"一定距離，請盡快與其聯繫。\n如要關閉提醒請刪除此行程。",null,null);
+                                                send_hourofday=calendar.get(Calendar.HOUR_OF_DAY);
+                                                send_min=calendar.get(Calendar.MINUTE);
+                                            }
 
+                                        }
                                     }
                                 }
 
