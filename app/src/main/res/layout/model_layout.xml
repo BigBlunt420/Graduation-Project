@@ -23,8 +23,8 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 android:text="Title"
-                android:textColor="@color/white"
                 android:textSize="30dp"
                 android:textStyle="bold" />
             <TextView
@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="date"
                 android:gravity="right"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="24dp" />
         </LinearLayout>
         <LinearLayout
@@ -50,26 +50,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="sTime"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="24dp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="~"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="24dp" />
                 <TextView
                     android:id="@+id/endtime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="EndTime"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="24dp" />
             </LinearLayout>
             <TextView
                 android:id="@+id/location"
                 android:text="location:"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="24dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="description"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="24dp"/>
     </LinearLayout>
 

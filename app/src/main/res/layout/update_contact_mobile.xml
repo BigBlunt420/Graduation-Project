@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white"
+    >
     <TextView
         android:id="@+id/inputSchedule"
         android:layout_width="match_parent"
@@ -19,7 +21,7 @@
         android:textSize="18dp"
         android:textStyle="bold"
         android:background="@color/purple_200"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -46,6 +48,8 @@
             android:drawablePadding="10dp"
             android:ems="10"
             android:hint="請輸入手機號碼一"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
             android:inputType="number"
             android:paddingLeft="20dp"
             android:paddingTop="10dp"
@@ -63,6 +67,8 @@
             android:drawablePadding="10dp"
             android:ems="10"
             android:hint="請輸入手機號碼二"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
             android:inputType="number"
             android:paddingLeft="20dp"
             android:paddingTop="10dp"
@@ -83,6 +89,7 @@
                 android:layout_weight="1"
                 android:layout_margin="10dp"
                 android:text="確認"
+                android:textColor="@color/black"
                 android:background="@drawable/button_background"
                 app:backgroundTint="@color/purple_200"
                 android:textSize="20dp"/>
@@ -93,6 +100,7 @@
                 android:layout_weight="1"
                 android:layout_margin="10dp"
                 android:text="取消"
+                android:textColor="@color/black"
                 android:background="@drawable/button_background"
                 app:backgroundTint="@color/purple_200"
                 android:textSize="20dp"/>

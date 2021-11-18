@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#02FFFFFF"
+    android:background="@color/white"
     tools:context=".ConfirmOTPforSignUp">
 
     <ImageView
@@ -58,6 +58,8 @@
         android:drawableLeft="@drawable/ic_verified"
         android:drawablePadding="10dp"
         android:ems="10"
+        android:textColorHint="@color/black"
+        android:textColor="@color/black"
         android:hint="請輸入驗證碼"
         android:inputType="number"
         android:paddingLeft="20dp"
@@ -77,6 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="未收到驗證碼？"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/OTPfConfirmOTPPage"
         app:layout_constraintTop_toBottomOf="@+id/OTPfConfirmOTPPage" />
@@ -98,6 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:gravity="center"
+        android:textColor="@color/black"
         android:text="驗證碼將傳送至"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -119,6 +123,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/button_background"
+            android:textColor="@color/black"
             android:text="驗  證"
             android:textSize="24sp"
             app:backgroundTint="@color/purple_200"
