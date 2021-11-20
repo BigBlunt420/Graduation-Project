@@ -312,8 +312,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         }
 
 
-
-        /////location change
+        //location change
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
@@ -330,6 +329,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                         mMap.addMarker(new MarkerOptions()
                                 .position(addresLatLng).title("Searched location"));
                     }
+                    //if the user is not moving the map then move the camera
                     if(move == 1 ){
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLong,zoomLevel));
                     }
@@ -357,7 +357,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
             e.printStackTrace();
         }
 
-
+        //search view to search locations
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -375,6 +375,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                     mMap.addMarker(new MarkerOptions()
                             .position(addresLatLng).title("Searched location"));
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(addresLatLng,zoomLevel));
+
+
 
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable(){
