@@ -296,47 +296,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
     }
 
-    //    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
-//        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        rLocationGranted = false;
-//        if(requestCode == 1001){
-//
-//            if(grantResults.length > 0){
-//                for(int i = 0 ;  i < grantResults.length ; i++){
-//                    if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
-//                        rLocationGranted = false;
-//                        return;
-//                    }
-//                    rLocationGranted = true;
-//                }
-//            }
-//        }
-//    }
-/*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-
-        if(id == R.id.profile){
-
-        }else if(id == R.id.joinedGroup){
-
-        }else if(id == R.id.signOut){
-
-        }
-        //return super.onOptionsItemSelected(item);
-        return true;
-    }
-
-*/
     /*
     Run google map, and update the location from user
      */
@@ -395,24 +354,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
 
 
-//
-//            @Override
-//            public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//            }
-//
-//            @Override
-//            public void onProviderEnabled(@NonNull String provider) {
-//
-//            }
-//
-//            @Override
-//            public void onProviderDisabled(@NonNull String provider) {
-//
-//            }
-//
-//
-//
         };
 
         //get current location at the first time when the app was opened
@@ -666,9 +607,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
     }
 
-    /*
-detect if the user is inside the range
- */
+    /**
+     * checks if the user is staying in range
+     * @param Latitude the user's Latitude
+     * @param Longitude the user's longitude
+     */
     private void stayInRange(double Latitude, double Longitude){
 
         firestoredb = FirebaseFirestore.getInstance();
@@ -745,6 +688,7 @@ detect if the user is inside the range
                                 }
                             }
 
+                            //檢查資料的日期是否與當日相同
                             if(year == calendar.get(Calendar.YEAR)
                                     && month == calendar.get(Calendar.MONTH)+1
                                     && day == calendar.get(Calendar.DAY_OF_MONTH)){
@@ -752,14 +696,12 @@ detect if the user is inside the range
                                 getEndTime = documentSnapshot.getString("EndTime");
 
 
-
-
-
-
                                 for(int j = 0 ; j < getStTime.length() ; j++){
 
                                     if(getStTime.charAt(j) == ':'){
+                                        //get the hour of the start time
                                         stHr = Integer.valueOf(getStTime.substring(0, j));
+                                        //get the minuit of the start time
                                         stMin = Integer.valueOf(getStTime.substring(j+1,
                                                 getStTime.length()));
                                     }
@@ -767,16 +709,20 @@ detect if the user is inside the range
 
                                 for(int l = 0 ; l < getEndTime.length() ; l++){
                                     if(getEndTime.charAt(l) == ':'){
+                                        //get the hour of the end time
                                         endHr = Integer.valueOf(getEndTime.substring(0, l));
+                                        //get the minuit of the end time
                                         endMin = Integer.valueOf(getEndTime.substring(l+1,
                                                 getEndTime.length()));
                                     }
                                 }
 
+                                //check if the time is already started
                                 if(stHr == calendar.get(Calendar.HOUR_OF_DAY) &&
                                         stMin <= calendar.get(Calendar.MINUTE)
                                         || stHr <calendar.get(Calendar.HOUR_OF_DAY)){
 
+                                    //check if the time wasn't ended yet
                                     if(endHr == calendar.get(Calendar.HOUR_OF_DAY) &&
                                             endMin >= calendar.get(Calendar.MINUTE)
                                             || endHr > calendar.get(Calendar.HOUR_OF_DAY)){
@@ -794,7 +740,7 @@ detect if the user is inside the range
                                             if(calendar.get(Calendar.HOUR_OF_DAY)>send_hourofday){
                                                 max_msgsize++;
                                                 sendMassage(max_msgsize, Latitude, Longitude
-                                                        , target_name, dbContactOne);
+                                                        , target_name, dbContactOne, dbContactTwo);
                                                 send_hourofday=calendar.get(Calendar.HOUR_OF_DAY);
                                                 send_min=calendar.get(Calendar.MINUTE);
                                             }
@@ -802,7 +748,7 @@ detect if the user is inside the range
                                                     && (calendar.get(Calendar.MINUTE)-send_min>=5)){
                                                 max_msgsize++;
                                                 sendMassage(max_msgsize, Latitude, Longitude
-                                                        , target_name, dbContactOne);
+                                                        , target_name, dbContactOne, dbContactTwo);
                                                 send_hourofday=calendar.get(Calendar.HOUR_OF_DAY);
                                                 send_min=calendar.get(Calendar.MINUTE);
                                             }
@@ -827,19 +773,45 @@ detect if the user is inside the range
                 });
     }
 
+    /**
+     * send out the text massage from user
+     * @param max_msgsize the time of massage has been sent
+     * @param latitude the user's latitude
+     * @param longitude the user's longitude
+     * @param target_name the current user's name
+     * @param dbContactOne the phone number of first contact
+     * @param dbContactTwo the phone number of second contact
+     */
     private void sendMassage(int max_msgsize, double latitude, double longitude,
-                             String target_name, String dbContactOne){
+                             String target_name,String dbContactOne, String dbContactTwo){
         SmsManager smsManager = SmsManager.getDefault();
-        smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+".\n目前"+target_name+"已偏離一定距離，請盡快與其聯繫。" +
-                "\n如要關閉提醒請刪除此行程。\n使用者位置：緯度"+latitude+"經度"+longitude,null,null);
-        smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+".\n目前"+target_name+"已偏離一定距離，請盡快與其聯繫。"+
-                "\n如要關閉提醒請刪除此行程。\n使用者位置：緯度"+latitude+"經度"+longitude,null,null);
+        smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+
+                ".\n目前" +target_name+"已偏離一定距離，請盡快與其聯繫。"
+                + "\n如要關閉提醒請刪除此行程。\n使用者位置：緯度"+latitude+"經度"+longitude
+                ,null,null);
+        smsManager.sendTextMessage(dbContactTwo,null,"目前傳送簡訊數量: "+max_msgsize+
+                ".\n目前"+target_name+"已偏離一定距離，請盡快與其聯繫。"+
+                "\n如要關閉提醒請刪除此行程。\n使用者位置：緯度"+latitude+"經度"+longitude
+                ,null,null);
     }
 
-    //設定日期顯示樣式
+    /**
+     * 設定當日日期顯示樣式供設定Schedule日期時使用
+     * @param year the year of the current day
+     * @param month the month of the current month
+     * @param day the day of the current day
+     * @return 當日日期的String格式
+     */
     private String makeDateString(int year, int month, int day) {
         return year + "年" + month + "月" + day + "日";
     }
+
+    /**
+     * 設定當日時間的格式供設定Schedule時間時使用
+     * @param hour the current hour of the time
+     * @param minute the current minute of the time
+     * @return 當日時間的String格式
+     */
     private String makeTimeString(int hour,int minute){
         return hour+":"+minute;
     }
