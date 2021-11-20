@@ -110,6 +110,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     String ScheduleID;
     String setStartTime,setEndTime;
 
+    String identify;
+
     //variables for getting the times and date of the searched schedule
     String getDate;
     String getStTime;
@@ -296,6 +298,29 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     @Override
     public void onMapReady(@NonNull @NotNull GoogleMap googleMap) {
         mMap = googleMap;
+        firestoredb = FirebaseFirestore.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        UserID = firebaseAuth.getCurrentUser().getUid();
+
+//        firestoredb.collection("Users").document(UserID)
+//                .get()
+//                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                        if(documentSnapshot.exists()){
+//                            identify = documentSnapshot.getString("identify");
+//                        }else{
+//                            Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
+//                        }
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull @NotNull Exception e) {
+//                        Toast.makeText(HomePage.this,"Fail:"
+//                                +e.getMessage(),Toast.LENGTH_LONG).show();
+//                    }
+//                });
 
         //ask for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -376,6 +401,9 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                             .position(addresLatLng).title("Searched location"));
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(addresLatLng,zoomLevel));
 
+                    if(identify == "BeCare"){
+                        //add schedule
+                    }
 
 
                     Handler handler = new Handler();
@@ -601,6 +629,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
     /**
      * checks if the user is staying in range
+     * and send text msg if user's out of range
      * @param Latitude the user's Latitude
      * @param Longitude the user's longitude
      */
@@ -609,6 +638,28 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         UserID = firebaseAuth.getCurrentUser().getUid();
+        firestoredb.collection("Users").document(UserID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.exists()){
+                            dbContactOne = documentSnapshot.getString("ContactPersonOne");
+                            dbContactTwo = documentSnapshot.getString("ContactPersonTwo");
+                            target_name  = documentSnapshot.getString("Username");
+                            target_phone = documentSnapshot.getString("MyPhonenumber");
+                        }else{
+                            Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(HomePage.this,"Fail:"
+                                +e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
         firestoredb.collection("Users").document(UserID).collection("Schedule")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -627,29 +678,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                         double latDistance;
                         double lonDistance;
                         double a, c, distance, height;
-
-                        UserID = firebaseAuth.getCurrentUser().getUid();
-                        firestoredb.collection("Users").document(UserID)
-                                .get()
-                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        if(documentSnapshot.exists()){
-                                            dbContactOne = documentSnapshot.getString("ContactPersonOne");
-                                            dbContactTwo = documentSnapshot.getString("ContactPersonTwo");
-                                            target_name  = documentSnapshot.getString("Username");
-                                            target_phone = documentSnapshot.getString("MyPhonenumber");
-                                        }else{
-                                            Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull @NotNull Exception e) {
-                                        Toast.makeText(HomePage.this,"Fail:"+e.getMessage(),Toast.LENGTH_LONG).show();
-                                    }
-                                });
 
 
                         Calendar calendar = Calendar.getInstance();
@@ -759,6 +787,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(HomePage.this,"Fail:"
+                                +e.getMessage(),Toast.LENGTH_LONG).show();
                     }
                 });
     }
