@@ -31,7 +31,6 @@ import android.os.Handler;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -46,15 +45,12 @@ import android.widget.Toast;
 //import com.example.loginandsignup.databinding.ActivityMapsBinding;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -75,7 +71,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -798,19 +793,16 @@ detect if the user is inside the range
                                         if(distance > 200){
                                             if(calendar.get(Calendar.HOUR_OF_DAY)>send_hourofday){
                                                 max_msgsize++;
-                                                String fire_location=documentSnapshot.getString("Location");
-                                                SmsManager smsManager = SmsManager.getDefault();
-                                                smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+".\n目前"+target_name+"已偏離"+fire_location+"一定距離，請盡快與其聯繫。\n如要關閉提醒請刪除此行程。",null,null);
-                                                smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+".\n目前"+target_name+"已偏離"+fire_location+"一定距離，請盡快與其聯繫。\n如要關閉提醒請刪除此行程。",null,null);
+                                                sendMassage(max_msgsize, Latitude, Longitude
+                                                        , target_name, dbContactOne);
                                                 send_hourofday=calendar.get(Calendar.HOUR_OF_DAY);
                                                 send_min=calendar.get(Calendar.MINUTE);
                                             }
-                                            else if((calendar.get(Calendar.HOUR_OF_DAY)==send_hourofday)&& (calendar.get(Calendar.MINUTE)-send_min>=5)){
+                                            else if((calendar.get(Calendar.HOUR_OF_DAY)==send_hourofday)
+                                                    && (calendar.get(Calendar.MINUTE)-send_min>=5)){
                                                 max_msgsize++;
-                                                String fire_location = documentSnapshot.getString("Location");
-                                                SmsManager smsManager = SmsManager.getDefault();
-                                                smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+".\n目前"+target_name+"已偏離"+fire_location+"一定距離，請盡快與其聯繫。\n如要關閉提醒請刪除此行程。",null,null);
-                                                smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+".\n目前"+target_name+"已偏離"+fire_location+"一定距離，請盡快與其聯繫。\n如要關閉提醒請刪除此行程。",null,null);
+                                                sendMassage(max_msgsize, Latitude, Longitude
+                                                        , target_name, dbContactOne);
                                                 send_hourofday=calendar.get(Calendar.HOUR_OF_DAY);
                                                 send_min=calendar.get(Calendar.MINUTE);
                                             }
@@ -833,6 +825,15 @@ detect if the user is inside the range
                     public void onFailure(@NonNull @NotNull Exception e) {
                     }
                 });
+    }
+
+    private void sendMassage(int max_msgsize, double latitude, double longitude,
+                             String target_name, String dbContactOne){
+        SmsManager smsManager = SmsManager.getDefault();
+        smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+".\n目前"+target_name+"已偏離一定距離，請盡快與其聯繫。" +
+                "\n如要關閉提醒請刪除此行程。\n使用者位置：緯度"+latitude+"經度"+longitude,null,null);
+        smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+".\n目前"+target_name+"已偏離一定距離，請盡快與其聯繫。"+
+                "\n如要關閉提醒請刪除此行程。\n使用者位置：緯度"+latitude+"經度"+longitude,null,null);
     }
 
     //設定日期顯示樣式
