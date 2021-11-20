@@ -36,6 +36,12 @@ import java.util.concurrent.TimeUnit;
 public class ConfirmOTPforSignUp extends AppCompatActivity {
 
     public static final String TEN_PHONE_NUMBER_KEY = "MyPhoneNumber";
+
+
+
+
+
+
     public static final String NINE_PHONE_NUMBER_KEY = "NinePhoneNumber";
     public static final String TAG = "MobileQuote";
     private TextView eUserMobile;
