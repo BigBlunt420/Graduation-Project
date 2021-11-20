@@ -81,7 +81,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     private GoogleMap mMap;
     private SearchView searchView;
     private Geocoder geocoder;
-    private boolean inRange = true;
 
     private float zoomLevel = 16.0f;
     private String shLocation;
@@ -91,7 +90,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     LocationListener locationListener;
     LatLng userLatLong;
     LatLng addresLatLng;
-    int move = 1;
+    int move = 1; //to check if the user is moving the map
     private FloatingActionButton reloadButton;
     private static boolean rLocationGranted = false ;
     private FirebaseAuth firebaseAuth;
@@ -111,15 +110,16 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     String ScheduleID;
     String setStartTime,setEndTime;
 
+    //variables for getting the times and date of the searched schedule
     String getDate;
     String getStTime;
     String getEndTime;
 
+    //variables for send text msg
     String dbContactOne;
     String dbContactTwo;
     String target_name;
     String target_phone;
-
     int max_msgsize=0;
     int send_hourofday=0;
     int send_min=0;
@@ -201,6 +201,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
             }
         });
 
+        //when the user is moving the map, move = 0
         if(MotionEvent.ACTION_DOWN == 0){
             move = 0;
         }
@@ -224,13 +225,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
     }
 
-    private void replaceFragment(Fragment fragment){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.changeFrameLayout,fragment);
-        fragmentTransaction.commit();
-    }
-
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)){
@@ -241,11 +235,9 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     }
 
 
-
-
-
-    /*
-    Checking if the version is able to use google map api
+    /**
+     * Checks if the version is able to use google map api
+     * @return if the version is able to use google map api
      */
     private boolean checkPlayService(){
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(HomePage.this);
@@ -257,8 +249,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         }
     }
 
-    /*
-    Asking user to permit the permission to share the location
+    /**
+     * Asks user to permit the permission to share the location
      */
     private void initialMap(){
         String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -296,19 +288,16 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
     }
 
-    /*
-    Run google map, and update the location from user
+
+    /**
+     * Run google map, and update the location from user
+     * @param googleMap the GoogleMap the is showing on homepage
      */
     @Override
     public void onMapReady(@NonNull @NotNull GoogleMap googleMap) {
         mMap = googleMap;
 
-
-
-
         //ask for location permission
-
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -351,9 +340,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
             }
 
-
-
-
         };
 
         //get current location at the first time when the app was opened
@@ -370,7 +356,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         }catch (SecurityException e){
             e.printStackTrace();
         }
-
 
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -436,7 +421,12 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         });
     }
 
-    //確認要位置要加入行程後，跳出建立詳細行程的Dialog
+
+    /**
+     * 確認要位置要加入行程後，跳出建立詳細行程的Dialog
+     * @param Latitude the user's current latitude
+     * @param Longitude the user's current longitude
+     */
     private void setDetailSchedule(double Latitude, double Longitude) {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(HomePage.this);
         LayoutInflater inflater = LayoutInflater.from(HomePage.this);
@@ -660,8 +650,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                                 });
 
 
-
-
                         Calendar calendar = Calendar.getInstance();
                         //顯示資料
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
@@ -815,6 +803,5 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     private String makeTimeString(int hour,int minute){
         return hour+":"+minute;
     }
-
 
 }
