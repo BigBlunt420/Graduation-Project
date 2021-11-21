@@ -60,7 +60,7 @@ public class AddFriend extends AppCompatActivity {
         dialog.show();
 
 //        final EditText edtID = dialog.findViewById(R.id.edtID);
-        final EditText edtID = dialog.findViewById(R.id.edtID);
+        EditText edtID = dialog.findViewById(R.id.edtID);
 
         Button btnSearch = dialog.findViewById(R.id.btnSearch);
 
@@ -136,8 +136,6 @@ public class AddFriend extends AppCompatActivity {
                                 }
                             }
                         });
-                    } else{
-
                     }
                 }
             }
