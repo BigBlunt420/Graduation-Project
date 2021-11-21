@@ -35,11 +35,14 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -77,7 +80,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
+public class HomePage extends AppCompatActivity implements OnMapReadyCallback, AdapterView.OnItemSelectedListener {
 
     private static int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private Toolbar toolbar;
@@ -101,6 +104,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     private NavigationView navigationView;
     //Dialog的元件
     private TextView inputStartTime,inputEndTime;
+    private Spinner inputParameter;
     private int starthour,startminute,endhour,endminute;
     int setYear,setMonth,setDay,month;
     private TextView inputDate;
@@ -112,7 +116,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     private String date;
     private String ScheduleID;
     private String setStartTime,setEndTime;
-
+    String choice;
     private String identify;
 
     //variables for getting the times and date of the searched schedule
@@ -128,7 +132,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     int max_msgsize=0;
     int send_hourofday=0;
     int send_min=0;
-
+    boolean sended_msg=false;
 
     private String Identify;
     private TextView Text;
@@ -499,7 +503,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
      * @param Longitude the user's current longitude
      */
     private void setDetailSchedule(double Latitude, double Longitude) {
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(HomePage.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
         LayoutInflater inflater = LayoutInflater.from(HomePage.this);
 
         View myView = inflater.inflate(R.layout.input_detail_schedule,null);
@@ -513,6 +517,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         inputDate = myView.findViewById(R.id.inputDate);
         addDetail = myView.findViewById(R.id.addDetail);
         cancelDetail = myView.findViewById(R.id.cancelDetail);
+        inputParameter = myView.findViewById(R.id.inputParameter);
 
         //取得當日日期時間
         Calendar calendar = Calendar.getInstance();
@@ -529,10 +534,16 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         inputStartTime.setText(String.format("%02d:%02d",hour,minute));
         inputEndTime.setText(String.format("%02d:%02d",hour,minute));
 
-        androidx.appcompat.app.AlertDialog dialog = builder.create();
+        AlertDialog dialog = builder.create();
         dialog.setCancelable(false);
 
         dialog.show();
+
+        //設定範圍
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(this,R.array.numbers, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        inputParameter.setAdapter(adapter);
+        inputParameter.setOnItemSelectedListener(this);
 
         //設定起始時間
         inputStartTime.setOnClickListener(new View.OnClickListener() {
@@ -628,6 +639,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                     inputEndTime.setError("結束時間不得比起始時間早");
                     return;
                 }
+
                 //將資料加進firestore
                 firestoredb = FirebaseFirestore.getInstance();
                 firebaseAuth = FirebaseAuth.getInstance();
@@ -643,6 +655,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 SaveDetailSchedule.put("EndTime",setEndTime);
                 SaveDetailSchedule.put("Latitude",Double.toString(Latitude));
                 SaveDetailSchedule.put("Longitude",Double.toString(Longitude));
+                SaveDetailSchedule.put("Parameter",choice);
 
                 documentReference.set(SaveDetailSchedule).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -793,24 +806,23 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                                         c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                                         distance = R * c * 1000; // convert to meters
 
-                                        if(distance > 200){
-                                            if(calendar.get(Calendar.HOUR_OF_DAY)>send_hourofday){
-                                                max_msgsize++;
-                                                sendMassage(max_msgsize, Latitude, Longitude
-                                                        , target_name, dbContactOne, dbContactTwo);
-                                                send_hourofday=calendar.get(Calendar.HOUR_OF_DAY);
-                                                send_min=calendar.get(Calendar.MINUTE);
-                                            }
-                                            else if((calendar.get(Calendar.HOUR_OF_DAY)==send_hourofday)
-                                                    && (calendar.get(Calendar.MINUTE)-send_min>=5)){
-                                                max_msgsize++;
-                                                sendMassage(max_msgsize, Latitude, Longitude
-                                                        , target_name, dbContactOne, dbContactTwo);
-                                                send_hourofday=calendar.get(Calendar.HOUR_OF_DAY);
-                                                send_min=calendar.get(Calendar.MINUTE);
-                                            }
 
+                                        if(!sended_msg && max_msgsize<=5){
+                                            if(distance>200) {
+                                                max_msgsize++;
+                                                sendMassage(max_msgsize, Latitude, Longitude
+                                                        , target_name, dbContactOne, dbContactTwo);
+                                                send_hourofday = calendar.get(Calendar.HOUR_OF_DAY);
+                                                send_min = calendar.get(Calendar.MINUTE);
+                                                sended_msg = true;
+                                            }
                                         }
+                                        else if(sended_msg){
+                                            if(calendar.get(Calendar.HOUR_OF_DAY)-send_hourofday>1)sended_msg=false;
+                                            if(calendar.get(Calendar.HOUR_OF_DAY)-send_hourofday==1 && (60+calendar.get(Calendar.MINUTE))-send_min>=5 )sended_msg=false;
+                                            else if(calendar.get(Calendar.HOUR_OF_DAY)==send_hourofday && calendar.get(Calendar.MINUTE)-send_min>=5)sended_msg=false;
+                                        }
+
                                     }
                                 }
 
@@ -859,7 +871,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
      * @param year the year of the current day
      * @param month the month of the current month
      * @param day the day of the current day
-     * @return 當日日期的String格式
+     * @return 日期的String格式
      */
     private String makeDateString(int year, int month, int day) {
         return year + "年" + month + "月" + day + "日";
@@ -869,10 +881,20 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
      * 設定當日時間的格式供設定Schedule時間時使用
      * @param hour the current hour of the time
      * @param minute the current minute of the time
-     * @return 當日時間的String格式
+     * @return 時間的String格式
      */
     private String makeTimeString(int hour,int minute){
         return hour+":"+minute;
     }
 
+    //選擇範圍
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        choice =  parent.getItemAtPosition(position).toString();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }

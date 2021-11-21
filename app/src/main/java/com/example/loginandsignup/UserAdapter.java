@@ -11,9 +11,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -41,7 +44,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
+public class UserAdapter extends RecyclerView.Adapter<ViewHolder> implements AdapterView.OnItemSelectedListener {
     scheduleList scheduleList;
     List<Model> modelList;
     Context context;
@@ -58,6 +61,8 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
     String date;
     String dbtitle,dbstartTime,dbendTime,dblocation,dbdescription,dbdate,dbid;
     String setStartTime,setEndTime;
+    private Spinner inputParameter;
+    String choice;
 
     public UserAdapter(scheduleList scheduleList, List<Model> modelList) {
         this.scheduleList = scheduleList;
@@ -164,6 +169,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
         inputDate = myView.findViewById(R.id.inputDate);
         addDetail = myView.findViewById(R.id.addDetail);
         cancelDetail = myView.findViewById(R.id.cancelDetail);
+        inputParameter = myView.findViewById(R.id.inputParameter);
 
         //取得firestore資料
         inputTile.setText(dbtitle);
@@ -188,6 +194,12 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
         dialog.setCancelable(false);
 
         dialog.show();
+
+        //設定範圍
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(scheduleList,R.array.numbers, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        inputParameter.setAdapter(adapter);
+        inputParameter.setOnItemSelectedListener(this);
 
         //設定起始時間
         inputStartTime.setOnClickListener(new View.OnClickListener() {
@@ -291,6 +303,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                 updateSchedule.put("Date",date);
                 updateSchedule.put("StartTime",setStartTime);
                 updateSchedule.put("EndTime",setEndTime);
+                updateSchedule.put("Parameter",choice);
 
                 documentReference.set(updateSchedule, SetOptions.merge())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -345,5 +358,15 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
     @Override
     public int getItemCount() {
         return modelList.size();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        choice = parent.getItemAtPosition(position).toString();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }
