@@ -131,7 +131,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
     String currentUser;
     String Identify;
-    private ConstraintLayout contactPeople = null;
+    private ConstraintLayout contactPeople;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
