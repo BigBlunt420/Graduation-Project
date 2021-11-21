@@ -89,10 +89,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     private String shLocation;
     private List<Address> addressList = null;
     //private ActivityMapsBinding binding;
-    LocationManager locationManager;
-    LocationListener locationListener;
-    LatLng userLatLong;
-    LatLng addresLatLng;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private LatLng userLatLong;
+    private LatLng addresLatLng;
     int move = 1; //to check if the user is moving the map
     private FloatingActionButton reloadButton;
     private static boolean rLocationGranted = false ;
@@ -104,33 +104,33 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     private int starthour,startminute,endhour,endminute;
     int setYear,setMonth,setDay,month;
     private TextView inputDate;
-    DatePickerDialog datePickerDialog;
+    private DatePickerDialog datePickerDialog;
     private Button addDetail,cancelDetail;
     private FirebaseFirestore firestoredb;
-    String UserID;
+    private String UserID = firebaseAuth.getCurrentUser().getUid(); //data ID of current on firebase
     private EditText inputTile,inputDescribe;
-    String date;
-    String ScheduleID;
-    String setStartTime,setEndTime;
+    private String date;
+    private String ScheduleID;
+    private String setStartTime,setEndTime;
 
-    String identify;
+    private String identify;
 
     //variables for getting the times and date of the searched schedule
-    String getDate;
-    String getStTime;
-    String getEndTime;
+    private String getDate;
+    private String getStTime;
+    private String getEndTime;
 
     //variables for send text msg
-    String dbContactOne;
-    String dbContactTwo;
-    String target_name;
-    String target_phone;
+    private String dbContactOne;
+    private String dbContactTwo;
+    private String target_name;
+    private String target_phone;
     int max_msgsize=0;
     int send_hourofday=0;
     int send_min=0;
 
-    String currentUser;
-    String Identify;
+
+    private String Identify;
     private ConstraintLayout contactPeople;
 
     @Override
@@ -171,8 +171,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
                 // 依照id判斷點了哪個項目並做相應事件
                 if(id == R.id.profile){
-                    currentUser = firebaseAuth.getCurrentUser().getUid();
-                    Identify = firestoredb.collection("Users").document(currentUser).collection("identify").get().toString();
+                    Identify = firestoredb.collection("Users").document(UserID).collection("identify").get().toString();
                     contactPeople = (ConstraintLayout) findViewById(R.id.contactPeople);
                     //照顧者不需顯示緊急聯絡人
                     if(Identify == "TakeCare"){
@@ -314,7 +313,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         mMap = googleMap;
         firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
-        UserID = firebaseAuth.getCurrentUser().getUid();
+
 
 //        firestoredb.collection("Users").document(UserID)
 //                .get()
@@ -604,7 +603,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 //將資料加進firestore
                 firestoredb = FirebaseFirestore.getInstance();
                 firebaseAuth = FirebaseAuth.getInstance();
-                UserID = firebaseAuth.getCurrentUser().getUid();
                 ScheduleID = UUID.randomUUID().toString();
                 DocumentReference documentReference = firestoredb.collection("Users").document(UserID).collection("Schedule").document(ScheduleID);
                 Map<String,Object> SaveDetailSchedule = new HashMap<String, Object>();
@@ -651,7 +649,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
         firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
-        UserID = firebaseAuth.getCurrentUser().getUid();
         firestoredb.collection("Users").document(UserID)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
