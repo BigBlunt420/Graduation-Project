@@ -45,6 +45,7 @@ public class SignUpPage extends AppCompatActivity{
     String UserID;
     Boolean ProfileComplete = false;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,9 +84,7 @@ public class SignUpPage extends AppCompatActivity{
                     }
                 });
 
-                if(ProfileComplete){
-                    startActivity(new Intent(SignUpPage.this,setContactPerson.class));
-                }
+                startActivity(new Intent(SignUpPage.this,setContactPerson.class));
             }
 
         });
@@ -113,9 +112,7 @@ public class SignUpPage extends AppCompatActivity{
                     }
                 });
 
-                if(ProfileComplete){
-                    startActivity(new Intent(SignUpPage.this,HomePage.class));
-                }
+                startActivity(new Intent(SignUpPage.this,HomePage.class));
             }
         });
     }

@@ -12,10 +12,10 @@
             android:id="@+id/edtID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="以用戶ID搜尋" />
+            android:hint="以電話號碼搜尋" />
 
         <Button
-            android:id="@+id/btnSearch"
+            android:id="@+id/schFriend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
