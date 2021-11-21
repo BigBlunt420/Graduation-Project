@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +18,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -36,6 +39,8 @@ public class AddFriend extends AppCompatActivity {
     private FloatingActionButton fabAdd;
     private String uid;
 
+    public static final String TAG = "ProfileQuote";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +59,9 @@ public class AddFriend extends AppCompatActivity {
         dialog.setContentView(R.layout.dialog_add);
         dialog.show();
 
+//        final EditText edtID = dialog.findViewById(R.id.edtID);
         final EditText edtID = dialog.findViewById(R.id.edtID);
+
         Button btnSearch = dialog.findViewById(R.id.btnSearch);
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -102,6 +109,34 @@ public class AddFriend extends AppCompatActivity {
                 if(task.isSuccessful()){
                     DocumentSnapshot documentSnapshot = task.getResult();
                     if(!documentSnapshot.exists()){
+                        DocumentReference documentReference_1 = db.collection("Users").document(uid);
+                        DocumentReference documentReference_2 = db.collection("Users").document(uidFriend);
+                        Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
+                        SaveUserProfile.put("friend", uidFriend);
+                        SaveUserProfile.put("friend", uid);
+
+                        documentReference_1.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Log.d(TAG,"Successful:User Profile was been update");
+                                }else {
+                                    Log.w(TAG,"Failed:",task.getException());
+                                }
+                            }
+                        });
+
+                        documentReference_2.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Log.d(TAG,"Successful:User Profile was been update");
+                                }else {
+                                    Log.w(TAG,"Failed:",task.getException());
+                                }
+                            }
+                        });
+                    } else{
 
                     }
                 }
