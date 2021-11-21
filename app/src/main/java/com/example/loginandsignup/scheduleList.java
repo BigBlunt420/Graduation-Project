@@ -158,25 +158,6 @@ public class scheduleList extends AppCompatActivity {
                     }
                 });
     }
-//    public void deleteData(int position){
-//        firebaseAuth = FirebaseAuth.getInstance();
-//        firestoredb = FirebaseFirestore.getInstance();
-//        UserID = firebaseAuth.getCurrentUser().getUid();
-//        DocumentReference documentReference = firestoredb.collection("Users").document(UserID);
-//                documentReference.collection("Schedule").document(modelList.get(position).getId());
-//        documentReference.delete()
-//                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull @NotNull Task<Void> task) {
-//                        //showScheduleList();
-//                        Log.d("DeleteDetailSchedule","Successful:User Profile is deleted for " + UserID);
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull @NotNull Exception e) {
-//                Log.w("DeleteDetailSchedule","Fail:"+e.getMessage());
-//            }
-//        });
-//    }
+
 
 }

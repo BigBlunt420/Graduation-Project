@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -58,6 +59,8 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
     String date;
     String dbtitle,dbstartTime,dbendTime,dblocation,dbdescription,dbdate,dbid;
     String setStartTime,setEndTime;
+    private Spinner inputParameter;
+    int choice;
 
     public UserAdapter(scheduleList scheduleList, List<Model> modelList) {
         this.scheduleList = scheduleList;
@@ -164,6 +167,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
         inputDate = myView.findViewById(R.id.inputDate);
         addDetail = myView.findViewById(R.id.addDetail);
         cancelDetail = myView.findViewById(R.id.cancelDetail);
+        inputParameter = myView.findViewById(R.id.inputParameter);
 
         //取得firestore資料
         inputTile.setText(dbtitle);
@@ -291,6 +295,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
                 updateSchedule.put("Date",date);
                 updateSchedule.put("StartTime",setStartTime);
                 updateSchedule.put("EndTime",setEndTime);
+                updateSchedule.put("Parameter",choice);
 
                 documentReference.set(updateSchedule, SetOptions.merge())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -346,4 +351,5 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> {
     public int getItemCount() {
         return modelList.size();
     }
+
 }
