@@ -80,7 +80,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class HomePage extends AppCompatActivity implements OnMapReadyCallback, AdapterView.OnItemClickListener {
+public class HomePage extends AppCompatActivity implements OnMapReadyCallback, AdapterView.OnItemSelectedListener {
 
     private static int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private Toolbar toolbar;
@@ -116,7 +116,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     private String date;
     private String ScheduleID;
     private String setStartTime,setEndTime;
-    int choice;
+    String choice;
     private String identify;
 
     //variables for getting the times and date of the searched schedule
@@ -543,7 +543,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this,R.array.numbers, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         inputParameter.setAdapter(adapter);
-        inputParameter.setOnItemClickListener(this);
+        inputParameter.setOnItemSelectedListener(this);
 
         //設定起始時間
         inputStartTime.setOnClickListener(new View.OnClickListener() {
@@ -890,7 +890,12 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
     //選擇範圍
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        choice = (int) parent.getItemAtPosition(position);
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        choice =  parent.getItemAtPosition(position).toString();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }
