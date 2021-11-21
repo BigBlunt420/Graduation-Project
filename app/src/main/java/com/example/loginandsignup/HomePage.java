@@ -131,7 +131,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
 
     private String Identify;
-    private ConstraintLayout contactPeople;
+    private TextView Text;
+    private TextView ContactMobileOne;
+    private TextView ContactMobileTwo;
+    private Button UpdateContactMobileButton;
+//    private ConstraintLayout contactPeople;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,7 +175,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
                 // 依照id判斷點了哪個項目並做相應事件
                 if(id == R.id.profile){
-                    contactPeople = findViewById(R.id.contactPeople);
+//                    contactPeople = findViewById(R.id.contactPeople);
+                    Text = findViewById(R.id.Text);
+                    ContactMobileOne = findViewById(R.id.ContactMobileOne);
+                    ContactMobileTwo = findViewById(R.id.ContactMobileTwo);
+                    UpdateContactMobileButton = findViewById(R.id.UpdateContactMobileButton);
                     firestoredb.collection("Users").document(UserID)
                             .get()
                             .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -181,7 +189,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                                         identify = documentSnapshot.getString("identify");
                                         if(identify == "TakeCare"){
                                             //照顧者不需顯示緊急聯絡人
-                                            contactPeople.setVisibility(View.GONE);
+//                                            contactPeople.setVisibility(View.GONE);
+                                            Text.setVisibility(View.GONE);
+                                            ContactMobileOne.setVisibility(View.GONE);
+                                            ContactMobileTwo.setVisibility(View.GONE);
+                                            UpdateContactMobileButton.setVisibility(View.GONE);
                                         }
                                     }else{
                                         Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
