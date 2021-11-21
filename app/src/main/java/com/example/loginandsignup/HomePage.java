@@ -132,7 +132,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     int max_msgsize=0;
     int send_hourofday=0;
     int send_min=0;
-
+    boolean sended_msg=false;
 
     private String Identify;
     private TextView Text;
@@ -806,24 +806,23 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                         c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                                         distance = R * c * 1000; // convert to meters
 
-                                        if(distance > 200){
-                                            if(calendar.get(Calendar.HOUR_OF_DAY)>send_hourofday){
-                                                max_msgsize++;
-                                                sendMassage(max_msgsize, Latitude, Longitude
-                                                        , target_name, dbContactOne, dbContactTwo);
-                                                send_hourofday=calendar.get(Calendar.HOUR_OF_DAY);
-                                                send_min=calendar.get(Calendar.MINUTE);
-                                            }
-                                            else if((calendar.get(Calendar.HOUR_OF_DAY)==send_hourofday)
-                                                    && (calendar.get(Calendar.MINUTE)-send_min>=5)){
-                                                max_msgsize++;
-                                                sendMassage(max_msgsize, Latitude, Longitude
-                                                        , target_name, dbContactOne, dbContactTwo);
-                                                send_hourofday=calendar.get(Calendar.HOUR_OF_DAY);
-                                                send_min=calendar.get(Calendar.MINUTE);
-                                            }
 
+                                        if(!sended_msg && max_msgsize<=5){
+                                            if(distance>200) {
+                                                max_msgsize++;
+                                                sendMassage(max_msgsize, Latitude, Longitude
+                                                        , target_name, dbContactOne, dbContactTwo);
+                                                send_hourofday = calendar.get(Calendar.HOUR_OF_DAY);
+                                                send_min = calendar.get(Calendar.MINUTE);
+                                                sended_msg = true;
+                                            }
                                         }
+                                        else if(sended_msg){
+                                            if(calendar.get(Calendar.HOUR_OF_DAY)-send_hourofday>1)sended_msg=false;
+                                            if(calendar.get(Calendar.HOUR_OF_DAY)-send_hourofday==1 && (60+calendar.get(Calendar.MINUTE))-send_min>=5 )sended_msg=false;
+                                            else if(calendar.get(Calendar.HOUR_OF_DAY)==send_hourofday && calendar.get(Calendar.MINUTE)-send_min>=5)sended_msg=false;
+                                        }
+
                                     }
                                 }
 
