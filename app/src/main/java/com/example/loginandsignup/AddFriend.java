@@ -63,7 +63,8 @@ public class AddFriend extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
-        searchView = findViewById(R.id.sch_friend);
+        searchView = findViewById(R.id.edtID);
+//        searchView = findViewById(R.id.sch_friend);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -217,7 +218,7 @@ public class AddFriend extends AppCompatActivity {
 //        final EditText edtID = dialog.findViewById(R.id.edtID);
         EditText edtID = dialog.findViewById(R.id.edtID);
 
-        Button btnSearch = dialog.findViewById(R.id.btnSearch);
+        Button btnSearch = dialog.findViewById(R.id.sch_friend);
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -15,7 +15,7 @@
             android:hint="以電話號碼搜尋" />
 
         <Button
-            android:id="@+id/schFriend"
+            android:id="@+id/sch_friend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"

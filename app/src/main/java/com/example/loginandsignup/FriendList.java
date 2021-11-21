@@ -118,7 +118,7 @@ public class FriendList extends AppCompatActivity {
         });
     }
 
-    private void showFriendList() {
+    public void showFriendList() {
         firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -135,6 +135,7 @@ public class FriendList extends AppCompatActivity {
                         //顯示資料
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
                             fModel model = new fModel(
+                                    documentSnapshot.getString("id"),
                                     documentSnapshot.getString("Name"),
                                     documentSnapshot.getString("PhoneNumber"));
                             modelList.add(model);
@@ -152,5 +153,4 @@ public class FriendList extends AppCompatActivity {
                     }
                 });
     }
-}
 }
