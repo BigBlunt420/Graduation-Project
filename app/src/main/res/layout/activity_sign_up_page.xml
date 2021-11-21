@@ -55,16 +55,37 @@
 
 
   <Button
-      android:id="@+id/ButtonofSignUpPage"
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
+      android:id="@+id/BeCareButton"
+      android:layout_width="wrap_content"
+      android:layout_height="58dp"
+      android:layout_margin="10dp"
       android:layout_marginTop="24dp"
+      android:layout_marginEnd="48dp"
+      android:layout_marginRight="48dp"
+      android:layout_weight="1"
       android:background="@drawable/button_background"
+      android:text="以被照顧者登入"
       android:textColor="@color/black"
-      android:text="下一步"
-      android:textSize="24sp"
+      android:textSize="15dp"
       app:backgroundTint="@color/purple_200"
       app:layout_constraintEnd_toEndOf="@+id/ConfirmPasswordofSignUpPage"
+      app:layout_constraintTop_toBottomOf="@+id/ConfirmPasswordofSignUpPage" />
+
+
+  <Button
+      android:id="@+id/TakeCareButton"
+      android:layout_width="wrap_content"
+      android:layout_height="62dp"
+      android:layout_margin="10dp"
+      android:layout_marginStart="12dp"
+      android:layout_marginLeft="12dp"
+      android:layout_marginTop="24dp"
+      android:layout_weight="1"
+      android:background="@drawable/button_background"
+      android:text=" 以照顧者登入 "
+      android:textColor="@color/black"
+      android:textSize="15dp"
+      app:backgroundTint="@color/purple_200"
       app:layout_constraintStart_toStartOf="@+id/ConfirmPasswordofSignUpPage"
       app:layout_constraintTop_toBottomOf="@+id/ConfirmPasswordofSignUpPage" />
 

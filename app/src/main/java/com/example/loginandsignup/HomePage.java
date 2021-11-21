@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -37,6 +38,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -59,6 +61,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -126,7 +129,9 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     int send_hourofday=0;
     int send_min=0;
 
-
+    String currentUser;
+    String Identify;
+    private ConstraintLayout contactPeople = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,9 +149,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         navigationView = findViewById(R.id.nav_view);
 
         firebaseAuth = FirebaseAuth.getInstance();
-
-
-
+        UserID = firebaseAuth.getCurrentUser().getUid();
 
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
@@ -168,6 +171,15 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
                 // 依照id判斷點了哪個項目並做相應事件
                 if(id == R.id.profile){
+                    currentUser = firebaseAuth.getCurrentUser().getUid();
+                    Identify = firestoredb.collection("Users").document(currentUser).collection("identify").get().toString();
+                    contactPeople = (ConstraintLayout) findViewById(R.id.contactPeople);
+                    //照顧者不需顯示緊急聯絡人
+                    if(Identify == "TakeCare"){
+                        contactPeople.setVisibility(View.GONE);
+                    } else{
+                        contactPeople.setVisibility(View.VISIBLE);
+                    }
                     startActivity(new Intent(HomePage.this,MyProfile.class));
                     return true;
                 }else if(id == R.id.mappage){
@@ -176,7 +188,9 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 }else if(id == R.id.setTimeAndLocation){
                     startActivity(new Intent(HomePage.this,scheduleList.class));
                     return true;
-                }else if (id == R.id.signOut){
+                }else if(id == R.id.addFriend){
+                    startActivity(new Intent(HomePage.this, AddFriend.class));
+                } else if (id == R.id.signOut){
                     firebaseAuth = FirebaseAuth.getInstance();
                     firebaseAuth.signOut();
                     Toast.makeText(HomePage.this, "用戶已登出", Toast.LENGTH_SHORT).show();

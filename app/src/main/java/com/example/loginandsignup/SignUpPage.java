@@ -39,10 +39,11 @@ public class SignUpPage extends AppCompatActivity{
     public static final String PASSWORD_KEY = "Password";
     public static final String TAG = "ProfileQuote";
     private EditText eUsernameofSignUpPage,eEmailofSignUpPage,ePasswordofSignUpPage,eConfirmPasswordofSignUpPage;
-    private Button eButtonofSignUpPage;
+    private Button eButtonofTakeCare, eButtonofBeCare;
     private FirebaseAuth firebaseAuth ;
     private FirebaseFirestore firestoredb;
     String UserID;
+    Boolean ProfileComplete = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +58,64 @@ public class SignUpPage extends AppCompatActivity{
         eEmailofSignUpPage = findViewById(R.id.EmailofSignUpPage);
         ePasswordofSignUpPage = findViewById(R.id.PasswordofSignUpPage);
         eConfirmPasswordofSignUpPage = findViewById(R.id.ConfirmPasswordofSignUpPage);
-        eButtonofSignUpPage = findViewById(R.id.ButtonofSignUpPage);
+        eButtonofTakeCare = findViewById(R.id.TakeCareButton);
+        eButtonofBeCare = findViewById(R.id.BeCareButton);
 
-        eButtonofSignUpPage.setOnClickListener(new View.OnClickListener() {
+        eButtonofBeCare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 UserProfile();
+                //將資料寫進firestore
+                UserID = firebaseAuth.getCurrentUser().getUid();
+                DocumentReference documentReference = firestoredb.collection("Users").document(UserID);
+                Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
+                SaveUserProfile.put("identify", "BeCare");
+                //SaveUserProfile.put(PASSWORD_KEY,Password);
+
+                documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Log.d(TAG,"Successful:User Profile was been update");
+                        }else {
+                            Log.w(TAG,"Failed:",task.getException());
+                        }
+                    }
+                });
+
+                if(ProfileComplete){
+                    startActivity(new Intent(SignUpPage.this,setContactPerson.class));
+                }
+            }
+
+        });
+
+        eButtonofTakeCare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserProfile();
+                //將資料寫進firestore
+                UserID = firebaseAuth.getCurrentUser().getUid();
+                DocumentReference documentReference = firestoredb.collection("Users").document(UserID);
+                Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
+                SaveUserProfile.put("identify", "TakeCare");
+                SaveUserProfile.put("ContactPersonOne", "0");
+                SaveUserProfile.put("ContactPersonTwo", "0");
+
+                documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Log.d(TAG,"Successful:User Profile was been update");
+                        }else {
+                            Log.w(TAG,"Failed:",task.getException());
+                        }
+                    }
+                });
+
+                if(ProfileComplete){
+                    startActivity(new Intent(SignUpPage.this,HomePage.class));
+                }
             }
         });
     }
@@ -129,6 +182,7 @@ public class SignUpPage extends AppCompatActivity{
             public void onComplete(@NonNull @NotNull Task<Void> task) {
                 if(task.isSuccessful()){
                     Log.d(TAG,"Successful:User Profile was been update");
+                    ProfileComplete = true;
                 }else {
                     Log.w(TAG,"Failed:",task.getException());
                 }
@@ -137,14 +191,13 @@ public class SignUpPage extends AppCompatActivity{
 
         AuthCredential credential = EmailAuthProvider.getCredential(Email,Password);
 
-
         firebaseAuth.getCurrentUser().linkWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     //註冊完成，導向HomePage
                     Log.d("EmailLink","linkWithCredential:success");
-                    startActivity(new Intent(SignUpPage.this,setContactPerson.class));
+
                 }else {
                     Log.w("EmailLink", "linkWithCredential:failure", task.getException());
                     Toast.makeText(SignUpPage.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
