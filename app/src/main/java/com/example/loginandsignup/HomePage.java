@@ -107,7 +107,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     private DatePickerDialog datePickerDialog;
     private Button addDetail,cancelDetail;
     private FirebaseFirestore firestoredb;
-    private String UserID = firebaseAuth.getCurrentUser().getUid(); //data ID of current on firebase
+    private String UserID; //data ID of current on firebase
     private EditText inputTile,inputDescribe;
     private String date;
     private String ScheduleID;
@@ -171,14 +171,30 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
 
                 // 依照id判斷點了哪個項目並做相應事件
                 if(id == R.id.profile){
-                    Identify = firestoredb.collection("Users").document(UserID).collection("identify").get().toString();
-                    contactPeople = (ConstraintLayout) findViewById(R.id.contactPeople);
-                    //照顧者不需顯示緊急聯絡人
-                    if(Identify == "TakeCare"){
-                        contactPeople.setVisibility(View.GONE);
-                    } else{
-                        contactPeople.setVisibility(View.VISIBLE);
-                    }
+                    contactPeople = findViewById(R.id.contactPeople);
+                    firestoredb.collection("Users").document(UserID)
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if(documentSnapshot.exists()){
+                                        identify = documentSnapshot.getString("identify");
+                                        if(identify == "TakeCare"){
+                                            //照顧者不需顯示緊急聯絡人
+                                            contactPeople.setVisibility(View.GONE);
+                                        }
+                                    }else{
+                                        Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull @NotNull Exception e) {
+                                    Toast.makeText(HomePage.this,"Fail:"
+                                            +e.getMessage(),Toast.LENGTH_LONG).show();
+                                }
+                            });
                     startActivity(new Intent(HomePage.this,MyProfile.class));
                     return true;
                 }else if(id == R.id.mappage){

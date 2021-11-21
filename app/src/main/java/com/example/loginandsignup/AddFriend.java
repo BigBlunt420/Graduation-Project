@@ -49,49 +49,50 @@ public class AddFriend extends AppCompatActivity {
     private void goMain(){
         FirebaseUser currentUser = mAuth.getCurrentUser();
         uid = currentUser.getUid();
-        fabAdd = findViewById(R.id.fabAdd);
-        fabAdd.setOnClickListener(new View.OnClickListener() {
+        Dialog dialog = new Dialog(AddFriend.this);
+        dialog.setTitle("輸入用戶電話號碼");
+        dialog.setContentView(R.layout.dialog_add);
+        dialog.show();
+
+        final EditText edtID = dialog.findViewById(R.id.edtID);
+        Button btnSearch = dialog.findViewById(R.id.btnSearch);
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialog dialog = new Dialog(AddFriend.this);
-                dialog.setTitle("輸入用戶電話號碼");
-                dialog.setContentView(R.layout.dialog_add);
-                dialog.show();
-
-                final EditText edtID = dialog.findViewById(R.id.edtID);
-                Button btnSearch = dialog.findViewById(R.id.btnSearch);
-
-                btnSearch.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String userPhone= edtID.getText().toString();
-                        if(TextUtils.isEmpty(userPhone)){
-                            edtID.setError("欄位不得為空");
-                        } else{
-                            db.collection("Users").whereEqualTo("MyPhoneNumber", userPhone)
-                                    .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                @Override
-                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                    if(queryDocumentSnapshots.isEmpty()){
-                                        edtID.setError("找不到用戶");
-                                    } else{
-                                        for(DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()){
-                                            String uidFriend = documentSnapshot.getId();
-                                            if(uid.equals(uidFriend)){
-                                                //不能加自己好友
-                                                edtID.setError("錯誤號碼");
-                                            }else{
-                                                checkFriendExist(uidFriend);
-                                            }
-                                        }
+                String userPhone= edtID.getText().toString();
+                if(TextUtils.isEmpty(userPhone)){
+                    edtID.setError("欄位不得為空");
+                } else{
+                    db.collection("Users").whereEqualTo("MyPhoneNumber", userPhone)
+                            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            if(queryDocumentSnapshots.isEmpty()){
+                                edtID.setError("找不到用戶");
+                            } else{
+                                for(DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()){
+                                    String uidFriend = documentSnapshot.getId();
+                                    if(uid.equals(uidFriend)){
+                                        //不能加自己好友
+                                        edtID.setError("錯誤號碼");
+                                    }else{
+                                        checkFriendExist(uidFriend);
                                     }
                                 }
-                            });
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         });
+//        fabAdd = findViewById(R.id.fabAdd);
+//        fabAdd.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
     }
 
     private void checkFriendExist(String uidFriend) {
