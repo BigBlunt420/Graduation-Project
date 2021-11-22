@@ -118,6 +118,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     private String setStartTime,setEndTime;
     String choice;
     private String identify;
+    private String friendIdentify;
 
     //variables for getting the times and date of the searched schedule
     private String getDate;
@@ -134,11 +135,13 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     int send_min=0;
     boolean sended_msg=false;
 
-    private String Identify;
     private TextView Text;
     private TextView ContactMobileOne;
     private TextView ContactMobileTwo;
     private Button UpdateContactMobileButton;
+
+    private  String friendId;// id of a friend
+    private  String tId; //temp id
 //    private ConstraintLayout contactPeople;
 
     @Override
@@ -168,6 +171,9 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+
+
         //為NavigationView設置點擊事件
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -346,7 +352,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
-
+        //存取使用者的identify
         firestoredb.collection("Users").document(UserID)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -366,6 +372,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                 +e.getMessage(),Toast.LENGTH_LONG).show();
                     }
                 });
+
 
         //ask for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -392,6 +399,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     MarkerOptions options = new MarkerOptions().position(userLatLong).title("Your location");
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                     mMap.addMarker(options);
+
+                    sentTimeAndLocation(location.getLatitude(),location.getLongitude(),UserID);
 
                     stayInRange(location.getLatitude(), location.getLongitude());
 
@@ -427,6 +436,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
             e.printStackTrace();
         }
 
+
+
         //search view to search locations
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -448,8 +459,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
                     if(identify.equals("BeCare")){
                         //add schedule
-                        int t = 1;
-                        t++;
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable(){
 
@@ -891,6 +900,59 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
      */
     private String makeTimeString(int hour,int minute){
         return hour+":"+minute;
+    }
+
+    private void sentTimeAndLocation(double Latitude, double Longitude, String UserID){
+        //傳送時間與位置
+        Calendar calendar = Calendar.getInstance();
+        firestoredb.collection("Users").document(UserID).collection("Friend")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        for(DocumentSnapshot documentSnapshot:task.getResult()){
+                            friendIdentify = documentSnapshot.getString("identify");
+                            if(friendIdentify.equals("TakeCare")){
+                                friendId = documentSnapshot.getString("id");
+                                firestoredb.collection("Users").document(friendId)
+                                        .collection("Friend")
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                                                for(DocumentSnapshot documentSnapshot:task.getResult()){
+                                                    tId = documentSnapshot.getString("id");
+                                                    if(tId.equals(UserID)){
+                                                        DocumentReference documentReference =
+                                                                firestoredb.collection("Users")
+                                                                        .document(friendId).collection("Friend")
+                                                                        .document(documentSnapshot.getId());
+                                                        Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
+                                                        SaveUserProfile.put("Time", calendar.get(Calendar.MINUTE));
+                                                        SaveUserProfile.put("Latitude",Latitude);
+                                                        SaveUserProfile.put("Latitude",Longitude);
+                                                    }
+                                                }
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull @NotNull Exception e) {
+                                                Toast.makeText(HomePage.this,"Fail:"
+                                                        +e.getMessage(),Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(HomePage.this,"Fail:"
+                                +e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
     //選擇範圍
