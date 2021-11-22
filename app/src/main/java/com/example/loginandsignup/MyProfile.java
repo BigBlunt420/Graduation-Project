@@ -102,6 +102,10 @@ public class MyProfile extends AppCompatActivity {
                 } else if(id == R.id.setTimeAndLocation){
                     startActivity(new Intent(MyProfile.this,scheduleList.class));
                     return true;
+                }
+                else if(id == R.id.addFriend){
+                    startActivity(new Intent(MyProfile.this,AddFriend.class));
+                    return true;
                 }else if (id == R.id.signOut){
                     firebaseAuth = FirebaseAuth.getInstance();
                     firebaseAuth.signOut();

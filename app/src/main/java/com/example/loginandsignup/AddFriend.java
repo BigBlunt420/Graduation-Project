@@ -127,6 +127,9 @@ public class AddFriend extends AppCompatActivity {
                 } else if(id == R.id.setTimeAndLocation){
                     startActivity(new Intent(AddFriend.this,scheduleList.class));
                     return true;
+                }else if(id == R.id.addFriend){
+                    startActivity(new Intent(AddFriend.this,AddFriend.class));
+                    return true;
                 }else if (id == R.id.signOut){
                     mAuth = FirebaseAuth.getInstance();
                     mAuth.signOut();

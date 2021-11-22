@@ -89,7 +89,10 @@ public class scheduleList extends AppCompatActivity {
                 } else if(id == R.id.setTimeAndLocation){
                     startActivity(new Intent(scheduleList.this,scheduleList.class));
                     return true;
-                }else if (id == R.id.signOut){
+                }else if(id == R.id.addFriend){
+                    startActivity(new Intent(scheduleList.this,AddFriend.class));
+                    return true;
+                } else if (id == R.id.signOut){
                     firebaseAuth = FirebaseAuth.getInstance();
                     firebaseAuth.signOut();
                     Toast.makeText(scheduleList.this, "用戶已登出", Toast.LENGTH_SHORT).show();
