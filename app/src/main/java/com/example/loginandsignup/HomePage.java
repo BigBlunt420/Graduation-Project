@@ -902,6 +902,13 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         return hour+":"+minute;
     }
 
+    /**
+     * sent the location and current time on user's phone
+     * to friends who's identity is TakeCare
+     * @param Latitude the latitude of current user
+     * @param Longitude the longitude of current user
+     * @param UserID the data ID of current user
+     */
     private void sentTimeAndLocation(double Latitude, double Longitude, String UserID){
         //傳送時間與位置
         Calendar calendar = Calendar.getInstance();
