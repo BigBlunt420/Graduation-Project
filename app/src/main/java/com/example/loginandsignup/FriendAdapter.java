@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class FriendAdapter extends RecyclerView.Adapter<ViewHolder> implements AdapterView.OnItemSelectedListener {
+public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements AdapterView.OnItemSelectedListener {
     FriendList friendList;
     List<fModel> modelList;
     Context context;
@@ -45,13 +45,13 @@ public class FriendAdapter extends RecyclerView.Adapter<ViewHolder> implements A
     @NonNull
     @NotNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType){
+    public fViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType){
         //inflate layout
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_users_display_layout,parent,false);
 
         //處理 item click 事件
-        ViewHolder viewHolder = new ViewHolder(itemView);
-        viewHolder.setOnClickListener(new ViewHolder.ClickListener() {
+        fViewHolder viewHolder = new fViewHolder(itemView);
+        viewHolder.setOnClickListener(new fViewHolder.ClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 //click
@@ -97,6 +97,8 @@ public class FriendAdapter extends RecyclerView.Adapter<ViewHolder> implements A
     }
 
 
+
+
     private void sendMsg() {
 
     }
@@ -124,12 +126,10 @@ public class FriendAdapter extends RecyclerView.Adapter<ViewHolder> implements A
     }
 
     @Override
-    public void onBindViewHolder(@NonNull @NotNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull @NotNull fViewHolder holder, int position) {
         //綁畫面和資料
-
-        holder.Title.setText(modelList.get(position).getName());
-        holder.startTime.setText(modelList.get(position).getPhone());
-
+        holder.Name.setText(modelList.get(position).getName());
+        holder.Phone.setText(modelList.get(position).getPhone());
     }
 
     @Override

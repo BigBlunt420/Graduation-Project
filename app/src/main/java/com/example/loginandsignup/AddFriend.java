@@ -62,6 +62,10 @@ public class AddFriend extends AppCompatActivity {
     private String schFriend;
     private String FriendID_1;
     private String FriendID_2;
+    private String userName;
+    private String userPhone;
+    private String fName;
+    private String fPhone;
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -296,6 +300,7 @@ public class AddFriend extends AppCompatActivity {
                                                         //按下是之後要做的事
                                                         dialog.dismiss();
                                                         checkFriendExist(uidFriend);
+                                                        startActivity(new Intent(AddFriend.this,AddFriend.class));
                                                     }
                                                 });
 
@@ -303,6 +308,7 @@ public class AddFriend extends AppCompatActivity {
                                                     public void onClick(DialogInterface dialog, int id) {
                                                         //按下否之後要做的事
                                                         dialog.dismiss();
+                                                        startActivity(new Intent(AddFriend.this,AddFriend.class));
                                                     }
                                                 });
 
@@ -318,7 +324,6 @@ public class AddFriend extends AppCompatActivity {
                 }
             }
         });
-        startActivity(new Intent(AddFriend.this,AddFriend.class));
     }
 
 //    private void checkFriendExist(String uidFriend){
@@ -337,9 +342,29 @@ public class AddFriend extends AppCompatActivity {
     private void checkFriendExist(String uidFriend) {
         FriendID_1 = UUID.randomUUID().toString();
         FriendID_2 = UUID.randomUUID().toString();
+        //current User's friend data
+        db.collection("Users").document(uidFriend)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            fName = documentSnapshot.getString("Username");
+                            fPhone = documentSnapshot.getString("MyPhoneNumber");
+                            Toast.makeText(AddFriend.this, fName, Toast.LENGTH_LONG).show();
+                            Toast.makeText(AddFriend.this, fPhone, Toast.LENGTH_LONG).show();
+
+                        } else {
+                            Toast.makeText(AddFriend.this, "此用戶不存在!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+        });
         DocumentReference documentReference = db.collection("Users").document(uid).collection("Friend").document(FriendID_1);
         Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
         SaveUserProfile.put("id",uidFriend);
+
+        SaveUserProfile.put("friendName", fName);
+        SaveUserProfile.put("friendPhone", fPhone);
 
         documentReference.set(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -352,9 +377,27 @@ public class AddFriend extends AppCompatActivity {
             }
         });
 
+        //friend's friend data
+        db.collection("Users").document(uid)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            userName = documentSnapshot.getString("Username");
+                            userPhone = documentSnapshot.getString("MyPhoneNumber");
+                        } else {
+                            Toast.makeText(AddFriend.this, "此用戶不存在!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+        });
+
         DocumentReference documentReference_2 = db.collection("Users").document(uidFriend).collection("Friend").document(FriendID_2);
         Map<String,Object> SaveFriendProfile = new HashMap<String, Object>();
         SaveFriendProfile.put("id",uid);
+
+        SaveUserProfile.put("friendName", userName);
+        SaveUserProfile.put("friendPhone", userPhone);
 
         documentReference_2.set(SaveFriendProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
