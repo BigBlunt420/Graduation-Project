@@ -400,9 +400,13 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                     mMap.addMarker(options);
 
-                    sentTimeAndLocation(location.getLatitude(),location.getLongitude(),UserID);
-
-                    stayInRange(location.getLatitude(), location.getLongitude());
+                    //if current user is identified as BeCare
+                    if(identify.equals("BeCare")){
+                        //send time and location to friend who's identify is "TakeCare"
+                        sentTimeAndLocation(location.getLatitude(),location.getLongitude(),UserID);
+                        //detect user's range
+                        stayInRange(location.getLatitude(), location.getLongitude());
+                    }
 
                     if(addresLatLng != null){
                         mMap.addMarker(new MarkerOptions()
