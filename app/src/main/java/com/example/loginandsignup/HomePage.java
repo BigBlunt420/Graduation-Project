@@ -117,8 +117,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     private String ScheduleID;
     private String setStartTime,setEndTime;
     String choice;
-    private String identify;
-    private String friendIdentify;
+    private String identify = "";
+    private String friendIdentify = "";
 
     //variables for getting the times and date of the searched schedule
     private String getDate;
@@ -911,7 +911,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     @Override
                     public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
-                            friendIdentify = documentSnapshot.getString("identify");
+                            friendIdentify = documentSnapshot.getString("friendIdentify");
                             if(friendIdentify.equals("TakeCare")){
                                 friendId = documentSnapshot.getString("id");
                                 firestoredb.collection("Users").document(friendId)
@@ -930,7 +930,17 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                                         Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
                                                         SaveUserProfile.put("Time", calendar.get(Calendar.MINUTE));
                                                         SaveUserProfile.put("Latitude",Latitude);
-                                                        SaveUserProfile.put("Latitude",Longitude);
+                                                        SaveUserProfile.put("Longitude",Longitude);
+                                                        documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                                                if(task.isSuccessful()){
+                                                                    Log.d("SaveUserProfile","Successful:User Profile is created for " + friendId);
+                                                                }else {
+                                                                    Log.w("SaveUserProfile","Fail:",task.getException());
+                                                                }
+                                                            }
+                                                        });
                                                     }
                                                 }
                                             }

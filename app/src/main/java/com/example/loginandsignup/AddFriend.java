@@ -339,7 +339,7 @@ public class AddFriend extends AppCompatActivity {
                         if (documentSnapshot.exists()) {
                             userName = documentSnapshot.getString("Username");
                             userPhone = documentSnapshot.getString("MyPhoneNumber");
-                            userIdentify = documentSnapshot.getString("Identify");
+                            userIdentify = documentSnapshot.getString("identify");
 
                             DocumentReference documentReference_2 = db.collection("Users").document(uidFriend).collection("Friend").document(FriendID_2);
                             Map<String,Object> SaveFriendProfile = new HashMap<String, Object>();
