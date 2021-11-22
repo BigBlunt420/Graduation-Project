@@ -62,7 +62,7 @@ public class AddFriend extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseFirestore db;
-    private FloatingActionButton fabAdd;
+    private FloatingActionButton addNewFriend;
     private String uid;
     private SearchView searchView;
     private String schFriend;
@@ -84,7 +84,7 @@ public class AddFriend extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     FriendAdapter adapter;
     ProgressDialog progressDialog;
-    FloatingActionButton addNewFriend;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +94,8 @@ public class AddFriend extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+
+        addNewFriend = findViewById(R.id.addNewFriend);
 
         /*---------navigation view and tool bar-------------*/
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -153,13 +155,9 @@ public class AddFriend extends AppCompatActivity {
         addNewFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                goMain();
             }
         });
-
-        goMain();
-
-
     }
 
 
@@ -219,7 +217,6 @@ public class AddFriend extends AppCompatActivity {
         dialog.setContentView(R.layout.dialog_add);
         dialog.show();
 
-//        final EditText edtID = dialog.findViewById(R.id.edtID);
         EditText edtID = dialog.findViewById(R.id.edtID);
 
         Button btnSearch = dialog.findViewById(R.id.sch_friend);
