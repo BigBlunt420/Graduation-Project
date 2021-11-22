@@ -354,28 +354,30 @@ public class AddFriend extends AppCompatActivity {
                             Toast.makeText(AddFriend.this, fName, Toast.LENGTH_LONG).show();
                             Toast.makeText(AddFriend.this, fPhone, Toast.LENGTH_LONG).show();
 
+                            DocumentReference documentReference = db.collection("Users").document(uid).collection("Friend").document(FriendID_1);
+                            Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
+                            SaveUserProfile.put("friendName", fName);
+                            SaveUserProfile.put("id",uidFriend);
+                            SaveUserProfile.put("friendPhone", fPhone);
+
+
+                            documentReference.set(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Log.d("SaveUserProfile","Successful:User Profile is created for " + uid);
+                                    }else {
+                                        Log.w("SaveUserProfile","Fail:",task.getException());
+                                    }
+                                }
+                            });
+
                         } else {
                             Toast.makeText(AddFriend.this, "此用戶不存在!", Toast.LENGTH_LONG).show();
                         }
                     }
         });
-        DocumentReference documentReference = db.collection("Users").document(uid).collection("Friend").document(FriendID_1);
-        Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
-        SaveUserProfile.put("id",uidFriend);
 
-        SaveUserProfile.put("friendName", fName);
-        SaveUserProfile.put("friendPhone", fPhone);
-
-        documentReference.set(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull @NotNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    Log.d("SaveUserProfile","Successful:User Profile is created for " + uid);
-                }else {
-                    Log.w("SaveUserProfile","Fail:",task.getException());
-                }
-            }
-        });
 
         //friend's friend data
         db.collection("Users").document(uid)
@@ -386,29 +388,31 @@ public class AddFriend extends AppCompatActivity {
                         if (documentSnapshot.exists()) {
                             userName = documentSnapshot.getString("Username");
                             userPhone = documentSnapshot.getString("MyPhoneNumber");
+
+
+                            DocumentReference documentReference_2 = db.collection("Users").document(uidFriend).collection("Friend").document(FriendID_2);
+                            Map<String,Object> SaveFriendProfile = new HashMap<String, Object>();
+                            SaveFriendProfile.put("id",uid);
+
+                            SaveFriendProfile.put("friendName", userName);
+                            SaveFriendProfile.put("friendPhone", userPhone);
+
+                            documentReference_2.set(SaveFriendProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Log.d("SaveFriendProfile","Successful:User Profile is created for " + uid);
+                                    }else {
+                                        Log.w("SaveFriendProfile","Fail:",task.getException());
+                                    }
+                                }
+                            });
                         } else {
                             Toast.makeText(AddFriend.this, "此用戶不存在!", Toast.LENGTH_LONG).show();
                         }
                     }
         });
 
-        DocumentReference documentReference_2 = db.collection("Users").document(uidFriend).collection("Friend").document(FriendID_2);
-        Map<String,Object> SaveFriendProfile = new HashMap<String, Object>();
-        SaveFriendProfile.put("id",uid);
-
-        SaveUserProfile.put("friendName", userName);
-        SaveUserProfile.put("friendPhone", userPhone);
-
-        documentReference_2.set(SaveFriendProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull @NotNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    Log.d("SaveFriendProfile","Successful:User Profile is created for " + uid);
-                }else {
-                    Log.w("SaveFriendProfile","Fail:",task.getException());
-                }
-            }
-        });
     }
 //        db.collection("user").document(uid).collection("friend").document().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 //            @Override
