@@ -89,12 +89,13 @@ public class AddFriend extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friend_list);
+        setContentView(R.layout.activity_add_friend);
         searchView = findViewById(R.id.edtID);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        recyclerView = findViewById(R.id.recycle_view);
         addNewFriend = findViewById(R.id.addNewFriend);
 
         /*---------navigation view and tool bar-------------*/
