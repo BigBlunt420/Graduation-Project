@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements AdapterView.OnItemSelectedListener {
-    FriendList friendList;
+    AddFriend friendList;
     List<fModel> modelList;
     Context context;
     FirebaseFirestore firestoredb;
@@ -37,7 +37,7 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
     String dbid, dbName, dbPhone;
     String choice;
 
-    public FriendAdapter(FriendList friendList, List<fModel> modelList) {
+    public FriendAdapter(AddFriend friendList, List<fModel> modelList) {
         this.friendList = friendList;
         this.modelList = modelList;
     }

@@ -7,8 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
@@ -29,6 +32,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -47,7 +51,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -64,21 +70,27 @@ public class AddFriend extends AppCompatActivity {
     private String FriendID_2;
     private String userName;
     private String userPhone;
+    private String userIdentify;
     private String fName;
     private String fPhone;
+    private String fIdentify;
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
 
-    public static final String TAG = "ProfileQuote";
+    List<fModel> modelList = new ArrayList<>();
+    RecyclerView recyclerView;
+    RecyclerView.LayoutManager layoutManager;
+    FriendAdapter adapter;
+    ProgressDialog progressDialog;
+    FloatingActionButton addNewFriend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_friend);
+        setContentView(R.layout.activity_friend_list);
         searchView = findViewById(R.id.edtID);
-//        searchView = findViewById(R.id.sch_friend);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -127,80 +139,27 @@ public class AddFriend extends AppCompatActivity {
         });
         /*---------navigation view and tool bar-------------*/
 
+        progressDialog = new ProgressDialog(AddFriend.this);
+
+        recyclerView.setHasFixedSize(false);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        showFriendList();
+
+        addNewFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         goMain();
 
 
     }
 
-//    private void Find(){
-//        //search view to search locations
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                schFriend = searchView.getQuery().toString();
-//                if(schFriend != null || !schFriend.equals("")){
-////                    geocoder = new Geocoder(HomePage.this);
-////                    try{
-////                        addressList = geocoder.getFromLocationName(shLocation, 1);
-////                    }catch (IOException e){
-////                        e.printStackTrace();
-////                    }
-////                    Address address = addressList.get(0);
-////                    addresLatLng = new LatLng(address.getLatitude(), address.getLongitude());
-////                    mMap.addMarker(new MarkerOptions()
-////                            .position(addresLatLng).title("Searched location"));
-////                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(addresLatLng,zoomLevel));
-////
-////                    if(identify == "BeCare"){
-////                        //add schedule
-////                    }
-//
-//
-//                    Handler handler = new Handler();
-//                    handler.postDelayed(new Runnable(){
-//
-//                        @Override
-//                        public void run() {
-//
-//                            //過四秒後要做的事情
-//                            AlertDialog.Builder builder = new AlertDialog.Builder(AddFriend.this);
-//
-//                            builder.setMessage("是否加入好友？");
-//                            //點選空白處不會返回
-//                            builder.setCancelable(false);
-//
-//                            builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
-//                                public void onClick(DialogInterface dialog, int id) {
-//                                    //按下是之後要做的事
-//                                    dialog.dismiss();
-//
-//                                    addFriend(schFriend);
-//                                }
-//                            });
-//
-//                            builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
-//                                public void onClick(DialogInterface dialog, int id) {
-//                                    //按下否之後要做的事
-//                                    dialog.dismiss();
-//                                }
-//                            });
-//
-//                            AlertDialog alert = builder.create();
-//                            alert.show();
-//
-//                        }}, 1000);
-//
-//                }
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return false;
-//            }
-//        });
-//    }
-//
+
 //    private void addFriend(String schFriend) {
 ////        FriendID_1 = UUID.randomUUID().toString();
 ////        FriendID_2 = UUID.randomUUID().toString();
@@ -212,41 +171,43 @@ public class AddFriend extends AppCompatActivity {
 ////        SaveDetailSchedule_2.put("friend", uid);
 //    }
 
-//    private void sendFriendRequest(String schFriend) {
-//
-//
-//
-//        db.collection("Users").document(uid).collection("Friend").document().set(schFriend).addOnCompleteListener(new OnCompleteListener<Void>() {
-//            @Override
-//            public void onComplete(@NonNull @NotNull Task<Void> task) {
-//                if(task.isSuccessful()){
-//                    Log.d("schFriend","Successful:Friend Request is sent");
-//                }else {
-//                    Log.w("schFriend","Fail:",task.getException());
-//                }
-//            }
-//        });
-//
-////                get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-////            @Override
-////            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-////                if(queryDocumentSnapshots.isEmpty()){
-////                    edtID.setError("找不到用戶");
-////                } else{
-////                    for(DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()){
-////                        String uidFriend = documentSnapshot.getId();
-////                        if(uid.equals(uidFriend)){
-////                            //不能加自己好友
-////                            edtID.setError("錯誤號碼");
-////                        }else{
-////                            checkFriendExist(uidFriend);
-////                        }
-////                    }
-////                }
-////            }
-////        });
-//    }
-//
+
+    public void showFriendList() {
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
+        progressDialog.setTitle("資料載入中...");
+        progressDialog.show();
+        uid = mAuth.getCurrentUser().getUid();
+        db.collection("Users").document(uid).collection("Friend")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        modelList.clear();
+                        progressDialog.dismiss();
+                        //顯示資料
+                        for(DocumentSnapshot documentSnapshot:task.getResult()){
+                            fModel model = new fModel(
+                                    documentSnapshot.getString("id"),
+                                    documentSnapshot.getString("Name"),
+                                    documentSnapshot.getString("PhoneNumber"));
+                            modelList.add(model);
+                        }
+                        //連接
+                        adapter = new FriendAdapter(AddFriend.this,modelList);
+                        recyclerView.setAdapter(adapter);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(AddFriend.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
     private void goMain(){
         FirebaseUser currentUser = mAuth.getCurrentUser();
         uid = currentUser.getUid();
@@ -326,19 +287,6 @@ public class AddFriend extends AppCompatActivity {
         });
     }
 
-//    private void checkFriendExist(String uidFriend){
-//        addFriend(uidFriend);
-////        db.collection("Users").document(uid).collection("Friend").document().set(schFriend).addOnCompleteListener(new OnCompleteListener<Void>() {
-////            @Override
-////            public void onComplete(@NonNull @NotNull Task<Void> task) {
-////                if(task.isSuccessful()){
-////                    Log.d("schFriend","Successful:Friend Request is sent");
-////                }else {
-////                    Log.w("schFriend","Fail:",task.getException());
-////                }
-////            }
-////        });
-//    }
     private void checkFriendExist(String uidFriend) {
         FriendID_1 = UUID.randomUUID().toString();
         FriendID_2 = UUID.randomUUID().toString();
@@ -351,14 +299,16 @@ public class AddFriend extends AppCompatActivity {
                         if (documentSnapshot.exists()) {
                             fName = documentSnapshot.getString("Username");
                             fPhone = documentSnapshot.getString("MyPhoneNumber");
-                            Toast.makeText(AddFriend.this, fName, Toast.LENGTH_LONG).show();
-                            Toast.makeText(AddFriend.this, fPhone, Toast.LENGTH_LONG).show();
+                            fIdentify = documentSnapshot.getString("identify");
+//                            Toast.makeText(AddFriend.this, fName, Toast.LENGTH_LONG).show();
+//                            Toast.makeText(AddFriend.this, fPhone, Toast.LENGTH_LONG).show();
 
                             DocumentReference documentReference = db.collection("Users").document(uid).collection("Friend").document(FriendID_1);
                             Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
                             SaveUserProfile.put("friendName", fName);
                             SaveUserProfile.put("id",uidFriend);
                             SaveUserProfile.put("friendPhone", fPhone);
+                            SaveUserProfile.put("friendIdentify", fIdentify);
 
 
                             documentReference.set(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -388,14 +338,14 @@ public class AddFriend extends AppCompatActivity {
                         if (documentSnapshot.exists()) {
                             userName = documentSnapshot.getString("Username");
                             userPhone = documentSnapshot.getString("MyPhoneNumber");
-
+                            userIdentify = documentSnapshot.getString("Identify");
 
                             DocumentReference documentReference_2 = db.collection("Users").document(uidFriend).collection("Friend").document(FriendID_2);
                             Map<String,Object> SaveFriendProfile = new HashMap<String, Object>();
                             SaveFriendProfile.put("id",uid);
-
                             SaveFriendProfile.put("friendName", userName);
                             SaveFriendProfile.put("friendPhone", userPhone);
+                            SaveFriendProfile.put("friendIdentify", userIdentify);
 
                             documentReference_2.set(SaveFriendProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -414,27 +364,5 @@ public class AddFriend extends AppCompatActivity {
         });
 
     }
-//        db.collection("user").document(uid).collection("friend").document().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull @NotNull Task<DocumentSnapshot> task) {
-//                if(task.isSuccessful()){
-//                    DocumentSnapshot documentSnapshot = task.getResult();
-//                    if(!documentSnapshot.exists()){
-//
-//                        });
-//
-//                        documentReference_2.update(SaveFriendProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                            @Override
-//                            public void onComplete(@NonNull @NotNull Task<Void> task) {
-//                                if(task.isSuccessful()){
-//                                    Log.d(TAG,"Successful:Friend Profile was been update");
-//                                }else {
-//                                    Log.w(TAG,"Failed:",task.getException());
-//                                }
-//                            }
-//                        });
-//                    }
-//                }
-//            }
 
 }
