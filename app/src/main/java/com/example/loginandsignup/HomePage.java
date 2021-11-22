@@ -657,7 +657,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                 SaveDetailSchedule.put("EndTime",setEndTime);
                 SaveDetailSchedule.put("Latitude",Double.toString(Latitude));
                 SaveDetailSchedule.put("Longitude",Double.toString(Longitude));
-                SaveDetailSchedule.put("Parameter",choice);
+                SaveDetailSchedule.put("Range",choice);
 
                 documentReference.set(SaveDetailSchedule).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -701,7 +701,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                             dbContactOne = documentSnapshot.getString("ContactPersonOne");
                             dbContactTwo = documentSnapshot.getString("ContactPersonTwo");
                             target_name  = documentSnapshot.getString("Username");
-                            target_phone = documentSnapshot.getString("MyPhonenumber");
+                            target_phone = documentSnapshot.getString("MyPhoneNumber");
                         }else{
                             Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
                         }
@@ -727,6 +727,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                         int endHr = 0;
                         int endMin = 0;
                         double rLat ;
+                        double range;
                         double rLong;
                         final int R = 6371; // Radius of the earth
                         double latDistance;
@@ -766,6 +767,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                     && day == calendar.get(Calendar.DAY_OF_MONTH)){
                                 getStTime = documentSnapshot.getString("StartTime");
                                 getEndTime = documentSnapshot.getString("EndTime");
+                                range = Double.valueOf(
+                                        documentSnapshot.getString("Latitude"));
 
 
                                 for(int j = 0 ; j < getStTime.length() ; j++){
@@ -810,7 +813,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
 
                                         if(!sended_msg && max_msgsize<=5){
-                                            if(distance>200) {
+                                            if(distance>range) {
                                                 max_msgsize++;
                                                 sendMassage(max_msgsize, Latitude, Longitude
                                                         , target_name, dbContactOne, dbContactTwo);
@@ -859,12 +862,12 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                              String target_name,String dbContactOne, String dbContactTwo){
         SmsManager smsManager = SmsManager.getDefault();
         smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+
-                ".\n目前" +target_name+"已偏離一定距離，請盡快與其聯繫。"
-                + "\n如要關閉提醒請刪除此行程。\n使用者位置：緯度"+latitude+"經度"+longitude
+                        ".\n目前" +target_name+"已偏離一定距離，請盡快與其聯繫。"
+                        + "\n如要關閉提醒請刪除此行程。\n使用者位置：緯度"+latitude+"經度"+longitude
                 ,null,null);
         smsManager.sendTextMessage(dbContactTwo,null,"目前傳送簡訊數量: "+max_msgsize+
-                ".\n目前"+target_name+"已偏離一定距離，請盡快與其聯繫。"+
-                "\n如要關閉提醒請刪除此行程。\n使用者位置：緯度"+latitude+"經度"+longitude
+                        ".\n目前"+target_name+"已偏離一定距離，請盡快與其聯繫。"+
+                        "\n如要關閉提醒請刪除此行程。\n使用者位置：緯度"+latitude+"經度"+longitude
                 ,null,null);
     }
 
