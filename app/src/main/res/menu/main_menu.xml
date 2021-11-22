@@ -11,6 +11,9 @@
             android:id="@+id/setTimeAndLocation"
             android:title="所有行程" />
         <item
+            android:id="@+id/FriendList"
+            android:title="好友列表" />
+        <item
             android:id="@+id/addFriend"
             android:title="加好友" />
         <item
