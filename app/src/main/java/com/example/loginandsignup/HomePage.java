@@ -347,25 +347,25 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         firebaseAuth = FirebaseAuth.getInstance();
 
 
-//        firestoredb.collection("Users").document(UserID)
-//                .get()
-//                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                        if(documentSnapshot.exists()){
-//                            identify = documentSnapshot.getString("identify");
-//                        }else{
-//                            Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
-//                        }
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull @NotNull Exception e) {
-//                        Toast.makeText(HomePage.this,"Fail:"
-//                                +e.getMessage(),Toast.LENGTH_LONG).show();
-//                    }
-//                });
+        firestoredb.collection("Users").document(UserID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.exists()){
+                            identify = documentSnapshot.getString("identify");
+                        }else{
+                            Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(HomePage.this,"Fail:"
+                                +e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
 
         //ask for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -446,44 +446,47 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                             .position(addresLatLng).title("Searched location"));
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(addresLatLng,zoomLevel));
 
-                    if(identify == "BeCare"){
+                    if(identify.equals("BeCare")){
                         //add schedule
+                        int t = 1;
+                        t++;
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable(){
+
+                            @Override
+                            public void run() {
+
+                                //過四秒後要做的事情
+                                AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+
+
+                                builder.setMessage("是否要將此位置 "+shLocation+" 加入行程中？");
+                                //點選空白處不會返回
+                                builder.setCancelable(false);
+
+                                builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //按下是之後要做的事
+                                        dialog.dismiss();
+                                        setDetailSchedule(address.getLatitude(), address.getLongitude());
+                                    }
+                                });
+
+                                builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //按下否之後要做的事
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                                AlertDialog alert = builder.create();
+                                alert.show();
+
+                            }}, 4000);
                     }
 
 
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable(){
 
-                        @Override
-                        public void run() {
-
-                            //過四秒後要做的事情
-                            AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
-
-
-                            builder.setMessage("是否要將此位置 "+shLocation+" 加入行程中？");
-                            //點選空白處不會返回
-                            builder.setCancelable(false);
-
-                            builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    //按下是之後要做的事
-                                    dialog.dismiss();
-                                    setDetailSchedule(address.getLatitude(), address.getLongitude());
-                                }
-                            });
-
-                            builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    //按下否之後要做的事
-                                    dialog.dismiss();
-                                }
-                            });
-
-                            AlertDialog alert = builder.create();
-                            alert.show();
-
-                        }}, 4000);
 
                 }
                 return false;
