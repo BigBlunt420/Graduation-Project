@@ -12,18 +12,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -33,33 +32,38 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class scheduleList extends AppCompatActivity {
+class Friend {
+    String id,name;
 
-    List<Model> modelList = new ArrayList<>();
-    RecyclerView recyclerView;
-    RecyclerView.LayoutManager layoutManager;
+    Friend(String id,String name) {
+        this.name = name;
+        this.id = id;
+    }
+}
 
-    FirebaseFirestore firestoredb;
-    FirebaseAuth firebaseAuth;
-    String UserID;
-    UserAdapter adapter;
-    ProgressDialog progressDialog;
-    FloatingActionButton addNewSchedule;
-    String fffId ="a";
-
-
+public class FriendListForSchedule extends AppCompatActivity {
+    /*--navigation drawer menu--*/
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
+    FirebaseFirestore firestoredb;
+    FirebaseAuth firebaseAuth;
+    /*--navigation drawer menu--*/
+
+    RecyclerView recyclerView;
+    RecyclerView.LayoutManager layoutManager;
+    ProgressDialog progressDialog;
+    FloatingActionButton refresh;
+    String UserID;
+    FriendScheduleAdapter adapter;
+
+    private List<Friend> Friend= new ArrayList<>();;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_schedule_list);
-
-        recyclerView = findViewById(R.id.recycle_view);
-        addNewSchedule = findViewById(R.id.addNewSchedule);
-
+        setContentView(R.layout.activity_friend_list_for_schedule);
+        /*--navigation drawer menu--*/
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.main_toolbar);
@@ -82,86 +86,82 @@ public class scheduleList extends AppCompatActivity {
 
                 // 依照id判斷點了哪個項目並做相應事件
                 if(id == R.id.profile){
-                    startActivity(new Intent(scheduleList.this,MyProfile.class));
+                    startActivity(new Intent(FriendListForSchedule.this,MyProfile.class));
                     return true;
                 }else if(id == R.id.mappage){
-                    startActivity(new Intent(scheduleList.this,HomePage.class));
+                    startActivity(new Intent(FriendListForSchedule.this,HomePage.class));
                     return true;
                 } else if(id == R.id.setTimeAndLocation){
-                    startActivity(new Intent(scheduleList.this,FriendSchedule.class));
+                    startActivity(new Intent(FriendListForSchedule.this,FriendSchedule.class));
                     return true;
                 }else if(id == R.id.addFriend){
-                    startActivity(new Intent(scheduleList.this,AddFriend.class));
+                    startActivity(new Intent(FriendListForSchedule.this,AddFriend.class));
                     return true;
                 } else if (id == R.id.signOut){
                     firebaseAuth = FirebaseAuth.getInstance();
                     firebaseAuth.signOut();
-                    Toast.makeText(scheduleList.this, "用戶已登出", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(scheduleList.this,LoginPage.class));
+                    Toast.makeText(FriendListForSchedule.this, "用戶已登出", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(FriendListForSchedule.this,LoginPage.class));
                     return true;
                 }
                 return false;
             }
         });
+        /*--navigation drawer menu--*/
+
+
 
         firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
-        progressDialog = new ProgressDialog(scheduleList.this);
+        progressDialog = new ProgressDialog(FriendListForSchedule.this);
 
+        recyclerView = findViewById(R.id.recycle_view);
         recyclerView.setHasFixedSize(false);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        refresh = findViewById(R.id.refresh);
 
-        showScheduleList();
+        showFriendList();
 
-        addNewSchedule.setOnClickListener(new View.OnClickListener() {
+        refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(scheduleList.this,HomePage.class));
+                startActivity(new Intent(FriendListForSchedule.this,FriendListForSchedule.class));
             }
         });
     }
 
-    public void showScheduleList() {
+    private void showFriendList() {
         firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
         progressDialog.setTitle("資料載入中...");
         progressDialog.show();
         UserID = firebaseAuth.getCurrentUser().getUid();
-        firestoredb.collection("Users").document(UserID).collection("Schedule")
+
+        firestoredb.collection("Users").document(UserID).collection("Friend")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
-                        modelList.clear();
                         progressDialog.dismiss();
+                        Friend.clear();
                         //顯示資料
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
-                            Model model = new Model(
-                                    documentSnapshot.getString("id"),
-                                    documentSnapshot.getString("Title"),
-                                    documentSnapshot.getString("Describe"),
-                                    documentSnapshot.getString("StartTime"),
-                                    documentSnapshot.getString("EndTime"),
-                                    documentSnapshot.getString("Location"),
-                                    documentSnapshot.getString("Date"));
-                            modelList.add(model);
+                            String id = documentSnapshot.getString("id");
+                            String ffName = documentSnapshot.getString("friendName");
+                            Friend.add(new Friend(id,ffName));
                         }
-                        //連接
-                        adapter = new UserAdapter(scheduleList.this,modelList);
+                        adapter = new FriendScheduleAdapter(FriendListForSchedule.this,Friend);
                         recyclerView.setAdapter(adapter);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull @NotNull Exception e) {
-                        progressDialog.dismiss();
-                        Toast.makeText(scheduleList.this,e.getMessage(),Toast.LENGTH_LONG).show();
+
                     }
                 });
     }
-
-
 }

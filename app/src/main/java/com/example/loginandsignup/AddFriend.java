@@ -128,7 +128,7 @@ public class AddFriend extends AppCompatActivity {
                     startActivity(new Intent(AddFriend.this,HomePage.class));
                     return true;
                 } else if(id == R.id.setTimeAndLocation){
-                    startActivity(new Intent(AddFriend.this,scheduleList.class));
+                    startActivity(new Intent(AddFriend.this,FriendSchedule.class));
                     return true;
                 }else if(id == R.id.addFriend){
                     startActivity(new Intent(AddFriend.this,AddFriend.class));

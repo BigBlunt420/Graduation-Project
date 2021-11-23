@@ -103,7 +103,7 @@ public class MyProfile extends AppCompatActivity {
                     startActivity(new Intent(MyProfile.this,HomePage.class));
                     return true;
                 } else if(id == R.id.setTimeAndLocation){
-                    startActivity(new Intent(MyProfile.this,scheduleList.class));
+                    startActivity(new Intent(MyProfile.this,FriendSchedule.class));
                     return true;
                 }
                 else if(id == R.id.addFriend){

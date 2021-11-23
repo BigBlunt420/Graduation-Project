@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -23,7 +22,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -33,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class scheduleList extends AppCompatActivity {
+public class FriendFriendSchedule extends AppCompatActivity {
 
     List<Model> modelList = new ArrayList<>();
     RecyclerView recyclerView;
@@ -44,21 +42,20 @@ public class scheduleList extends AppCompatActivity {
     String UserID;
     UserAdapter adapter;
     ProgressDialog progressDialog;
-    FloatingActionButton addNewSchedule;
-    String fffId ="a";
+    FloatingActionButton refresh;
+    String fffId;
 
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_schedule_list);
+        setContentView(R.layout.activity_friend_friend_schedule);
 
         recyclerView = findViewById(R.id.recycle_view);
-        addNewSchedule = findViewById(R.id.addNewSchedule);
+        refresh = findViewById(R.id.refresh);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -82,22 +79,22 @@ public class scheduleList extends AppCompatActivity {
 
                 // 依照id判斷點了哪個項目並做相應事件
                 if(id == R.id.profile){
-                    startActivity(new Intent(scheduleList.this,MyProfile.class));
+                    startActivity(new Intent(FriendFriendSchedule.this,MyProfile.class));
                     return true;
                 }else if(id == R.id.mappage){
-                    startActivity(new Intent(scheduleList.this,HomePage.class));
+                    startActivity(new Intent(FriendFriendSchedule.this,HomePage.class));
                     return true;
                 } else if(id == R.id.setTimeAndLocation){
-                    startActivity(new Intent(scheduleList.this,FriendSchedule.class));
+                    startActivity(new Intent(FriendFriendSchedule.this,FriendSchedule.class));
                     return true;
                 }else if(id == R.id.addFriend){
-                    startActivity(new Intent(scheduleList.this,AddFriend.class));
+                    startActivity(new Intent(FriendFriendSchedule.this,AddFriend.class));
                     return true;
                 } else if (id == R.id.signOut){
                     firebaseAuth = FirebaseAuth.getInstance();
                     firebaseAuth.signOut();
-                    Toast.makeText(scheduleList.this, "用戶已登出", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(scheduleList.this,LoginPage.class));
+                    Toast.makeText(FriendFriendSchedule.this, "用戶已登出", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(FriendFriendSchedule.this,LoginPage.class));
                     return true;
                 }
                 return false;
@@ -107,7 +104,7 @@ public class scheduleList extends AppCompatActivity {
         firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
-        progressDialog = new ProgressDialog(scheduleList.this);
+        progressDialog = new ProgressDialog(FriendFriendSchedule.this);
 
         recyclerView.setHasFixedSize(false);
         layoutManager = new LinearLayoutManager(this);
@@ -115,22 +112,21 @@ public class scheduleList extends AppCompatActivity {
 
         showScheduleList();
 
-        addNewSchedule.setOnClickListener(new View.OnClickListener() {
+        refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(scheduleList.this,HomePage.class));
+                startActivity(new Intent(FriendFriendSchedule.this,FriendFriendSchedule.class));
             }
         });
     }
-
     public void showScheduleList() {
         firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
         progressDialog.setTitle("資料載入中...");
         progressDialog.show();
-        UserID = firebaseAuth.getCurrentUser().getUid();
-        firestoredb.collection("Users").document(UserID).collection("Schedule")
+        fffId = getIntent().getStringExtra("friendId");
+        firestoredb.collection("Users").document(fffId).collection("Schedule")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -150,7 +146,7 @@ public class scheduleList extends AppCompatActivity {
                             modelList.add(model);
                         }
                         //連接
-                        adapter = new UserAdapter(scheduleList.this,modelList);
+                        //adapter = new FriendFriendUserAdapter(FriendFriendSchedule.this,modelList);
                         recyclerView.setAdapter(adapter);
                     }
                 })
@@ -158,10 +154,8 @@ public class scheduleList extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull @NotNull Exception e) {
                         progressDialog.dismiss();
-                        Toast.makeText(scheduleList.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(FriendFriendSchedule.this,e.getMessage(),Toast.LENGTH_LONG).show();
                     }
                 });
     }
-
-
 }

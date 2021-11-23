@@ -62,7 +62,7 @@ public class FriendSchedule extends AppCompatActivity {
                     startActivity(new Intent(FriendSchedule.this,HomePage.class));
                     return true;
                 } else if(id == R.id.setTimeAndLocation){
-                    startActivity(new Intent(FriendSchedule.this,scheduleList.class));
+                    startActivity(new Intent(FriendSchedule.this,FriendSchedule.class));
                     return true;
                 }else if(id == R.id.addFriend){
                     startActivity(new Intent(FriendSchedule.this,AddFriend.class));
@@ -84,14 +84,16 @@ public class FriendSchedule extends AppCompatActivity {
         mySchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(FriendSchedule.this,scheduleList.class));
+                Intent intent = new Intent(FriendSchedule.this, scheduleList.class);
+                intent.putExtra("from","a");
+                startActivity(intent);
             }
         });
 
         friSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(FriendSchedule.this,FriendListForSchedule.class));
             }
         });
 
