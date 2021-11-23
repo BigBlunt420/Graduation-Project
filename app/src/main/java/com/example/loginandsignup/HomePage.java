@@ -275,13 +275,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     .findFragmentById(R.id.map1);
             mapFragment.getMapAsync(this);
 
-            if(statusChecked == 0){
-                checkStatus();
-                tempTime = calendar.get(Calendar.MINUTE);
-            }else if(calendar.get(Calendar.MINUTE)-tempTime>=5
-                    || calendar.get(Calendar.MINUTE)-tempTime<=-5){
-                checkStatus();
-            }
+
 
         }
 
@@ -385,6 +379,15 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     }
                 });
 
+        if(identify.equals("TakeCare")){
+            if(statusChecked == 0){
+                checkStatus();
+                tempTime = calendar.get(Calendar.MINUTE);
+            }else if(calendar.get(Calendar.MINUTE)-tempTime>=5
+                    || calendar.get(Calendar.MINUTE)-tempTime<=-5){
+                checkStatus();
+            }
+        }
 
         //ask for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
