@@ -34,26 +34,38 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:background="@color/white">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycle_view"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="809dp"
-                    tools:ignore="MissingConstraints" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="15dp">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/addNewSchedule"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_margin="16dp"
-                    android:backgroundTint="@color/purple_500"
-                    android:clickable="true"
-                    app:srcCompat="@drawable/ic_add"
-                    tools:ignore="MissingConstraints" />
+                    <Button
+                        android:id="@+id/mySchedule"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:background="@drawable/button_background"
+                        android:text="我的行程"
+                        android:textSize="24dp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@color/purple_200"
+                        android:layout_margin="15dp"/>
 
+                    <Button
+                        android:id="@+id/friSchedule"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:background="@drawable/button_background"
+                        android:text="好友行程"
+                        android:textSize="24dp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@color/purple_200"
+                        android:layout_margin="15dp"/>
+
+                </LinearLayout>
             </FrameLayout>
 
         </com.google.android.material.appbar.AppBarLayout>

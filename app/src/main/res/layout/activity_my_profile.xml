@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MyProfile"
-    android:id="@+id/drawer_layout">
+    android:id="@+id/drawer_layout"
+    android:background="@color/white">
 
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/nav_view"
@@ -100,11 +101,11 @@
                         android:layout_marginRight="32dp"
                         android:background="@drawable/input_background"
                         android:foregroundGravity="center"
+                        android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.333"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/MyEmail"
-                        android:visibility="visible">
+                        app:layout_constraintTop_toBottomOf="@+id/MyEmail">
 
                         <TextView
                             android:id="@+id/Text"
@@ -152,8 +153,8 @@
                             android:layout_marginTop="16dp"
                             android:background="@drawable/button_background"
                             android:drawableLeft="@drawable/ic_edit"
-                            android:textColor="@color/black"
                             android:text="修改緊急聯絡人"
+                            android:textColor="@color/black"
                             android:textSize="24sp"
                             app:backgroundTint="@color/purple_200"
                             app:layout_constraintEnd_toEndOf="parent"

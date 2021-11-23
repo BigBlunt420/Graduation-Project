@@ -223,7 +223,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     startActivity(new Intent(HomePage.this,HomePage.class));
                     return true;
                 }else if(id == R.id.setTimeAndLocation){
-                    startActivity(new Intent(HomePage.this,scheduleList.class));
+                    startActivity(new Intent(HomePage.this,FriendSchedule.class));
                     return true;
                 }else if(id == R.id.addFriend){
                     startActivity(new Intent(HomePage.this, AddFriend.class));

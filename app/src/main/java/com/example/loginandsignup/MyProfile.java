@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -36,13 +37,14 @@ import java.util.Map;
 
 public class MyProfile extends AppCompatActivity {
 
+    private ConstraintLayout contactPeople;
     private TextView eName,eMyMobile,eMyEmail,eContactMobileOne,eContactMobileTwo;
     private Button eUpdateContactMobileButton;
 
     private FirebaseFirestore firestoredb;
     private FirebaseAuth firebaseAuth;
     String UserID;
-    String dbName,dbMyPhoneNumber,dbMyEmail,dbContactOne,dbContactTwo;
+    String dbName,dbMyPhoneNumber,dbMyEmail,dbContactOne,dbContactTwo,dbIdentify;
     ProgressDialog progressDialog;
 
     //toolbar&navigation
@@ -59,6 +61,7 @@ public class MyProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
 
+        contactPeople = findViewById(R.id.contactPeople);
         eName = findViewById(R.id.Name);
         eMyMobile = findViewById(R.id.MyMobile);
         eMyEmail = findViewById(R.id.MyEmail);
@@ -122,6 +125,7 @@ public class MyProfile extends AppCompatActivity {
         progressDialog.setTitle("資料載入中...");
         progressDialog.show();
 
+
         UserID = firebaseAuth.getCurrentUser().getUid();
         firestoredb.collection("Users").document(UserID)
                 .get()
@@ -135,6 +139,11 @@ public class MyProfile extends AppCompatActivity {
                             dbMyEmail = documentSnapshot.getString("Email");
                             dbContactOne = documentSnapshot.getString("ContactPersonOne");
                             dbContactTwo = documentSnapshot.getString("ContactPersonTwo");
+                            dbIdentify = documentSnapshot.getString("identify");
+
+                            if(dbIdentify.equals("TakeCare")){
+                                contactPeople.setVisibility(View.INVISIBLE);
+                            }
 
                             eName.setText(dbName);
                             eMyMobile.setText(dbMyPhoneNumber);
