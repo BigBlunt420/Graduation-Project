@@ -39,8 +39,7 @@ public class FriendFriendSchedule extends AppCompatActivity {
 
     FirebaseFirestore firestoredb;
     FirebaseAuth firebaseAuth;
-    String UserID;
-    UserAdapter adapter;
+    FriendFriendUserAdapter adapter;
     ProgressDialog progressDialog;
     FloatingActionButton refresh;
     String fffId;
@@ -111,6 +110,7 @@ public class FriendFriendSchedule extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         showScheduleList();
+        getfriendId();
 
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +119,12 @@ public class FriendFriendSchedule extends AppCompatActivity {
             }
         });
     }
+
+    public String getfriendId() {
+        fffId = getIntent().getStringExtra("friendId");
+        return fffId;
+    }
+
     public void showScheduleList() {
         firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -146,7 +152,7 @@ public class FriendFriendSchedule extends AppCompatActivity {
                             modelList.add(model);
                         }
                         //連接
-                        //adapter = new FriendFriendUserAdapter(FriendFriendSchedule.this,modelList);
+                        adapter = new FriendFriendUserAdapter(FriendFriendSchedule.this,modelList);
                         recyclerView.setAdapter(adapter);
                     }
                 })

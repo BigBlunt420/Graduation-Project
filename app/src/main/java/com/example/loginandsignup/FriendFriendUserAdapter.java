@@ -1,135 +1,360 @@
-//package com.example.loginandsignup;
+package com.example.loginandsignup;
+
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class FriendFriendUserAdapter extends RecyclerView.Adapter<FriendFriendViewHolder> implements AdapterView.OnItemSelectedListener{
+    FriendFriendSchedule friendFriendSchedule;
+    List<Model> modelList;
+    Context context;
+    FirebaseFirestore firestoredb;
+    FirebaseAuth firebaseAuth;
+    private TextView inputStartTime,inputEndTime;
+    private int starthour,startminute,endhour,endminute;
+    int setYear,setMonth,setDay,month;
+    private TextView inputDate;
+    DatePickerDialog datePickerDialog;
+    private Button addDetail,cancelDetail;
+    String UserID;
+    private EditText inputTile,inputDescribe;
+    String date;
+    String dbtitle,dbstartTime,dbendTime,dblocation,dbdescription,dbdate,dbid;
+    String setStartTime,setEndTime;
+    private Spinner inputParameter;
+    String choice;
+
+    public FriendFriendUserAdapter(FriendFriendSchedule friendFriendSchedule, List<Model> modelList) {
+        this.friendFriendSchedule = friendFriendSchedule;
+        this.modelList = modelList;
+    }
+
+    @NonNull
+    @NotNull
+    @Override
+    public FriendFriendViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+        //inflate layout
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.model_layout,parent,false);
+
+        //處理 item click 事件
+        FriendFriendViewHolder friendFriendViewHolder = new FriendFriendViewHolder(itemView);
+        friendFriendViewHolder.setOnClickListener(new FriendFriendViewHolder.ClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                //click
+
+                //show data
+//                String dbid = modelList.get(position).getId();
+                String title = modelList.get(position).getTile();
+                String startTime = modelList.get(position).getStartTime();
+                String endTime = modelList.get(position).getEndTime();
+                String location = modelList.get(position).getLocation();
+                String description = modelList.get(position).getDescription();
+                String date = modelList.get(position).getDate();
 //
-//import android.app.AlertDialog;
-//import android.app.DatePickerDialog;
-//import android.content.Context;
-//import android.content.DialogInterface;
-//import android.view.LayoutInflater;
-//import android.view.View;
-//import android.view.ViewGroup;
-//import android.widget.AdapterView;
-//import android.widget.Button;
-//import android.widget.EditText;
-//import android.widget.Spinner;
-//import android.widget.TextView;
-//import android.widget.Toast;
-//
-//import androidx.annotation.NonNull;
-//import androidx.recyclerview.widget.RecyclerView;
-//
-//import com.google.firebase.auth.FirebaseAuth;
-//import com.google.firebase.firestore.FirebaseFirestore;
-//
-//import org.jetbrains.annotations.NotNull;
-//
-//import java.util.List;
-//
-//public class FriendFriendUserAdapter extends RecyclerView.Adapter<FriendFriendViewHolder> implements AdapterView.OnItemSelectedListener{
-//    FriendFriendSchedule friendFriendSchedule;
-//    List<Model> modelList;
-//    Context context;
-//    FirebaseFirestore firestoredb;
-//    FirebaseAuth firebaseAuth;
-//    private TextView inputStartTime,inputEndTime;
-//    private int starthour,startminute,endhour,endminute;
-//    int setYear,setMonth,setDay,month;
-//    private TextView inputDate;
-//    DatePickerDialog datePickerDialog;
-//    private Button addDetail,cancelDetail;
-//    String UserID;
-//    private EditText inputTile,inputDescribe;
-//    String date;
-//    String dbtitle,dbstartTime,dbendTime,dblocation,dbdescription,dbdate,dbid;
-//    String setStartTime,setEndTime;
-//    private Spinner inputParameter;
-//    String choice;
-//
-//    public FriendFriendUserAdapter(FriendFriendSchedule friendFriendSchedule, List<Model> modelList) {
-//        this.friendFriendSchedule = friendFriendSchedule;
-//        this.modelList = modelList;
-//    }
-//
-//    @Override
-//    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//
-//    }
-//
-//    @Override
-//    public void onNothingSelected(AdapterView<?> parent) {
-//
-//    }
-//
-//    @NonNull
-//    @NotNull
-//    @Override
-//    public FriendFriendViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-//        //inflate layout
-//        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.model_layout,parent,false);
-//
-//        //處理 item click 事件
-//        FriendFriendViewHolder viewHolder = new FriendFriendViewHolder(itemView);
-//        viewHolder.setOnClickListener(new FriendFriendViewHolder.ClickListener() {
-//            @Override
-//            public void onItemClick(View view, int position) {
-//                //click
-//
-//                //show data
-////                String dbid = modelList.get(position).getId();
-//                String title = modelList.get(position).getTile();
-//                String startTime = modelList.get(position).getStartTime();
-//                String endTime = modelList.get(position).getEndTime();
-//                String location = modelList.get(position).getLocation();
-//                String description = modelList.get(position).getDescription();
-//                String date = modelList.get(position).getDate();
-////
-////                firebaseAuth = FirebaseAuth.getInstance();
-////                UserID = firebaseAuth.getCurrentUser().getUid();
-////                //Toast.makeText(scheduleList, dbid,Toast.LENGTH_LONG).show();
-//                Toast.makeText(friendFriendSchedule, title+"  "+date+"\n"+startTime+"-"+endTime+"  "+location+"\n"+description,Toast.LENGTH_SHORT).show();
-//
-//            }
-//
-//            @Override
-//            public void onItemLongClick(View view, final int position) {
-//                //long click
-//                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-//
-//                String [] action = {"修改資料","刪除資料"};
-//                builder.setItems(action, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        if (which == 0){
-//                            //修改資料
-//                            dbid = modelList.get(position).getId();
-//                            dbtitle = modelList.get(position).getTile();
-//                            dbstartTime = modelList.get(position).getStartTime();
-//                            dbendTime = modelList.get(position).getEndTime();
-//                            dblocation = modelList.get(position).getLocation();
-//                            dbdescription = modelList.get(position).getDescription();
-//                            dbdate = modelList.get(position).getDate();
-//
-//
-//                            updateDetailSchedule();
-//                        }
-//                        if (which == 1){
-//                            //刪除資料
-//                            dbid = modelList.get(position).getId();
-//                            deleteData(dbid);
-//                        }
-//                    }
-//                }).create().show();
-//            }
-//        });
-//        return viewHolder;
-//    }
-//
-//    @Override
-//    public void onBindViewHolder(@NonNull @NotNull FriendFriendViewHolder holder, int position) {
-//
-//    }
-//
-//    @Override
-//    public int getItemCount() {
-//        return 0;
-//    }
-//}
+//                firebaseAuth = FirebaseAuth.getInstance();
+//                UserID = firebaseAuth.getCurrentUser().getUid();
+//                //Toast.makeText(scheduleList, dbid,Toast.LENGTH_LONG).show();
+                Toast.makeText(friendFriendSchedule, title+"  "+date+"\n"+startTime+"-"+endTime+"  "+location+"\n"+description,Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onItemLongClick(View view, final int position) {
+                //long click
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+
+                String [] action = {"修改資料","刪除資料"};
+                builder.setItems(action, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0){
+                            //修改資料
+                            dbid = modelList.get(position).getId();
+                            dbtitle = modelList.get(position).getTile();
+                            dbstartTime = modelList.get(position).getStartTime();
+                            dbendTime = modelList.get(position).getEndTime();
+                            dblocation = modelList.get(position).getLocation();
+                            dbdescription = modelList.get(position).getDescription();
+                            dbdate = modelList.get(position).getDate();
+
+
+                            updateDetailSchedule();
+                        }
+                        if (which == 1){
+                            //刪除資料
+                            dbid = modelList.get(position).getId();
+                            deleteData(dbid);
+                        }
+                    }
+                }).create().show();
+            }
+        });
+        return friendFriendViewHolder;
+    }
+
+    private void deleteData(String id){
+        firestoredb = FirebaseFirestore.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        String fid = friendFriendSchedule.getfriendId();
+        DocumentReference doc= firestoredb.collection("Users").document(fid).collection("Schedule").document(id);
+        doc.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        friendFriendSchedule.showScheduleList();
+                        Log.d("DeleteDetailSchedule","Successful:User Profile is deleted for " + fid);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Log.w("DeleteDetailSchedule","Fail:"+e.getMessage());
+                    }
+                });
+    }
+
+    private void updateDetailSchedule() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(friendFriendSchedule);
+        LayoutInflater inflater = LayoutInflater.from(friendFriendSchedule);
+
+        View myView = inflater.inflate(R.layout.input_detail_schedule,null);
+        builder.setView(myView);
+
+
+        inputTile = myView.findViewById(R.id.inputTile);
+        inputDescribe = myView.findViewById(R.id.inputDescribe);
+        inputStartTime = myView.findViewById(R.id.inputStartTime);
+        inputEndTime = myView.findViewById(R.id.inputEndTime);
+        inputDate = myView.findViewById(R.id.inputDate);
+        addDetail = myView.findViewById(R.id.addDetail);
+        cancelDetail = myView.findViewById(R.id.cancelDetail);
+        inputParameter = myView.findViewById(R.id.inputParameter);
+
+        //取得firestore資料
+        inputTile.setText(dbtitle);
+        inputDescribe.setText(dbdescription);
+        inputStartTime.setText(dbstartTime);
+        inputEndTime.setText(dbendTime);
+        inputDate.setText(dbdate);
+
+        date = dbdate;
+        setStartTime = dbstartTime;
+        setEndTime =dbendTime;
+
+
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute =calendar.get(Calendar.MINUTE);
+
+        androidx.appcompat.app.AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+
+        dialog.show();
+
+        //設定範圍
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(friendFriendSchedule,R.array.numbers, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        inputParameter.setAdapter(adapter);
+        inputParameter.setOnItemSelectedListener(this);
+
+        //設定起始時間
+        inputStartTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int setHour, int setMinute) {
+                        setStartTime = makeTimeString(setHour,setMinute);
+                        inputStartTime.setText(setStartTime);
+                    }
+                };
+                Calendar calendar = Calendar.getInstance();
+                int setStarthour = calendar.get(Calendar.HOUR_OF_DAY);
+                int setStartminute =calendar.get(Calendar.MINUTE);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(friendFriendSchedule, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,setStarthour,setStartminute,true);
+
+                timePickerDialog.show();
+            }
+        });
+
+        //設定結束時間
+        inputEndTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int setHour, int setMinute) {
+                        setEndTime = makeTimeString(setHour,setMinute);
+                        inputEndTime.setText(setEndTime);
+                    }
+                };
+                Calendar calendar = Calendar.getInstance();
+                int setEndHour = calendar.get(Calendar.HOUR_OF_DAY);
+                int setEndMinute =calendar.get(Calendar.MINUTE);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(friendFriendSchedule, android.app.AlertDialog.THEME_HOLO_LIGHT, onTimeSetListener,setEndHour,setEndMinute,true);
+
+                timePickerDialog.show();
+            }
+        });
+
+        //設定日期
+        inputDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        month = month+1;
+                        date = makeDateString(year,month,day);
+                        inputDate.setText(date);
+                    }
+                };
+
+                Calendar calendar = Calendar.getInstance();
+                setYear = calendar.get(Calendar.YEAR);
+                setMonth = calendar.get(Calendar.MONTH);
+                setDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+                datePickerDialog = new DatePickerDialog(friendFriendSchedule, android.app.AlertDialog.THEME_HOLO_LIGHT,dateSetListener,setYear,setMonth,setDay);
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis()-1000);
+
+                datePickerDialog.show();
+            }
+        });
+
+        addDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String Title = inputTile.getText().toString().trim();
+                String Describe = inputDescribe.getText().toString().trim();
+                //檢查起始時間和結束時間
+                while(year==setYear && (month+1)==setMonth&& day==setDay) {
+                    if (starthour < hour || (starthour == hour && startminute < minute)) {
+                        inputStartTime.requestFocus();
+                        inputStartTime.setError("起始時間已過");
+                        return;
+                    }
+                }
+                if(starthour>endhour){
+                    inputEndTime.requestFocus();
+                    inputEndTime.setError("結束時間不得比起始時間早");
+                    return;
+                }
+                if(starthour==endhour && startminute>endminute){
+                    inputEndTime.requestFocus();
+                    inputEndTime.setError("結束時間不得比起始時間早");
+                    return;
+                }
+                //將資料加進firestore
+                firestoredb = FirebaseFirestore.getInstance();
+                firebaseAuth = FirebaseAuth.getInstance();
+                String fid = friendFriendSchedule.getfriendId();
+
+                DocumentReference documentReference = firestoredb.collection("Users").document(fid).collection("Schedule").document(dbid);
+                Map<String,Object> updateSchedule = new HashMap<String, Object>();
+                updateSchedule.put("Title",Title);
+                updateSchedule.put("Describe",Describe);
+                updateSchedule.put("Date",date);
+                updateSchedule.put("StartTime",setStartTime);
+                updateSchedule.put("EndTime",setEndTime);
+                updateSchedule.put("Parameter",choice);
+
+                documentReference.set(updateSchedule, SetOptions.merge())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                friendFriendSchedule.showScheduleList();
+                                Log.d("updateDetailSchedule","Successful:User Profile is created for " + fid);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull @NotNull Exception e) {
+                                Log.w("updateDetailSchedule","Fail:"+e.getMessage());
+                            }
+                        });
+
+
+                dialog.dismiss();
+            }
+        });
+        cancelDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private String makeTimeString(int hour, int minute) {
+        return hour+":"+minute;
+    }
+
+    private String makeDateString(int year, int month, int day) {
+        return year + "年" + month + "月" + day + "日";
+    }
+
+
+    @Override
+    public void onBindViewHolder(@NonNull @NotNull FriendFriendViewHolder holder, int position) {
+        holder.Title.setText(modelList.get(position).getTile());
+        holder.startTime.setText(modelList.get(position).getStartTime());
+        holder.endTime.setText(modelList.get(position).getEndTime());
+        holder.Location.setText(modelList.get(position).getLocation());
+        holder.Description.setText(modelList.get(position).getDescription());
+        holder.Date.setText(modelList.get(position).getDate());
+    }
+
+    @Override
+    public int getItemCount() {
+        return modelList.size();
+    }
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        choice = parent.getItemAtPosition(position).toString();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+}
