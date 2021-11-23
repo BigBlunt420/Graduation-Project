@@ -142,6 +142,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
     private  String friendId;// id of a friend
     private  String tId; //temp id
+
+    private String friendStatus;
+    private int tempTime;
+    private Calendar calendar = Calendar.getInstance();
+    private int statusChecked = 0;
 //    private ConstraintLayout contactPeople;
 
     @Override
@@ -266,10 +271,18 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
         if(rLocationGranted == true){
             // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map1);
             mapFragment.getMapAsync(this);
+
+            if(statusChecked == 0){
+                checkStatus();
+                tempTime = calendar.get(Calendar.MINUTE);
+            }else if(calendar.get(Calendar.MINUTE)-tempTime>=5
+                    || calendar.get(Calendar.MINUTE)-tempTime<=-5){
+                checkStatus();
+            }
+
         }
 
 
@@ -350,7 +363,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     public void onMapReady(@NonNull @NotNull GoogleMap googleMap) {
         mMap = googleMap;
         firestoredb = FirebaseFirestore.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
 
         //存取使用者的identify
         firestoredb.collection("Users").document(UserID)
@@ -536,7 +548,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         inputParameter = myView.findViewById(R.id.inputParameter);
 
         //取得當日日期時間
-        Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         month = month + 1;
@@ -572,7 +583,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                         inputStartTime.setText(setStartTime);
                     }
                 };
-                Calendar calendar = Calendar.getInstance();
                 int setStarthour = calendar.get(Calendar.HOUR_OF_DAY);
                 int setStartminute =calendar.get(Calendar.MINUTE);
 
@@ -595,7 +605,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                         inputEndTime.setText(setEndTime);
                     }
                 };
-                Calendar calendar = Calendar.getInstance();
                 int setEndHour = calendar.get(Calendar.HOUR_OF_DAY);
                 int setEndMinute =calendar.get(Calendar.MINUTE);
 
@@ -620,7 +629,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     }
                 };
 
-                Calendar calendar = Calendar.getInstance();
                 setYear = calendar.get(Calendar.YEAR);
                 setMonth = calendar.get(Calendar.MONTH);
                 setDay = calendar.get(Calendar.DAY_OF_MONTH);
@@ -658,7 +666,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
                 //將資料加進firestore
                 firestoredb = FirebaseFirestore.getInstance();
-                firebaseAuth = FirebaseAuth.getInstance();
                 ScheduleID = UUID.randomUUID().toString();
                 DocumentReference documentReference = firestoredb.collection("Users").document(UserID).collection("Schedule").document(ScheduleID);
                 Map<String,Object> SaveDetailSchedule = new HashMap<String, Object>();
@@ -705,7 +712,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     private void stayInRange(double Latitude, double Longitude){
 
         firestoredb = FirebaseFirestore.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
         firestoredb.collection("Users").document(UserID)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -749,7 +755,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                         double a, c, distance, height;
 
 
-                        Calendar calendar = Calendar.getInstance();
                         //顯示資料
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
                             getDate = documentSnapshot.getString("Date");
@@ -915,7 +920,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
      */
     private void sentTimeAndLocation(double Latitude, double Longitude, String UserID){
         //傳送時間與位置
-        Calendar calendar = Calendar.getInstance();
+        firestoredb = FirebaseFirestore.getInstance();
         firestoredb.collection("Users").document(UserID).collection("Friend")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -939,7 +944,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                                                         .document(friendId).collection("Friend")
                                                                         .document(documentSnapshot.getId());
                                                         Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
-                                                        SaveUserProfile.put("Time", calendar.get(Calendar.MINUTE));
+                                                        SaveUserProfile.put("Status", "1");
                                                         SaveUserProfile.put("Latitude",Latitude);
                                                         SaveUserProfile.put("Longitude",Longitude);
                                                         documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -965,6 +970,60 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                         });
                             }
                         }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(HomePage.this,"Fail:"
+                                +e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    private void checkStatus(){
+        firestoredb = FirebaseFirestore.getInstance();
+        firestoredb.collection("Users").document(UserID).collection("Friend")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+
+                        for(DocumentSnapshot documentSnapshot:task.getResult()){
+                            friendStatus = documentSnapshot.getString("Status");
+                            if(friendStatus.equals(0)){
+                                //出現dialog訊息
+                                AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+                                builder.setMessage(documentSnapshot.getString("friendName")+"手機功能異常");
+                                //點選空白處不會返回
+                                builder.setCancelable(false);
+
+                                builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //按下是之後要做的事
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+                            DocumentReference documentReference =
+                                    firestoredb.collection("Users")
+                                            .document(UserID).collection("Friend")
+                                            .document(documentSnapshot.getId());
+                            Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
+                            SaveUserProfile.put("Status", "0");
+                            documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Log.d("SaveUserProfile","Successful:User Profile is created for " + friendId);
+                                    }else {
+                                        Log.w("SaveUserProfile","Fail:",task.getException());
+                                    }
+                                }
+                            });
+
+                        }
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
