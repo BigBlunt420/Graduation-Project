@@ -156,7 +156,6 @@ public class AddFriend extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         showFriendList();
-        getFriendID();
 
         addNewFriend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,11 +163,6 @@ public class AddFriend extends AppCompatActivity {
                 add();
             }
         });
-    }
-
-    private String getFriendID() {
-        uid = getIntent().getStringExtra("friendId");
-        return uid;
     }
 
 
@@ -185,13 +179,11 @@ public class AddFriend extends AppCompatActivity {
 
 
     public void showFriendList() {
-        mAuth = FirebaseAuth.getInstance();
-        uid = mAuth.getCurrentUser().getUid();
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         progressDialog.setTitle("資料載入中...");
         progressDialog.show();
-//        uid = getIntent().getStringExtra("friendId");
         uid = mAuth.getCurrentUser().getUid();
         db.collection("Users").document(uid).collection("Friend")
                 .get()
@@ -204,8 +196,8 @@ public class AddFriend extends AppCompatActivity {
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
                             fModel model = new fModel(
                                     documentSnapshot.getString("id"),
-                                    documentSnapshot.getString("friendName"),
-                                    documentSnapshot.getString("friendPhone"));
+                                    documentSnapshot.getString("Name"),
+                                    documentSnapshot.getString("PhoneNumber"));
                             modelList.add(model);
                         }
                         //連接
@@ -389,32 +381,32 @@ public class AddFriend extends AppCompatActivity {
         uid = currentUser.getUid();
         Dialog dialog = new Dialog(AddFriend.this);
         dialog.setTitle("輸入訊息");
-        dialog.setContentView(R.layout.send_message);
+        //dialog.setContentView(R.layout.send_message);
         dialog.show();
 
-        EditText sentMessage = dialog.findViewById(R.id.input_message);
+        //EditText sentMessage = dialog.findViewById(R.id.input_message);
 
-        Button btnSent = dialog.findViewById(R.id.sent_message);
+        //Button btnSent = dialog.findViewById(R.id.sent_message);
 
-        btnSent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String message = sentMessage.getText().toString();
-//                Toast.makeText(AddFriend.this, edtID,Toast.LENGTH_LONG).show();
-
-                if (TextUtils.isEmpty(message)) {
-                    sentMessage.setError("欄位不得為空");
-                } else {
-                    messageSave(R_ID, message);
-                    if(messageIsSent){
-                        Toast.makeText(AddFriend.this, "訊息已傳送", Toast.LENGTH_LONG).show();
-                    } else{
-                        Toast.makeText(AddFriend.this, "傳送失敗", Toast.LENGTH_LONG).show();
-
-                    }
-                }
-            }
-        });
+//        btnSent.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String message = sentMessage.getText().toString();
+////                Toast.makeText(AddFriend.this, edtID,Toast.LENGTH_LONG).show();
+//
+//                if (TextUtils.isEmpty(message)) {
+//                    sentMessage.setError("欄位不得為空");
+//                } else {
+//                    messageSave(R_ID, message);
+//                    if(messageIsSent){
+//                        Toast.makeText(AddFriend.this, "訊息已傳送", Toast.LENGTH_LONG).show();
+//                    } else{
+//                        Toast.makeText(AddFriend.this, "傳送失敗", Toast.LENGTH_LONG).show();
+//
+//                    }
+//                }
+//            }
+//        });
     }
 
     private void messageSave(String R_ID, String message){
@@ -429,7 +421,6 @@ public class AddFriend extends AppCompatActivity {
                             DocumentReference documentReference = db.collection("Users").document(R_ID).collection("Message").document(Message_ID);
                             Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
                             SaveUserProfile.put("messageContent", message);
-                            SaveUserProfile.put("messageSender", uid);
                             Toast.makeText(AddFriend.this, message, Toast.LENGTH_LONG).show();
 
                             documentReference.set(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
