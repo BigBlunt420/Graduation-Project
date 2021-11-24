@@ -285,10 +285,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     .findFragmentById(R.id.map1);
             mapFragment.getMapAsync(this);
 
-
-
         }
-
 
 
 
