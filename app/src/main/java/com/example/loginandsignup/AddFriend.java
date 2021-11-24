@@ -381,32 +381,32 @@ public class AddFriend extends AppCompatActivity {
         uid = currentUser.getUid();
         Dialog dialog = new Dialog(AddFriend.this);
         dialog.setTitle("輸入訊息");
-        dialog.setContentView(R.layout.send_message);
+        //dialog.setContentView(R.layout.send_message);
         dialog.show();
 
-        EditText sentMessage = dialog.findViewById(R.id.input_message);
+        //EditText sentMessage = dialog.findViewById(R.id.input_message);
 
-        Button btnSent = dialog.findViewById(R.id.sent_message);
+        //Button btnSent = dialog.findViewById(R.id.sent_message);
 
-        btnSent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String message = sentMessage.getText().toString();
-//                Toast.makeText(AddFriend.this, edtID,Toast.LENGTH_LONG).show();
-
-                if (TextUtils.isEmpty(message)) {
-                    sentMessage.setError("欄位不得為空");
-                } else {
-                    messageSave(R_ID, message);
-                    if(messageIsSent){
-                        Toast.makeText(AddFriend.this, "訊息已傳送", Toast.LENGTH_LONG).show();
-                    } else{
-                        Toast.makeText(AddFriend.this, "傳送失敗", Toast.LENGTH_LONG).show();
-
-                    }
-                }
-            }
-        });
+//        btnSent.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String message = sentMessage.getText().toString();
+////                Toast.makeText(AddFriend.this, edtID,Toast.LENGTH_LONG).show();
+//
+//                if (TextUtils.isEmpty(message)) {
+//                    sentMessage.setError("欄位不得為空");
+//                } else {
+//                    messageSave(R_ID, message);
+//                    if(messageIsSent){
+//                        Toast.makeText(AddFriend.this, "訊息已傳送", Toast.LENGTH_LONG).show();
+//                    } else{
+//                        Toast.makeText(AddFriend.this, "傳送失敗", Toast.LENGTH_LONG).show();
+//
+//                    }
+//                }
+//            }
+//        });
     }
 
     private void messageSave(String R_ID, String message){
