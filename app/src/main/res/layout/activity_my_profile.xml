@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context=".MyProfile"
     android:id="@+id/drawer_layout"
     android:background="@color/white">
@@ -19,8 +19,8 @@
         </com.google.android.material.navigation.NavigationView>
 
         <RelativeLayout
-            android:layout_width="@dimen/browser_actions_context_menu_max_width"
-            android:layout_height="@dimen/browser_actions_context_menu_max_width">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/appBarLayout"
@@ -34,33 +34,23 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="675dp"
+                    android:layout_height="677dp"
                     android:background="@color/white"
                     android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/TempIcon"
-                        android:layout_width="151dp"
-                        android:layout_height="143dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.081"
-                        app:srcCompat="@drawable/ic_mainic" />
 
                     <TextView
                         android:id="@+id/textView2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="32dp"
+                        android:gravity="center"
                         android:text="個人檔案"
                         android:textColor="@color/black"
                         android:textSize="30sp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/TempIcon"
-                        app:layout_constraintStart_toStartOf="@+id/TempIcon"
-                        app:layout_constraintTop_toBottomOf="@+id/TempIcon" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/Name"
