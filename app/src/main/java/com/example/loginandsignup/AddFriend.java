@@ -421,6 +421,7 @@ public class AddFriend extends AppCompatActivity {
                             DocumentReference documentReference = db.collection("Users").document(R_ID).collection("Message").document(Message_ID);
                             Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
                             SaveUserProfile.put("messageContent", message);
+                            SaveUserProfile.put("messageSender", uid);
                             Toast.makeText(AddFriend.this, message, Toast.LENGTH_LONG).show();
 
                             documentReference.set(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
