@@ -207,7 +207,7 @@ public class AddFriend extends AppCompatActivity {
                         click = adapter.getClick();
                         if(click){
                             R_ID = adapter.getReciever_ID();
-                            //sendMSG(R_ID);
+                            sendMSG(R_ID);
                         }
                     }
                 })
@@ -376,70 +376,70 @@ public class AddFriend extends AppCompatActivity {
 
     }
 
-    //private void sendMSG(String R_ID) {
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-//        uid = currentUser.getUid();
-//        Dialog dialog = new Dialog(AddFriend.this);
-//        dialog.setTitle("輸入訊息");
-//        //dialog.setContentView(R.layout.send_message);
-//        dialog.show();
+    private void sendMSG(String R_ID) {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        uid = currentUser.getUid();
+        Dialog dialog = new Dialog(AddFriend.this);
+        dialog.setTitle("輸入訊息");
+        dialog.setContentView(R.layout.send_message);
+        dialog.show();
 
-        //EditText sentMessage = dialog.findViewById(R.id.input_message);
+        EditText sentMessage = dialog.findViewById(R.id.input_message);
 
-        //Button btnSent = dialog.findViewById(R.id.sent_message);
+        Button btnSent = dialog.findViewById(R.id.sent_message);
 
-//        btnSent.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String message = sentMessage.getText().toString();
-////                Toast.makeText(AddFriend.this, edtID,Toast.LENGTH_LONG).show();
-//
-//                if (TextUtils.isEmpty(message)) {
-//                    sentMessage.setError("欄位不得為空");
-//                } else {
-//                    messageSave(R_ID, message);
-//                    if(messageIsSent){
-//                        Toast.makeText(AddFriend.this, "訊息已傳送", Toast.LENGTH_LONG).show();
-//                    } else{
-//                        Toast.makeText(AddFriend.this, "傳送失敗", Toast.LENGTH_LONG).show();
-//
-//                    }
-//                }
-//            }
-//        });
-//    }
+        btnSent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String message = sentMessage.getText().toString();
+//                Toast.makeText(AddFriend.this, edtID,Toast.LENGTH_LONG).show();
 
-//    private void messageSave(String R_ID, String message){
-//        Message_ID = UUID.randomUUID().toString();
-//        //current User's friend data
-//        db.collection("Users").document(R_ID)
-//                .get()
-//                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                        if (documentSnapshot.exists()) {
-//                            DocumentReference documentReference = db.collection("Users").document(R_ID).collection("Message").document(Message_ID);
-//                            Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
-//                            SaveUserProfile.put("messageContent", message);
-//                            Toast.makeText(AddFriend.this, message, Toast.LENGTH_LONG).show();
-//
-//                            documentReference.set(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                @Override
-//                                public void onComplete(@NonNull @NotNull Task<Void> task) {
-//                                    if(task.isSuccessful()){
-//                                        messageIsSent = true;
-//                                        Log.d("SaveUserProfile","Successful:User Profile is created for " + uid);
-//                                    }else {
-//                                        messageIsSent = false;
-//                                        Log.w("SaveUserProfile","Fail:",task.getException());
-//                                    }
-//                                }
-//                            });
-//
-//                        } else {
-//                            Toast.makeText(AddFriend.this, "此用戶不存在!", Toast.LENGTH_LONG).show();
-//                        }
-//                    }
-//        });
-//    }
+                if (TextUtils.isEmpty(message)) {
+                    sentMessage.setError("欄位不得為空");
+                } else {
+                    messageSave(R_ID, message);
+                    if(messageIsSent){
+                        Toast.makeText(AddFriend.this, "訊息已傳送", Toast.LENGTH_LONG).show();
+                    } else{
+                        Toast.makeText(AddFriend.this, "傳送失敗", Toast.LENGTH_LONG).show();
+
+                    }
+                }
+            }
+        });
+    }
+
+    private void messageSave(String R_ID, String message){
+        Message_ID = UUID.randomUUID().toString();
+        //current User's friend data
+        db.collection("Users").document(R_ID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            DocumentReference documentReference = db.collection("Users").document(R_ID).collection("Message").document(Message_ID);
+                            Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
+                            SaveUserProfile.put("messageContent", message);
+                            Toast.makeText(AddFriend.this, message, Toast.LENGTH_LONG).show();
+
+                            documentReference.set(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        messageIsSent = true;
+                                        Log.d("SaveUserProfile","Successful:User Profile is created for " + uid);
+                                    }else {
+                                        messageIsSent = false;
+                                        Log.w("SaveUserProfile","Fail:",task.getException());
+                                    }
+                                }
+                            });
+
+                        } else {
+                            Toast.makeText(AddFriend.this, "此用戶不存在!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+        });
+    }
 }

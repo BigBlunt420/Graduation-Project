@@ -60,7 +60,7 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
                 //click
 
                 //show data
-                String id = modelList.get(position).getId();
+//                String id = modelList.get(position).getId();
                 String name = modelList.get(position).getName();
                 String phone = modelList.get(position).getPhone();
 //
