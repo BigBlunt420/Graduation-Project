@@ -425,7 +425,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     //if current user is identified as BeCare
                     if(identify.equals("BeCare")){
                         //send time and location to friend who's identify is "TakeCare"
-                        sentTimeAndLocation(location.getLatitude(),location.getLongitude(),UserID);
+                        sendTimeAndLocation(location.getLatitude(),location.getLongitude(),UserID);
                         //detect user's range
                         stayInRange(location.getLatitude(), location.getLongitude());
                     }
@@ -458,6 +458,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
             options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
             mMap.addMarker(options);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), zoomLevel));
+            if(identify.equals("BeCare")){
+                //send time and location to friend who's identify is "TakeCare"
+                sendTimeAndLocation(lastLocation.getLatitude(),lastLocation.getLongitude(),UserID);
+            }
         }catch (SecurityException e){
             e.printStackTrace();
         }
@@ -971,7 +975,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
      * @param Longitude the longitude of current user
      * @param UserID the data ID of current user
      */
-    private void sentTimeAndLocation(double Latitude, double Longitude, String UserID){
+    private void sendTimeAndLocation(double Latitude, double Longitude, String UserID){
         //傳送時間與位置
         firestoredb = FirebaseFirestore.getInstance();
         firestoredb.collection("Users").document(UserID).collection("Friend")
@@ -980,8 +984,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     @Override
                     public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
-                            friendIdentify = documentSnapshot.getString("friendIdentify");
-                            if(friendIdentify.equals("TakeCare")){
                                 friendId = documentSnapshot.getString("id");
                                 firestoredb.collection("Users").document(friendId)
                                         .collection("Friend")
@@ -989,13 +991,13 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
-                                                for(DocumentSnapshot documentSnapshot:task.getResult()){
-                                                    tId = documentSnapshot.getString("id");
+                                                for(DocumentSnapshot fDocumentSnapshot:task.getResult()){
+                                                    tId = fDocumentSnapshot.getString("id");
                                                     if(tId.equals(UserID)){
                                                         DocumentReference documentReference =
                                                                 firestoredb.collection("Users")
                                                                         .document(friendId).collection("Friend")
-                                                                        .document(documentSnapshot.getId());
+                                                                        .document(fDocumentSnapshot.getId());
                                                         Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
                                                         SaveUserProfile.put("Status", "1");
                                                         SaveUserProfile.put("Latitude",Latitude);
@@ -1021,7 +1023,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                                         +e.getMessage(),Toast.LENGTH_LONG).show();
                                             }
                                         });
-                            }
+
                         }
                     }
                 })
