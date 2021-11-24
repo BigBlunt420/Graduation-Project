@@ -156,6 +156,7 @@ public class AddFriend extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         showFriendList();
+        getFriendID();
 
         addNewFriend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,6 +164,11 @@ public class AddFriend extends AppCompatActivity {
                 add();
             }
         });
+    }
+
+    private String getFriendID() {
+        uid = getIntent().getStringExtra("friendId");
+        return uid;
     }
 
 
@@ -179,11 +185,13 @@ public class AddFriend extends AppCompatActivity {
 
 
     public void showFriendList() {
-        db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+        uid = mAuth.getCurrentUser().getUid();
+        db = FirebaseFirestore.getInstance();
 
         progressDialog.setTitle("資料載入中...");
         progressDialog.show();
+//        uid = getIntent().getStringExtra("friendId");
         uid = mAuth.getCurrentUser().getUid();
         db.collection("Users").document(uid).collection("Friend")
                 .get()
@@ -196,8 +204,8 @@ public class AddFriend extends AppCompatActivity {
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
                             fModel model = new fModel(
                                     documentSnapshot.getString("id"),
-                                    documentSnapshot.getString("Name"),
-                                    documentSnapshot.getString("PhoneNumber"));
+                                    documentSnapshot.getString("friendName"),
+                                    documentSnapshot.getString("friendPhone"));
                             modelList.add(model);
                         }
                         //連接
