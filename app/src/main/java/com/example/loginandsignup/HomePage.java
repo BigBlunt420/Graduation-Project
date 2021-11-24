@@ -20,6 +20,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -50,6 +51,13 @@ import android.widget.Toast;
 //import com.example.loginandsignup.databinding.ActivityMapsBinding;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -69,7 +77,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.auth.User;
 
 
 import org.jetbrains.annotations.NotNull;
@@ -95,6 +102,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     //private ActivityMapsBinding binding;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private LocationRequest locationRequest;
     private LatLng userLatLong;
     private LatLng addresLatLng;
     int move = 1; //to check if the user is moving the map
@@ -143,9 +151,15 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
     private  String friendId;// id of a friend
     private  String tId; //temp id
+
     private String message;
     private String R_ID;
     private String Message_ID;
+
+    private String friendStatus;
+    private int tempTime;
+    private Calendar calendar = Calendar.getInstance();
+    private int statusChecked = 0;
 //    private ConstraintLayout contactPeople;
 
     @Override
@@ -189,6 +203,38 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
                 // 依照id判斷點了哪個項目並做相應事件
                 if(id == R.id.profile){
+//                    contactPeople = findViewById(R.id.contactPeople);
+                    Text = findViewById(R.id.Text);
+                    ContactMobileOne = findViewById(R.id.ContactMobileOne);
+                    ContactMobileTwo = findViewById(R.id.ContactMobileTwo);
+                    UpdateContactMobileButton = findViewById(R.id.UpdateContactMobileButton);
+                    firestoredb.collection("Users").document(UserID)
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if(documentSnapshot.exists()){
+                                        identify = documentSnapshot.getString("identify");
+                                        if(identify == "TakeCare"){
+                                            //照顧者不需顯示緊急聯絡人
+//                                            contactPeople.setVisibility(View.GONE);
+                                            Text.setVisibility(View.GONE);
+                                            ContactMobileOne.setVisibility(View.GONE);
+                                            ContactMobileTwo.setVisibility(View.GONE);
+                                            UpdateContactMobileButton.setVisibility(View.GONE);
+                                        }
+                                    }else{
+                                        Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull @NotNull Exception e) {
+                                    Toast.makeText(HomePage.this,"Fail:"
+                                            +e.getMessage(),Toast.LENGTH_LONG).show();
+                                }
+                            });
                     startActivity(new Intent(HomePage.this,MyProfile.class));
                     return true;
                 }else if(id == R.id.mappage){
@@ -238,13 +284,15 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
         if(rLocationGranted == true){
             // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-
+            turnOnGPS();
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map1);
             mapFragment.getMapAsync(this);
+            checkMessage();
         }
 
-        checkMessage();
+
+
 
     }
 
@@ -398,7 +446,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     public void onMapReady(@NonNull @NotNull GoogleMap googleMap) {
         mMap = googleMap;
         firestoredb = FirebaseFirestore.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
 
         //存取使用者的identify
         firestoredb.collection("Users").document(UserID)
@@ -421,6 +468,15 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     }
                 });
 
+        if(identify.equals("TakeCare")){
+            if(statusChecked == 0){
+                checkStatus();
+                tempTime = calendar.get(Calendar.MINUTE);
+            }else if(calendar.get(Calendar.MINUTE)-tempTime>=5
+                    || calendar.get(Calendar.MINUTE)-tempTime<=-5){
+                checkStatus();
+            }
+        }
 
         //ask for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -588,7 +644,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         inputParameter = myView.findViewById(R.id.inputParameter);
 
         //取得當日日期時間
-        Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         month = month + 1;
@@ -624,7 +679,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                         inputStartTime.setText(setStartTime);
                     }
                 };
-                Calendar calendar = Calendar.getInstance();
                 int setStarthour = calendar.get(Calendar.HOUR_OF_DAY);
                 int setStartminute =calendar.get(Calendar.MINUTE);
 
@@ -647,7 +701,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                         inputEndTime.setText(setEndTime);
                     }
                 };
-                Calendar calendar = Calendar.getInstance();
                 int setEndHour = calendar.get(Calendar.HOUR_OF_DAY);
                 int setEndMinute =calendar.get(Calendar.MINUTE);
 
@@ -672,7 +725,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     }
                 };
 
-                Calendar calendar = Calendar.getInstance();
                 setYear = calendar.get(Calendar.YEAR);
                 setMonth = calendar.get(Calendar.MONTH);
                 setDay = calendar.get(Calendar.DAY_OF_MONTH);
@@ -710,7 +762,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
                 //將資料加進firestore
                 firestoredb = FirebaseFirestore.getInstance();
-                firebaseAuth = FirebaseAuth.getInstance();
                 ScheduleID = UUID.randomUUID().toString();
                 DocumentReference documentReference = firestoredb.collection("Users").document(UserID).collection("Schedule").document(ScheduleID);
                 Map<String,Object> SaveDetailSchedule = new HashMap<String, Object>();
@@ -757,7 +808,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     private void stayInRange(double Latitude, double Longitude){
 
         firestoredb = FirebaseFirestore.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
         firestoredb.collection("Users").document(UserID)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -801,7 +851,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                         double a, c, distance, height;
 
 
-                        Calendar calendar = Calendar.getInstance();
                         //顯示資料
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
                             getDate = documentSnapshot.getString("Date");
@@ -916,6 +965,49 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     }
 
     /**
+     * turn on GPS
+     */
+    private void turnOnGPS() {
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true);
+
+        Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(getApplicationContext())
+                .checkLocationSettings(builder.build());
+
+        result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
+            @Override
+            public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
+
+                try {
+                    LocationSettingsResponse response = task.getResult(ApiException.class);
+                    Toast.makeText(HomePage.this, "GPS is already tured on", Toast.LENGTH_SHORT).show();
+
+                } catch (ApiException e) {
+
+                    switch (e.getStatusCode()) {
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+
+                            try {
+                                ResolvableApiException resolvableApiException = (ResolvableApiException) e;
+                                resolvableApiException.startResolutionForResult(HomePage.this, 2);
+                            } catch (IntentSender.SendIntentException ex) {
+                                ex.printStackTrace();
+                            }
+                            break;
+
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            //Device does not have location
+                            break;
+                    }
+                }
+            }
+        });
+
+    }
+
+    /**
      * send out the text massage from user
      * @param max_msgsize the time of massage has been sent
      * @param latitude the user's latitude
@@ -967,54 +1059,108 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
      */
     private void sendTimeAndLocation(double Latitude, double Longitude, String UserID){
         //傳送時間與位置
-        Calendar calendar = Calendar.getInstance();
+        firestoredb = FirebaseFirestore.getInstance();
         firestoredb.collection("Users").document(UserID).collection("Friend")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
-                                friendId = documentSnapshot.getString("id");
-                                firestoredb.collection("Users").document(friendId)
-                                        .collection("Friend")
-                                        .get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
-                                                for(DocumentSnapshot fDocumentSnapshot:task.getResult()){
-                                                    tId = fDocumentSnapshot.getString("id");
-                                                    if(tId.equals(UserID)){
-                                                        DocumentReference documentReference =
-                                                                firestoredb.collection("Users")
-                                                                        .document(friendId).collection("Friend")
-                                                                        .document(fDocumentSnapshot.getId());
-                                                        Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
-                                                        SaveUserProfile.put("Time", calendar.get(Calendar.MINUTE));
-                                                        SaveUserProfile.put("Latitude",Latitude);
-                                                        SaveUserProfile.put("Longitude",Longitude);
-                                                        documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                            @Override
-                                                            public void onComplete(@NonNull @NotNull Task<Void> task) {
-                                                                if(task.isSuccessful()){
-                                                                    Log.d("SaveUserProfile","Successful:User Profile is created for " + friendId);
-                                                                }else {
-                                                                    Log.w("SaveUserProfile","Fail:",task.getException());
-                                                                }
+                            friendId = documentSnapshot.getString("id");
+                            firestoredb.collection("Users").document(friendId)
+                                    .collection("Friend")
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                                            for(DocumentSnapshot fDocumentSnapshot:task.getResult()){
+                                                tId = fDocumentSnapshot.getString("id");
+                                                if(tId.equals(UserID)){
+                                                    DocumentReference documentReference =
+                                                            firestoredb.collection("Users")
+                                                                    .document(friendId).collection("Friend")
+                                                                    .document(fDocumentSnapshot.getId());
+                                                    Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
+                                                    SaveUserProfile.put("Status", "1");
+                                                    SaveUserProfile.put("Latitude",Latitude);
+                                                    SaveUserProfile.put("Longitude",Longitude);
+                                                    documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                                            if(task.isSuccessful()){
+                                                                Log.d("SaveUserProfile","Successful:User Profile is created for " + friendId);
+                                                            }else {
+                                                                Log.w("SaveUserProfile","Fail:",task.getException());
                                                             }
-                                                        });
-                                                    }
+                                                        }
+                                                    });
                                                 }
                                             }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull @NotNull Exception e) {
-                                                Toast.makeText(HomePage.this,"Fail:"
-                                                        +e.getMessage(),Toast.LENGTH_LONG).show();
-                                            }
-                                        });
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull @NotNull Exception e) {
+                                            Toast.makeText(HomePage.this,"Fail:"
+                                                    +e.getMessage(),Toast.LENGTH_LONG).show();
+                                        }
+                                    });
 
                         }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(HomePage.this,"Fail:"
+                                +e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    private void checkStatus(){
+        firestoredb = FirebaseFirestore.getInstance();
+        firestoredb.collection("Users").document(UserID).collection("Friend")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+
+                        for(DocumentSnapshot documentSnapshot:task.getResult()){
+                            friendStatus = documentSnapshot.getString("Status");
+                            if(friendStatus.equals(0)){
+                                //出現dialog訊息
+                                AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+                                builder.setMessage(documentSnapshot.getString("friendName")+"手機功能異常");
+                                //點選空白處不會返回
+                                builder.setCancelable(false);
+
+                                builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //按下是之後要做的事
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+                            DocumentReference documentReference =
+                                    firestoredb.collection("Users")
+                                            .document(UserID).collection("Friend")
+                                            .document(documentSnapshot.getId());
+                            Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
+                            SaveUserProfile.put("Status", "0");
+                            documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Log.d("SaveUserProfile","Successful:User Profile is created for " + friendId);
+                                    }else {
+                                        Log.w("SaveUserProfile","Fail:",task.getException());
+                                    }
+                                }
+                            });
+
+                        }
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
