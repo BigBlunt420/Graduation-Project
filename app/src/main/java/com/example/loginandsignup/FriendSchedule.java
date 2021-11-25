@@ -84,9 +84,7 @@ public class FriendSchedule extends AppCompatActivity {
         mySchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(FriendSchedule.this, scheduleList.class);
-                intent.putExtra("from","a");
-                startActivity(intent);
+                startActivity(new Intent(FriendSchedule.this,scheduleList.class));
             }
         });
 

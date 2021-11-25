@@ -37,6 +37,9 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
     String dbid, dbName, dbPhone;
     String choice;
 
+    private Boolean click = false;
+    private String R_ID;
+
     public FriendAdapter(AddFriend friendList, List<fModel> modelList) {
         this.friendList = friendList;
         this.modelList = modelList;
@@ -57,7 +60,7 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
                 //click
 
                 //show data
-                String id = modelList.get(position).getId();
+//                String id = modelList.get(position).getId();
                 String name = modelList.get(position).getName();
                 String phone = modelList.get(position).getPhone();
 //
@@ -78,11 +81,10 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0){
                             //傳訊息
-                            dbid = modelList.get(position).getId();
-                            dbName = modelList.get(position).getName();
-                            dbPhone = modelList.get(position).getPhone();
+                            click = true;
 
-                            sendMsg();
+                            dbid = modelList.get(position).getId();
+                            R_ID = dbid;
                         }
                         if (which == 1){
                             //刪除資料
@@ -97,11 +99,10 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
     }
 
 
-
-
-    private void sendMsg() {
-
+    public Boolean getClick(){
+        return click;
     }
+    public String getReciever_ID(){ return R_ID; }
 
     private void deleteData(String id) {
         firestoredb = FirebaseFirestore.getInstance();
