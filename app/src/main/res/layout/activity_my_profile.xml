@@ -38,29 +38,20 @@
                     android:orientation="horizontal"
                     android:background="@color/white">
 
-                    <ImageView
-                        android:id="@+id/TempIcon"
-                        android:layout_width="151dp"
-                        android:layout_height="143dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.081"
-                        app:srcCompat="@drawable/ic_mainic" />
 
                     <TextView
                         android:id="@+id/textView2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="32dp"
                         android:text="個人檔案"
                         android:textColor="@color/black"
                         android:textSize="30sp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/TempIcon"
-                        app:layout_constraintStart_toStartOf="@+id/TempIcon"
-                        app:layout_constraintTop_toBottomOf="@+id/TempIcon" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.498"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/Name"

@@ -41,7 +41,6 @@ public class FriendFriendSchedule extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FriendFriendUserAdapter adapter;
     ProgressDialog progressDialog;
-    FloatingActionButton refresh;
     String fffId;
 
 
@@ -54,7 +53,6 @@ public class FriendFriendSchedule extends AppCompatActivity {
         setContentView(R.layout.activity_friend_friend_schedule);
 
         recyclerView = findViewById(R.id.recycle_view);
-        refresh = findViewById(R.id.refresh);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -112,12 +110,7 @@ public class FriendFriendSchedule extends AppCompatActivity {
         showScheduleList();
         getfriendId();
 
-        refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(FriendFriendSchedule.this,FriendFriendSchedule.class));
-            }
-        });
+
     }
 
     public String getfriendId() {
