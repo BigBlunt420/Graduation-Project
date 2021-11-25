@@ -296,7 +296,7 @@ public class FriendFriendUserAdapter extends RecyclerView.Adapter<FriendFriendVi
                 updateSchedule.put("Date",date);
                 updateSchedule.put("StartTime",setStartTime);
                 updateSchedule.put("EndTime",setEndTime);
-                updateSchedule.put("Parameter",choice);
+                updateSchedule.put("Range",choice);
 
                 documentReference.set(updateSchedule, SetOptions.merge())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {

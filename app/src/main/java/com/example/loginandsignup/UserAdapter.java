@@ -303,7 +303,7 @@ public class UserAdapter extends RecyclerView.Adapter<ViewHolder> implements Ada
                 updateSchedule.put("Date",date);
                 updateSchedule.put("StartTime",setStartTime);
                 updateSchedule.put("EndTime",setEndTime);
-                updateSchedule.put("Parameter",choice);
+                updateSchedule.put("Range",choice);
 
                 documentReference.set(updateSchedule, SetOptions.merge())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
