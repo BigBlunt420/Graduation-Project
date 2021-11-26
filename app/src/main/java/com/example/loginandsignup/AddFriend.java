@@ -67,8 +67,6 @@ public class AddFriend extends AppCompatActivity {
     private String uid;
     private SearchView searchView;
     private String FriendID;
-    private String FriendID_1;
-    private String FriendID_2;
     private String userName;
     private String userPhone;
     private String userIdentify;
@@ -292,8 +290,6 @@ public class AddFriend extends AppCompatActivity {
 
     private void checkFriendExist(String uidFriend) {
         FriendID = UUID.randomUUID().toString();
-        FriendID_1 = UUID.randomUUID().toString();
-        FriendID_2 = UUID.randomUUID().toString();
         //current User's friend data
         db.collection("Users").document(uidFriend)
                 .get()
