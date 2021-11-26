@@ -203,38 +203,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
                 // 依照id判斷點了哪個項目並做相應事件
                 if(id == R.id.profile){
-//                    contactPeople = findViewById(R.id.contactPeople);
-                    Text = findViewById(R.id.Text);
-                    ContactMobileOne = findViewById(R.id.ContactMobileOne);
-                    ContactMobileTwo = findViewById(R.id.ContactMobileTwo);
-                    UpdateContactMobileButton = findViewById(R.id.UpdateContactMobileButton);
-                    firestoredb.collection("Users").document(UserID)
-                            .get()
-                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    if(documentSnapshot.exists()){
-                                        identify = documentSnapshot.getString("identify");
-                                        if(identify == "TakeCare"){
-                                            //照顧者不需顯示緊急聯絡人
-//                                            contactPeople.setVisibility(View.GONE);
-                                            Text.setVisibility(View.GONE);
-                                            ContactMobileOne.setVisibility(View.GONE);
-                                            ContactMobileTwo.setVisibility(View.GONE);
-                                            UpdateContactMobileButton.setVisibility(View.GONE);
-                                        }
-                                    }else{
-                                        Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull @NotNull Exception e) {
-                                    Toast.makeText(HomePage.this,"Fail:"
-                                            +e.getMessage(),Toast.LENGTH_LONG).show();
-                                }
-                            });
                     startActivity(new Intent(HomePage.this,MyProfile.class));
                     return true;
                 }else if(id == R.id.mappage){
