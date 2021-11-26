@@ -73,10 +73,7 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
 //                String id = modelList.get(position).getId();
                 String name = modelList.get(position).getName();
                 String phone = modelList.get(position).getPhone();
-//
-//                firebaseAuth = FirebaseAuth.getInstance();
-//                UserID = firebaseAuth.getCurrentUser().getUid();
-//                //Toast.makeText(scheduleList, dbid,Toast.LENGTH_LONG).show();
+
                 Toast.makeText(addFriend, name+"  "+phone,Toast.LENGTH_SHORT).show();
             }
 

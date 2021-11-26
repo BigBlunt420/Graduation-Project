@@ -66,6 +66,7 @@ public class AddFriend extends AppCompatActivity {
     private FloatingActionButton addNewFriend;
     private String uid;
     private SearchView searchView;
+    private String FriendID;
     private String FriendID_1;
     private String FriendID_2;
     private String userName;
@@ -290,6 +291,7 @@ public class AddFriend extends AppCompatActivity {
     }
 
     private void checkFriendExist(String uidFriend) {
+        FriendID = UUID.randomUUID().toString();
         FriendID_1 = UUID.randomUUID().toString();
         FriendID_2 = UUID.randomUUID().toString();
         //current User's friend data
@@ -305,10 +307,11 @@ public class AddFriend extends AppCompatActivity {
 //                            Toast.makeText(AddFriend.this, fName, Toast.LENGTH_LONG).show();
 //                            Toast.makeText(AddFriend.this, fPhone, Toast.LENGTH_LONG).show();
 
-                            DocumentReference documentReference = db.collection("Users").document(uid).collection("Friend").document(FriendID_1);
+                            DocumentReference documentReference = db.collection("Users").document(uid).collection("Friend").document(FriendID);
                             Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
+                            SaveUserProfile.put("id",FriendID);
+                            SaveUserProfile.put("uidFriend",uidFriend);
                             SaveUserProfile.put("friendName", fName);
-                            SaveUserProfile.put("id",uidFriend);
                             SaveUserProfile.put("friendPhone", fPhone);
                             SaveUserProfile.put("friendIdentify", fIdentify);
 
@@ -342,9 +345,10 @@ public class AddFriend extends AppCompatActivity {
                             userPhone = documentSnapshot.getString("MyPhoneNumber");
                             userIdentify = documentSnapshot.getString("identify");
 
-                            DocumentReference documentReference_2 = db.collection("Users").document(uidFriend).collection("Friend").document(FriendID_2);
+                            DocumentReference documentReference_2 = db.collection("Users").document(uidFriend).collection("Friend").document(FriendID);
                             Map<String,Object> SaveFriendProfile = new HashMap<String, Object>();
-                            SaveFriendProfile.put("id",uid);
+                            SaveFriendProfile.put("id",FriendID);
+                            SaveFriendProfile.put("uidFriend",uid);
                             SaveFriendProfile.put("friendName", userName);
                             SaveFriendProfile.put("friendPhone", userPhone);
                             SaveFriendProfile.put("friendIdentify", userIdentify);
