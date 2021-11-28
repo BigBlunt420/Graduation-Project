@@ -79,6 +79,8 @@ public class AddFriend extends AppCompatActivity {
     private NavigationView navigationView;
     private Toolbar toolbar;
 
+    private Button ButtonSentMSG;
+
     List<fModel> modelList = new ArrayList<>();
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
@@ -94,6 +96,8 @@ public class AddFriend extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+
+        ButtonSentMSG  = findViewById(R.id.sent_message);
 
         recyclerView = findViewById(R.id.recycle_view);
         addNewFriend = findViewById(R.id.addNewFriend);
@@ -159,6 +163,13 @@ public class AddFriend extends AppCompatActivity {
                 add();
             }
         });
+
+//        ButtonSentMSG.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
     }
 
 

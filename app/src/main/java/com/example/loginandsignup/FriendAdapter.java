@@ -23,6 +23,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -32,10 +34,12 @@ import com.google.firebase.firestore.auth.User;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 
 public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements AdapterView.OnItemSelectedListener {
     AddFriend addFriend;
@@ -47,7 +51,7 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
     String dbid, dbName, dbPhone;
     String choice;
     String Message_ID;
-    boolean messageIsSent = false;
+//    boolean messageIsSent = false;
 
 
     public FriendAdapter(AddFriend addFriend, List<fModel> modelList) {
@@ -129,6 +133,7 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
 
 
     private void sendMSG(String R_ID) {
+        firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         UserID = firebaseAuth.getCurrentUser().getUid();
         Dialog dialog = new Dialog(addFriend);
@@ -149,19 +154,13 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
                 if (TextUtils.isEmpty(message)) {
                     sentMessage.setError("欄位不得為空");
                 } else {
-                    messageSave(R_ID, message);
-                    if(messageIsSent){
-                        Toast.makeText(addFriend, "訊息已傳送", Toast.LENGTH_LONG).show();
-                    } else{
-                        Toast.makeText(addFriend, "傳送失敗", Toast.LENGTH_LONG).show();
-
-                    }
+                    messageSent(R_ID, message);
                 }
             }
         });
     }
 
-    private void messageSave(String R_ID, String message){
+    private void messageSent(String R_ID, String message){
         Message_ID = UUID.randomUUID().toString();
         //current User's friend data
         firestoredb.collection("Users").document(R_ID)
@@ -172,6 +171,7 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
                         if (documentSnapshot.exists()) {
                             DocumentReference documentReference = firestoredb.collection("Users").document(R_ID).collection("Message").document(Message_ID);
                             Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
+                            SaveUserProfile.put("messageID", Message_ID);
                             SaveUserProfile.put("messageContent", message);
                             SaveUserProfile.put("messageSender", UserID);
                             Toast.makeText(addFriend, message, Toast.LENGTH_LONG).show();
@@ -180,10 +180,12 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
                                 @Override
                                 public void onComplete(@NonNull @NotNull Task<Void> task) {
                                     if(task.isSuccessful()){
-                                        messageIsSent = true;
-                                        Log.d("SaveUserProfile","Successful:User Profile is created for " + UserID);
+//                                        messageIsSent = true;
+                                        Toast.makeText(addFriend, "訊息已傳送", Toast.LENGTH_LONG).show();
+                                        Log.d("SaveUserProfile","Message is created for " + UserID);
                                     }else {
-                                        messageIsSent = false;
+//                                        messageIsSent = false;
+                                        Toast.makeText(addFriend, "傳送失敗", Toast.LENGTH_LONG).show();
                                         Log.w("SaveUserProfile","Fail:",task.getException());
                                     }
                                 }
