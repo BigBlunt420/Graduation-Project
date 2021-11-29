@@ -3,8 +3,10 @@ package com.example.loginandsignup;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.NotificationChannel;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -51,8 +54,7 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
     String dbid, dbName, dbPhone;
     String choice;
     String Message_ID;
-//    boolean messageIsSent = false;
-
+    String title, message;
 
     public FriendAdapter(AddFriend addFriend, List<fModel> modelList) {
         this.addFriend = addFriend;
@@ -71,14 +73,16 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
         viewHolder.setOnClickListener(new fViewHolder.ClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                //click
+//                //click
+//
+//                //show data
+////                String id = modelList.get(position).getId();
+//                String name = modelList.get(position).getName();
+//                String phone = modelList.get(position).getPhone();
+//
+//                Toast.makeText(addFriend, name+"  "+phone,Toast.LENGTH_SHORT).show();
 
-                //show data
-//                String id = modelList.get(position).getId();
-                String name = modelList.get(position).getName();
-                String phone = modelList.get(position).getPhone();
 
-                Toast.makeText(addFriend, name+"  "+phone,Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -136,6 +140,18 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
         firestoredb = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         UserID = firebaseAuth.getCurrentUser().getUid();
+
+        firestoredb.collection("Users").document(UserID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.exists()){
+                            title = documentSnapshot.getString("Username");
+                        }
+                    }
+                });
+
         Dialog dialog = new Dialog(addFriend);
         dialog.setTitle("輸入訊息");
         dialog.setContentView(R.layout.send_message);
@@ -148,17 +164,19 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
         btnSent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String message = sentMessage.getText().toString();
-                Toast.makeText(addFriend, message,Toast.LENGTH_LONG).show();
+                message = sentMessage.getText().toString();
+//                Toast.makeText(addFriend, message,Toast.LENGTH_LONG).show();
 
                 if (TextUtils.isEmpty(message)) {
                     sentMessage.setError("欄位不得為空");
                 } else {
                     messageSent(R_ID, message);
+                    dialog.dismiss();
                 }
             }
         });
     }
+
 
     private void messageSent(String R_ID, String message){
         Message_ID = UUID.randomUUID().toString();
@@ -174,17 +192,17 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
                             SaveUserProfile.put("messageID", Message_ID);
                             SaveUserProfile.put("messageContent", message);
                             SaveUserProfile.put("messageSender", UserID);
+                            SaveUserProfile.put("messageSent", false);
                             Toast.makeText(addFriend, message, Toast.LENGTH_LONG).show();
 
                             documentReference.set(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull @NotNull Task<Void> task) {
                                     if(task.isSuccessful()){
-//                                        messageIsSent = true;
                                         Toast.makeText(addFriend, "訊息已傳送", Toast.LENGTH_LONG).show();
+
                                         Log.d("SaveUserProfile","Message is created for " + UserID);
                                     }else {
-//                                        messageIsSent = false;
                                         Toast.makeText(addFriend, "傳送失敗", Toast.LENGTH_LONG).show();
                                         Log.w("SaveUserProfile","Fail:",task.getException());
                                     }

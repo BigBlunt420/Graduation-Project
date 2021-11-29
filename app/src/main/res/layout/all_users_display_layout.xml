@@ -41,7 +41,5 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:gravity="start" />
-
-
     </LinearLayout>
 </LinearLayout>
