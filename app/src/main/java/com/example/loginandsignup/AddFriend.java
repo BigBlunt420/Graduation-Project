@@ -79,8 +79,6 @@ public class AddFriend extends AppCompatActivity {
     private NavigationView navigationView;
     private Toolbar toolbar;
 
-    private Button ButtonSentMSG;
-
     List<fModel> modelList = new ArrayList<>();
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
@@ -96,8 +94,6 @@ public class AddFriend extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-
-        ButtonSentMSG  = findViewById(R.id.sent_message);
 
         recyclerView = findViewById(R.id.recycle_view);
         addNewFriend = findViewById(R.id.addNewFriend);
@@ -164,25 +160,7 @@ public class AddFriend extends AppCompatActivity {
             }
         });
 
-//        ButtonSentMSG.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
     }
-
-
-//    private void addFriend(String schFriend) {
-////        FriendID_1 = UUID.randomUUID().toString();
-////        FriendID_2 = UUID.randomUUID().toString();
-////        db.collection("Users").document(uid).collection("Friend").document(FriendID_1);
-////        db.collection("Users").document(schFriend).collection("Friend").document(FriendID_2);
-////        Map<String,Object> SaveDetailSchedule_1 = new HashMap<String, Object>();
-////        Map<String,Object> SaveDetailSchedule_2 = new HashMap<String, Object>();
-////        SaveDetailSchedule_1.put("friend", schFriend);
-////        SaveDetailSchedule_2.put("friend", uid);
-//    }
 
 
     public void showFriendList() {
@@ -204,7 +182,8 @@ public class AddFriend extends AppCompatActivity {
                             fModel model = new fModel(
                                     documentSnapshot.getString("id"),
                                     documentSnapshot.getString("friendName"),
-                                    documentSnapshot.getString("friendPhone"));
+                                    documentSnapshot.getString("friendPhone"),
+                                    documentSnapshot.getString("identify"));
                             modelList.add(model);
                         }
                         //連接
@@ -321,7 +300,6 @@ public class AddFriend extends AppCompatActivity {
                             SaveUserProfile.put("friendName", fName);
                             SaveUserProfile.put("friendPhone", fPhone);
                             SaveUserProfile.put("friendIdentify", fIdentify);
-
 
                             documentReference.set(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override

@@ -73,16 +73,6 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
         viewHolder.setOnClickListener(new fViewHolder.ClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-//                //click
-//
-//                //show data
-////                String id = modelList.get(position).getId();
-//                String name = modelList.get(position).getName();
-//                String phone = modelList.get(position).getPhone();
-//
-//                Toast.makeText(addFriend, name+"  "+phone,Toast.LENGTH_SHORT).show();
-
-
             }
 
             @Override
@@ -193,7 +183,6 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
                             SaveUserProfile.put("messageContent", message);
                             SaveUserProfile.put("messageSender", UserID);
                             SaveUserProfile.put("messageSent", false);
-                            Toast.makeText(addFriend, message, Toast.LENGTH_LONG).show();
 
                             documentReference.set(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override

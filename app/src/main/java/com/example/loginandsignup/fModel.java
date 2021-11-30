@@ -1,16 +1,17 @@
 package com.example.loginandsignup;
 
 public class fModel {
-    String id, name, phone;
+    String id, name, phone, identify;
 
     public fModel(){
 
     }
 
-    public fModel(String id, String name, String phone) {
+    public fModel(String id, String name, String phone, String identify) {
         this.id = id;
         this.name = name;
         this.phone = phone;
+        this.identify = identify;
     }
 
     public String getId() {
@@ -35,5 +36,13 @@ public class fModel {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getIdentify() {
+        return identify;
+    }
+
+    public void setIdentify(String identify) {
+        this.identify = identify;
     }
 }

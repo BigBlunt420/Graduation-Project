@@ -82,6 +82,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.auth.User;
 
 
@@ -289,20 +290,50 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         timerTask = new TimerTask() {
             @Override
             public void run() {
-                checkMessage();
-//                firestoredb.collection("Users").document(UserID).collection("Message")
-//                        .get()
-//                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                            @Override
-//                            public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
-//                                for(DocumentSnapshot documentSnapshot:task.getResult()){
-//                                    //未發過通知才叫sendOnChannel
-//                                    if(!documentSnapshot.getBoolean("messageSent")){
-//                                        checkMessage();
-//                                    }
-//                                }
-//                            }
-//                        });
+                //搜尋是否有訊息
+                firestoredb = FirebaseFirestore.getInstance();
+                firestoredb.collection("Users").document(UserID).collection("Message")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                                for(DocumentSnapshot documentSnapshot:task.getResult()){
+                                    //未發過通知才sendOnChannel
+                                    if(!documentSnapshot.getBoolean("messageSent")){
+                                        message = documentSnapshot.getString("messageContent");
+                                        Message_ID = documentSnapshot.getString("messageID");
+                                        Sender_ID = documentSnapshot.getString("messageSender");
+
+                                        sendOnChannel(getSenderName(Sender_ID), message);
+                                        checkMessage(message, Message_ID);
+
+                                        //已發通知了，所以messageSent = true
+                                        DocumentReference documentReference = firestoredb.collection("Users").document(UserID)
+                                                .collection("Message").document(Message_ID);
+                                        Map<String,Object> UpdateMessageDetail = new HashMap<String, Object>();
+                                        UpdateMessageDetail.put("messageSent", true);
+
+                                        documentReference.set(UpdateMessageDetail, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                                if(task.isSuccessful()){
+                                                    Log.d("UpdateMessageDetail","Successful:messageSent is true.");
+                                                }else {
+                                                    Log.w("UpdateMessageDetail","Fail:",task.getException());
+                                                }
+                                            }
+                                        });
+
+                                    }
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull @NotNull Exception e) {
+                                Toast.makeText(HomePage.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                            }
+                        });
             }
         };
 
@@ -314,8 +345,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 //        Toast.makeText(this, "send on channel",Toast.LENGTH_LONG).show();
         Notification notification = new NotificationCompat.Builder(this, NotificationHelper.channel_ID)
                 .setSmallIcon(R.drawable.ic_message)
-                .setContentTitle(Sender_ID)
-                .setContentText(message)
+                .setContentTitle(title)
+                .setContentText(text)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .build();
@@ -336,52 +367,79 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         }
     }
 
-    private void checkMessage() {
-        firestoredb = FirebaseFirestore.getInstance();
-        firestoredb.collection("Users").document(UserID).collection("Message")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
-                        for(DocumentSnapshot documentSnapshot : task.getResult()){
-                            message = documentSnapshot.getString("messageContent");
-                            Message_ID = documentSnapshot.getString("messageID");
-                            Sender_ID = documentSnapshot.getString("messageSender");
+    private void checkMessage(String message, String Message_ID){
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run() {
+                //過一秒後要做的事情
+                AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
 
-                            sendOnChannel(getSenderName(Sender_ID), message);
+                builder.setMessage(message);
 
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable(){
-                                @Override
-                                public void run() {
-                                    //過一秒後要做的事情
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+//                Toast.makeText(HomePage.this,message, Toast.LENGTH_LONG).show();
 
-                                    builder.setMessage(message);
+                //點選空白處不會返回
+                builder.setCancelable(false);
 
-                                    Toast.makeText(HomePage.this,message, Toast.LENGTH_LONG).show();
-
-                                    //點選空白處不會返回
-                                    builder.setCancelable(false);
-
-                                    builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            //按下是之後要做的事
-                                            dialog.dismiss();
-                                            deleteMessage(Message_ID);
-
+                builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //按下是之後要做的事
+                        dialog.dismiss();
+                        deleteMessage(Message_ID);
 //                                            sendMessageCheck();
-                                        }
-                                    });
-
-                                    AlertDialog alert = builder.create();
-                                    alert.show();
-
-                                }}, 1000);
-                        }
                     }
                 });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+
+            }}, 1000);
     }
+//    private void checkMessage() {
+//        firestoredb = FirebaseFirestore.getInstance();
+//        firestoredb.collection("Users").document(UserID).collection("Message")
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+//                        for(DocumentSnapshot documentSnapshot : task.getResult()){
+////                            message = documentSnapshot.getString("messageContent");
+////                            Message_ID = documentSnapshot.getString("messageID");
+////                            Sender_ID = documentSnapshot.getString("messageSender");
+//
+//                            Handler handler = new Handler();
+//                            handler.postDelayed(new Runnable(){
+//                                @Override
+//                                public void run() {
+//                                    //過一秒後要做的事情
+//                                    AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+//
+//                                    builder.setMessage(message);
+//
+//                                    Toast.makeText(HomePage.this,message, Toast.LENGTH_LONG).show();
+//
+//                                    //點選空白處不會返回
+//                                    builder.setCancelable(false);
+//
+//                                    builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
+//                                        public void onClick(DialogInterface dialog, int id) {
+//                                            //按下是之後要做的事
+//                                            dialog.dismiss();
+//                                            deleteMessage(Message_ID);
+//
+////                                            sendMessageCheck();
+//                                        }
+//                                    });
+//
+//                                    AlertDialog alert = builder.create();
+//                                    alert.show();
+//
+//                                }}, 1000);
+//                        }
+//                    }
+//                });
+//    }
 
     private String getSenderName(String Sender_ID) {
         firestoredb.collection("Users").document(Sender_ID)
@@ -413,7 +471,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        Log.d("DeleteFriend","Successful:Message is deleted for " + UserID);
+                        Log.d("DeleteMessage","Successful:Message is deleted for " + UserID);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

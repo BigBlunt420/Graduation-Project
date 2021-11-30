@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class fViewHolder extends RecyclerView.ViewHolder {
 
-    TextView Name, Phone;
+    TextView Name, Phone, Identify;
     View view;
 
     public fViewHolder(@NonNull @NotNull View itemView) {
@@ -37,6 +37,7 @@ public class fViewHolder extends RecyclerView.ViewHolder {
 
         Name = itemView.findViewById(R.id.all_users_profile_full_name);
         Phone = itemView.findViewById(R.id.all_users_profile_phone_number);
+        Identify = itemView.findViewById(R.id.all_users_profile_identify);
 
     }
     private fViewHolder.ClickListener ClickListener;
