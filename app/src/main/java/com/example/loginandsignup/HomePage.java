@@ -505,6 +505,16 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if(documentSnapshot.exists()){
                             identify = documentSnapshot.getString("identify");
+                            if(identify.equals("TakeCare")){
+                                if(statusChecked == 0){
+                                    checkStatus();
+                                    tempTime = calendar.get(Calendar.MINUTE);
+                                }else if(calendar.get(Calendar.MINUTE)-tempTime>=5
+                                        || calendar.get(Calendar.MINUTE)-tempTime<=-5){
+                                    checkStatus();
+                                    statusChecked = 1;
+                                }
+                            }
                         }else{
                             Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
                         }
@@ -518,15 +528,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     }
                 });
 
-        if(identify.equals("TakeCare")){
-            if(statusChecked == 0){
-                checkStatus();
-                tempTime = calendar.get(Calendar.MINUTE);
-            }else if(calendar.get(Calendar.MINUTE)-tempTime>=5
-                    || calendar.get(Calendar.MINUTE)-tempTime<=-5){
-                checkStatus();
-            }
-        }
+
 
         //ask for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -1132,8 +1134,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                                                     .document(fDocumentSnapshot.getId());
                                                     Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
                                                     SaveUserProfile.put("Status", "1");
-                                                    SaveUserProfile.put("Latitude",Latitude);
-                                                    SaveUserProfile.put("Longitude",Longitude);
+                                                    SaveUserProfile.put("Latitude",Double.toString(Latitude));
+                                                    SaveUserProfile.put("Longitude",Double.toString(Longitude));
                                                     documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
                                                         public void onComplete(@NonNull @NotNull Task<Void> task) {
@@ -1178,19 +1180,32 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
                             friendStatus = documentSnapshot.getString("Status");
-                            if(friendStatus.equals(0)){
+                            if(friendStatus.equals("0")){
                                 //出現dialog訊息
-                                AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
-                                builder.setMessage(documentSnapshot.getString("friendName")+"手機功能異常");
-                                //點選空白處不會返回
-                                builder.setCancelable(false);
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable(){
+                                    @Override
+                                    public void run() {
+                                        //過一秒後要做的事情
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+                                        builder.setMessage(documentSnapshot.getString("friendName")+"手機功能異常\n"
+                                                +"最後更新位置為：\n經度：" + documentSnapshot.getString("Longitude")
+                                                +"\n緯度：" + documentSnapshot.getString("Latitude"));
+                                        //點選空白處不會返回
+                                        builder.setCancelable(false);
 
-                                builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        //按下是之後要做的事
-                                        dialog.dismiss();
-                                    }
-                                });
+                                        builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                //按下是之後要做的事
+                                                dialog.dismiss();
+                                            }
+                                        });
+
+                                        AlertDialog alert = builder.create();
+                                        alert.show();
+
+                                    }}, 1000);
+
                             }
                             DocumentReference documentReference =
                                     firestoredb.collection("Users")
