@@ -175,8 +175,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     private NotificationManagerCompat notificationManager;
     public static final String channel_ID = "channel";
 
-    private Timer timer = null; //計時器
+    private Timer timer = null; //是否有訊息的計時器
     private TimerTask timerTask = null;
+
+    private Timer timerCheckMSG = null; //訊息是否確認的計時器
+    private TimerTask timerTaskCheckMSG = null;
 
 
     @Override
@@ -342,6 +345,23 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         timer.schedule(timerTask, 1000, 5000);    //從現在起過1000ms後，每5000ms執行一次
     }
 
+    private void startTimerCheck(AlertDialog alert, String Sender_ID, String Message_ID) {
+        if(timerCheckMSG == null){
+            timerCheckMSG = new Timer();
+        }
+
+        timerTaskCheckMSG = new TimerTask() {
+            @Override
+            public void run() {
+                //是否超過五分鐘還未確認
+                alert.dismiss();
+                sendMessageCheck(Sender_ID, "訊息超過五分鐘未被確認");
+                deleteMessage(Message_ID);
+            }
+        };
+
+        timerCheckMSG.schedule(timerTaskCheckMSG, 1000 * 60 * 5);    //從現在起過五分鐘才執行
+    }
 
     private void sendOnChannel(String title, String text) {
 //        Toast.makeText(this, "send on channel",Toast.LENGTH_LONG).show();
@@ -379,7 +399,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
                 builder.setMessage(message);
 
-//                Toast.makeText(HomePage.this,message, Toast.LENGTH_LONG).show();
 
                 //點選空白處不會返回
                 builder.setCancelable(false);
@@ -388,64 +407,23 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     public void onClick(DialogInterface dialog, int id) {
                         //按下是之後要做的事
                         dialog.dismiss();
-                        deleteMessage(Message_ID);
 
-                        //Send_Back是true，回傳告知對方訊息已被確認
+                        //Send_Back是true才需要回傳告知對方訊息已被確認
                         if(Send_Back){
-                            sendMessageCheck(Sender_ID);
+                            sendMessageCheck(Sender_ID, "訊息已被確認");
                         }
+
+                        deleteMessage(Message_ID);
                     }
                 });
 
                 AlertDialog alert = builder.create();
                 alert.show();
 
+                startTimerCheck(alert, Sender_ID, Message_ID);
+
             }}, 1000);
     }
-//    private void checkMessage() {
-//        firestoredb = FirebaseFirestore.getInstance();
-//        firestoredb.collection("Users").document(UserID).collection("Message")
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
-//                        for(DocumentSnapshot documentSnapshot : task.getResult()){
-////                            message = documentSnapshot.getString("messageContent");
-////                            Message_ID = documentSnapshot.getString("messageID");
-////                            Sender_ID = documentSnapshot.getString("messageSender");
-//
-//                            Handler handler = new Handler();
-//                            handler.postDelayed(new Runnable(){
-//                                @Override
-//                                public void run() {
-//                                    //過一秒後要做的事情
-//                                    AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
-//
-//                                    builder.setMessage(message);
-//
-//                                    Toast.makeText(HomePage.this,message, Toast.LENGTH_LONG).show();
-//
-//                                    //點選空白處不會返回
-//                                    builder.setCancelable(false);
-//
-//                                    builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
-//                                        public void onClick(DialogInterface dialog, int id) {
-//                                            //按下是之後要做的事
-//                                            dialog.dismiss();
-//                                            deleteMessage(Message_ID);
-//
-////                                            sendMessageCheck();
-//                                        }
-//                                    });
-//
-//                                    AlertDialog alert = builder.create();
-//                                    alert.show();
-//
-//                                }}, 1000);
-//                        }
-//                    }
-//                });
-//    }
 
     private String getSenderName(String Sender_ID) {
         firestoredb.collection("Users").document(Sender_ID)
@@ -459,7 +437,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         return senderName;
     }
 
-    private void sendMessageCheck(String Sender_ID) {
+    private void sendMessageCheck(String Sender_ID, String checkMessage) {
         Message_ID = UUID.randomUUID().toString();
         firestoredb = FirebaseFirestore.getInstance();
         firestoredb.collection("Users").document(Sender_ID)
@@ -472,7 +450,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                     .document(Sender_ID).collection("Message").document(Message_ID);
                             Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
                             SaveUserProfile.put("messageID", Message_ID);
-                            SaveUserProfile.put("messageContent", "訊息已被確認");
+                            SaveUserProfile.put("messageContent", checkMessage);
                             SaveUserProfile.put("messageSender", UserID);
                             SaveUserProfile.put("messageSent", false);
                             SaveUserProfile.put("SendBack", false);
