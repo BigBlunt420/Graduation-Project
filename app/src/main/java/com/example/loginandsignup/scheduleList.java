@@ -162,6 +162,4 @@ public class scheduleList extends AppCompatActivity {
                     }
                 });
     }
-
-
 }

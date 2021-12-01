@@ -165,6 +165,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     private String Message_ID;
     private String Sender_ID;
     private String senderName;
+    private boolean Send_Back;
 
     private String friendStatus;
     private int tempTime;
@@ -199,6 +200,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         createNotificationChannel();
         notificationManager = NotificationManagerCompat.from(this);
 
+        //每5秒檢查是否有新訊息
         startTimer();
 
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
@@ -303,9 +305,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                         message = documentSnapshot.getString("messageContent");
                                         Message_ID = documentSnapshot.getString("messageID");
                                         Sender_ID = documentSnapshot.getString("messageSender");
+                                        Send_Back = documentSnapshot.getBoolean("SendBack");
 
                                         sendOnChannel(getSenderName(Sender_ID), message);
-                                        checkMessage(message, Message_ID);
+                                        checkMessage(message, Message_ID, Sender_ID, Send_Back);
 
                                         //已發通知了，所以messageSent = true
                                         DocumentReference documentReference = firestoredb.collection("Users").document(UserID)
@@ -323,7 +326,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                                 }
                                             }
                                         });
-
                                     }
                                 }
                             }
@@ -367,7 +369,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         }
     }
 
-    private void checkMessage(String message, String Message_ID){
+    private void checkMessage(String message, String Message_ID, String Sender_ID, Boolean Send_Back){
         Handler handler = new Handler();
         handler.postDelayed(new Runnable(){
             @Override
@@ -387,7 +389,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                         //按下是之後要做的事
                         dialog.dismiss();
                         deleteMessage(Message_ID);
-//                                            sendMessageCheck();
+
+                        //Send_Back是true，回傳告知對方訊息已被確認
+                        if(Send_Back){
+                            sendMessageCheck(Sender_ID);
+                        }
                     }
                 });
 
@@ -452,14 +458,42 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                 });
         return senderName;
     }
-//
-//    private void sendMessageCheck(String R_ID) {
-//        Message_ID = UUID.randomUUID().toString();
-//        firestoredb.collection("Users").document()
-//                .get()
-//
-//
-//    }
+
+    private void sendMessageCheck(String Sender_ID) {
+        Message_ID = UUID.randomUUID().toString();
+        firestoredb = FirebaseFirestore.getInstance();
+        firestoredb.collection("Users").document(Sender_ID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.exists()){
+                            DocumentReference documentReference = firestoredb.collection("Users")
+                                    .document(Sender_ID).collection("Message").document(Message_ID);
+                            Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
+                            SaveUserProfile.put("messageID", Message_ID);
+                            SaveUserProfile.put("messageContent", "訊息已被確認");
+                            SaveUserProfile.put("messageSender", UserID);
+                            SaveUserProfile.put("messageSent", false);
+                            SaveUserProfile.put("SendBack", false);
+
+                            documentReference.set(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Toast.makeText(HomePage.this, "訊息已回覆", Toast.LENGTH_LONG).show();
+
+                                        Log.d("SaveUserProfile","Message is created for " + UserID);
+                                    }else {
+                                        Toast.makeText(HomePage.this, "回覆失敗", Toast.LENGTH_LONG).show();
+                                        Log.w("SaveUserProfile","Fail:",task.getException());
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+    }
 
     private void deleteMessage(String Message_ID) {
         firestoredb = FirebaseFirestore.getInstance();

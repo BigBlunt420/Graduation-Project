@@ -183,6 +183,7 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
                             SaveUserProfile.put("messageContent", message);
                             SaveUserProfile.put("messageSender", UserID);
                             SaveUserProfile.put("messageSent", false);
+                            SaveUserProfile.put("SendBack", true);
 
                             documentReference.set(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
