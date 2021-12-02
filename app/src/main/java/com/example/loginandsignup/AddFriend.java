@@ -204,6 +204,48 @@ public class AddFriend extends AppCompatActivity {
                 });
     }
 
+    public void showFFList(String UserID){
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
+        progressDialog.setTitle("資料載入中...");
+        progressDialog.show();
+        uid = mAuth.getCurrentUser().getUid();
+        db.collection("Users").document(UserID).collection("Friend")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        modelList.clear();
+                        progressDialog.dismiss();
+                        //顯示資料
+                        for(DocumentSnapshot documentSnapshot:task.getResult()){
+                            if(documentSnapshot.getString("friendIdentify").equals("BeCare")){
+                                fIdentify = "被照顧者";
+                            }else {
+                                fIdentify = "照顧者";
+                            }
+                            fModel model = new fModel(
+                                    documentSnapshot.getString("id"),
+                                    documentSnapshot.getString("friendName"),
+                                    documentSnapshot.getString("friendPhone"),
+                                    fIdentify);
+                            modelList.add(model);
+                        }
+                        //連接
+                        adapter = new FriendAdapter(AddFriend.this,modelList);
+                        recyclerView.setAdapter(adapter);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(AddFriend.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
     private void add(){
         FirebaseUser currentUser = mAuth.getCurrentUser();
         uid = currentUser.getUid();
