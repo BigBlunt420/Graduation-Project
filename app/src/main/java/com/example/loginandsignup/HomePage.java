@@ -35,6 +35,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,7 +59,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
@@ -217,6 +220,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         toggle.syncState();
 
 
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         //為NavigationView設置點擊事件
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -651,24 +656,48 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
         };
 
+
+        LocationServices.getFusedLocationProviderClient(HomePage.this)
+                .requestLocationUpdates(locationRequest, new LocationCallback() {
+                    @Override
+                    public void onLocationResult(@NonNull @NotNull LocationResult locationResult) {
+                        super.onLocationResult(locationResult);
+                        LocationServices.getFusedLocationProviderClient(HomePage.this)
+                                .removeLocationUpdates(this);
+                        if(locationResult != null && locationResult.getLocations().size() > 0){
+                            int index = locationResult.getLocations().size()-1;
+                            mMap.clear();   //clear the old location marker on the map
+                            userLatLong = new LatLng(locationResult.getLocations().get(index).getLatitude()
+                                    ,locationResult.getLocations().get(index).getLongitude());
+                            MarkerOptions options = new MarkerOptions().position(userLatLong)
+                                    .title("Your location");
+                            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                            mMap.addMarker(options);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(locationResult.getLocations().get(index).getLatitude(),
+                                            locationResult.getLocations().get(index).getLongitude())
+                                    , zoomLevel));
+                        }
+                    }
+                }, Looper.getMainLooper());
         //get current location at the first time when the app was opened
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        try{
-            Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-            mMap.clear();   //clear the old location marker on the map
-            MarkerOptions options = new MarkerOptions().position(new LatLng(lastLocation.getLatitude(),
-                    lastLocation.getLongitude())).title("Your location");
-            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-            mMap.addMarker(options);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), zoomLevel));
-            if(identify.equals("BeCare")){
-                //send time and location to friend who's identify is "TakeCare"
-                sendTimeAndLocation(lastLocation.getLatitude(),lastLocation.getLongitude(),UserID);
-            }
-        }catch (SecurityException e){
-            e.printStackTrace();
-        }
+//        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+//        try{
+//            Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+//            mMap.clear();   //clear the old location marker on the map
+//            MarkerOptions options = new MarkerOptions().position(new LatLng(lastLocation.getLatitude(),
+//                    lastLocation.getLongitude())).title("Your location");
+//            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//            mMap.addMarker(options);
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), zoomLevel));
+//            if(identify.equals("BeCare")){
+//                //send time and location to friend who's identify is "TakeCare"
+//                sendTimeAndLocation(lastLocation.getLatitude(),lastLocation.getLongitude(),UserID);
+//            }
+//        }catch (SecurityException e){
+//            e.printStackTrace();
+//        }
 
 
 
