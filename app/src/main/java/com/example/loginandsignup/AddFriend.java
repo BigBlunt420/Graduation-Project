@@ -74,7 +74,6 @@ public class AddFriend extends AppCompatActivity {
     private String fPhone;
     private String fIdentify;
 
-
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
@@ -179,11 +178,16 @@ public class AddFriend extends AppCompatActivity {
                         progressDialog.dismiss();
                         //顯示資料
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
+                            if(documentSnapshot.getString("friendIdentify").equals("BeCare")){
+                                fIdentify = "被照顧者";
+                            }else {
+                                fIdentify = "照顧者";
+                            }
                             fModel model = new fModel(
                                     documentSnapshot.getString("id"),
                                     documentSnapshot.getString("friendName"),
                                     documentSnapshot.getString("friendPhone"),
-                                    documentSnapshot.getString("identify"));
+                                    fIdentify);
                             modelList.add(model);
                         }
                         //連接
@@ -290,8 +294,6 @@ public class AddFriend extends AppCompatActivity {
                             fName = documentSnapshot.getString("Username");
                             fPhone = documentSnapshot.getString("MyPhoneNumber");
                             fIdentify = documentSnapshot.getString("identify");
-//                            Toast.makeText(AddFriend.this, fName, Toast.LENGTH_LONG).show();
-//                            Toast.makeText(AddFriend.this, fPhone, Toast.LENGTH_LONG).show();
 
                             DocumentReference documentReference = db.collection("Users").document(uid).collection("Friend").document(FriendID);
                             Map<String,Object> SaveUserProfile = new HashMap<String, Object>();

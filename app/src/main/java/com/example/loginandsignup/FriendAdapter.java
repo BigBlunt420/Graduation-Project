@@ -210,6 +210,7 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
         //綁畫面和資料
         holder.Name.setText(modelList.get(position).getName());
         holder.Phone.setText(modelList.get(position).getPhone());
+        holder.Identify.setText(modelList.get(position).getIdentify());
     }
 
     @Override
