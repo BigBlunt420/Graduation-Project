@@ -83,6 +83,7 @@ public class AddFriend extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     FriendAdapter adapter;
     ProgressDialog progressDialog;
+    FFListAdapter FFadapter;
 
 
     @Override
@@ -210,7 +211,6 @@ public class AddFriend extends AppCompatActivity {
 
         progressDialog.setTitle("資料載入中...");
         progressDialog.show();
-        uid = mAuth.getCurrentUser().getUid();
         db.collection("Users").document(UserID).collection("Friend")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -233,8 +233,8 @@ public class AddFriend extends AppCompatActivity {
                             modelList.add(model);
                         }
                         //連接
-                        adapter = new FriendAdapter(AddFriend.this,modelList);
-                        recyclerView.setAdapter(adapter);
+                        FFadapter = new FFListAdapter(AddFriend.this, modelList);
+                        recyclerView.setAdapter(FFadapter);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

@@ -49,12 +49,10 @@ import java.util.UUID;
 public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements AdapterView.OnItemSelectedListener {
     AddFriend addFriend;
     List<fModel> modelList;
-    Context context;
     FirebaseFirestore firestoredb;
     FirebaseAuth firebaseAuth;
     String UserID;
-    String dbid, dbName, dbPhone;
-    String choice;
+    String dbid;
     String Message_ID;
     String title, message;
 
@@ -76,7 +74,7 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
             @Override
             public void onItemClick(View view, int position) {
                 dbid = modelList.get(position).getId();
-                showFFList(dbid);
+                addFriend.showFFList(dbid);
             }
 
             @Override
@@ -104,10 +102,6 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
             }
         });
         return viewHolder;
-    }
-
-    private void showFFList(String UserID) {
-        addFriend.showFFList(UserID);
     }
 
 
@@ -228,7 +222,6 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        choice = parent.getItemAtPosition(position).toString();
     }
 
     @Override
