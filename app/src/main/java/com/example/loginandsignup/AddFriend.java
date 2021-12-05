@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -76,7 +77,7 @@ public class AddFriend extends AppCompatActivity {
     private String fName;
     private String fPhone;
     private String fIdentify;
-    private Button btnSetting;
+    private TextView btnSetting;
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
