@@ -59,5 +59,11 @@ android:id="@+id/drawer_layout">
     </com.google.android.material.appbar.AppBarLayout>
 
 </RelativeLayout>
-
+    <Button
+        android:id="@+id/btnSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginLeft="325dp"
+        android:layout_marginBottom="675dp"
+        android:text="設定" />
 </androidx.drawerlayout.widget.DrawerLayout>

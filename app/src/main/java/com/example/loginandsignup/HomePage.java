@@ -183,6 +183,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
     private Timer timerCheckMSG = null; //訊息是否確認的計時器
     private TimerTask timerTaskCheckMSG = null;
+    private int period;     //須在幾分鐘內確認訊息, default一分鐘
 
 
     @Override
@@ -347,7 +348,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
             }
         };
 
-        timer.schedule(timerTask, 1000, 5000);    //從現在起過1000ms後，每5000ms執行一次
+        period = FriendSetting.getPeriod();
+        timer.schedule(timerTask, 1000, period * 1000 * 60);    //從現在起過1000ms後，每5000ms執行一次
     }
 
     private void startTimerCheck(AlertDialog alert, String Sender_ID, String Message_ID) {

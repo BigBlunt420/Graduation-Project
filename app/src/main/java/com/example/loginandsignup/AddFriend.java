@@ -22,11 +22,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -73,6 +76,7 @@ public class AddFriend extends AppCompatActivity {
     private String fName;
     private String fPhone;
     private String fIdentify;
+    private Button btnSetting;
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -97,6 +101,7 @@ public class AddFriend extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recycle_view);
         addNewFriend = findViewById(R.id.addNewFriend);
+        btnSetting = findViewById(R.id.btnSetting);
 
         /*---------navigation view and tool bar-------------*/
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -157,6 +162,13 @@ public class AddFriend extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 add();
+            }
+        });
+
+        btnSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(AddFriend.this,FriendSetting.class));
             }
         });
 

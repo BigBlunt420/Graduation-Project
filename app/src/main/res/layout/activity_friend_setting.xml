@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".scheduleList"
+    android:id="@+id/drawer_layout">
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/main_menu"
+        tools:visibility="gone">
+
+    </com.google.android.material.navigation.NavigationView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/main_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:background="@color/white">
+
+                    <TextView
+                        android:id="@+id/Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="好友相關設定"
+                        android:textColor="@color/black"
+                        android:textSize="30sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:ignore="MissingConstraints" />
+
+                <TextView
+                    android:id="@+id/period_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginRight="32dp"
+                    android:textColor="@color/browser_actions_title_color"
+                    android:textSize="30sp"
+                    app:layout_constraintEnd_toStartOf="@+id/period"
+                    app:layout_constraintTop_toBottomOf="@+id/Text"
+                    tools:ignore="MissingConstraints"
+                    tools:text="須在" />
+
+                <TextView
+                    android:id="@+id/period"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/browser_actions_title_color"
+                    android:textSize="30sp"
+                    app:layout_constraintEnd_toEndOf="@+id/Text"
+                    app:layout_constraintHorizontal_bias="0.097"
+                    app:layout_constraintStart_toStartOf="@+id/Text"
+                    app:layout_constraintTop_toBottomOf="@+id/Text"
+                    tools:ignore="MissingConstraints"
+                    tools:text="1" />
+
+                <TextView
+                    android:id="@+id/period_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/browser_actions_title_color"
+                    android:textSize="30sp"
+                    app:layout_constraintStart_toEndOf="@+id/period"
+                    app:layout_constraintTop_toBottomOf="@+id/Text"
+                    tools:ignore="MissingConstraints"
+                    tools:text="分鐘內確認訊息" />
+
+                <TextView
+                        android:id="@+id/status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:textColor="@color/browser_actions_title_color"
+                        android:textSize="30sp"
+                        app:layout_constraintEnd_toEndOf="@+id/period_2"
+                        app:layout_constraintStart_toStartOf="@+id/period_1"
+                        app:layout_constraintTop_toBottomOf="@+id/period"
+                        tools:ignore="MissingConstraints"
+                        tools:text="status" />
+
+                    <Button
+                        android:id="@+id/EditFriendSettingButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/button_background"
+                        android:drawableLeft="@drawable/ic_edit"
+                        android:text="編輯"
+                        android:textColor="@color/black"
+                        android:textSize="24sp"
+                        app:backgroundTint="@color/purple_200"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/status" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btnBacktoFriendList"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginRight="300dp"
+        android:layout_marginBottom="675dp"
+        android:drawableLeft="@drawable/ic_baseline_arrow_back_24"
+        android:text="返回" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

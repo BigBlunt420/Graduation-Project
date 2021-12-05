@@ -31,7 +31,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LoginandSignUp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".MainActivity2"></activity>
+        <activity android:name=".FriendSetting"></activity>
+        <activity android:name=".friendSetting" />
+        <activity android:name=".MainActivity2" />
         <activity android:name=".ChatActivity" />
         <activity android:name=".FriendFriendSchedule" />
         <activity android:name=".FriendListForSchedule" />
