@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 public class FriendSetting extends AppCompatActivity {
@@ -14,6 +16,7 @@ public class FriendSetting extends AppCompatActivity {
     private Button editSetting;
     private Button updateSetting,cancelSetting;
     private EditText inputPeriod;
+    private Spinner inputStatus;
     private static int period = 1;  //須在幾分鐘內確認訊息,default一分鐘
 
     @Override
@@ -51,9 +54,15 @@ public class FriendSetting extends AppCompatActivity {
         View myView = inflater.inflate(R.layout.friend_setting,null);
         builder.setView(myView);
 
+        inputStatus = myView.findViewById(R.id.inputStatus);
         inputPeriod = myView.findViewById(R.id.inputPeriod);
         updateSetting = myView.findViewById(R.id.updateSetting);
         cancelSetting = myView.findViewById(R.id.cancelSetting);
+
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(this,R.array.status
+                , android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        inputStatus.setAdapter(adapter);
 
         androidx.appcompat.app.AlertDialog dialog = builder.create();
         dialog.setCancelable(false);

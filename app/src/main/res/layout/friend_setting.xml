@@ -83,52 +83,61 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="2dp">
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/status"
-                android:text="狀態："
-                android:textSize="20dp"
-                android:textStyle="bold"
+                android:layout_width="177dp"
+                android:layout_height="92dp"
+                android:padding="10dp"
+                android:text="好友狀態回報時間(分鐘)："
                 android:textColor="@color/black"
-                android:padding="10dp"/>
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <Spinner
                 android:id="@+id/inputStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:paddingLeft="20dp"
-                android:textColor="@color/black"
-                android:background="@drawable/input_background" />
+                android:paddingTop="13dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="5dp"
+                android:textSize="18dp" />
+
         </LinearLayout>
 
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="87dp"
             android:orientation="horizontal"
             android:padding="2dp">
+
             <Button
                 android:id="@+id/updateSetting"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_background"
                 android:text="確認"
                 android:textColor="@color/black"
-                android:background="@drawable/button_background"
-                app:backgroundTint="@color/purple_200"
-                android:textSize="20dp"/>
+                android:textSize="20dp"
+                app:backgroundTint="@color/purple_200" />
+
             <Button
                 android:id="@+id/cancelSetting"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_margin="10dp"
-                android:textColor="@color/black"
-                android:text="取消"
+                android:layout_weight="1"
                 android:background="@drawable/button_background"
-                app:backgroundTint="@color/purple_200"
-                android:textSize="20dp"/>
+                android:text="取消"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                app:backgroundTint="@color/purple_200" />
 
 
         </LinearLayout>
