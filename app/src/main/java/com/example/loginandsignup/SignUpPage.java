@@ -100,6 +100,7 @@ public class SignUpPage extends AppCompatActivity{
                 SaveUserProfile.put("identify", "TakeCare");
                 SaveUserProfile.put("ContactPersonOne", "0");
                 SaveUserProfile.put("ContactPersonTwo", "0");
+                SaveUserProfile.put("CheckPeriod", 5);
 
                 documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override

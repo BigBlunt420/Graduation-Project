@@ -65,11 +65,10 @@ import java.util.UUID;
 public class AddFriend extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseFirestore db;
-    private FloatingActionButton addNewFriend;
+    FloatingActionButton addNewFriend;
     private String uid;
-    private SearchView searchView;
+    SearchView searchView;
     private String FriendID;
     private String userName;
     private String userPhone;
@@ -80,8 +79,8 @@ public class AddFriend extends AppCompatActivity {
     private TextView btnSetting;
 
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private Toolbar toolbar;
+    NavigationView navigationView;
+    Toolbar toolbar;
 
     List<fModel> modelList = new ArrayList<>();
     RecyclerView recyclerView;
@@ -182,7 +181,9 @@ public class AddFriend extends AppCompatActivity {
 
         progressDialog.setTitle("資料載入中...");
         progressDialog.show();
-        uid = mAuth.getCurrentUser().getUid();
+        if(mAuth.getCurrentUser() != null){
+            uid = mAuth.getCurrentUser().getUid();
+        }
         db.collection("Users").document(uid).collection("Friend")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -198,7 +199,7 @@ public class AddFriend extends AppCompatActivity {
                                 fIdentify = "照顧者";
                             }
                             fModel model = new fModel(
-                                    documentSnapshot.getString("id"),
+                                    documentSnapshot.getString("uidFriend"),
                                     documentSnapshot.getString("friendName"),
                                     documentSnapshot.getString("friendPhone"),
                                     fIdentify);
@@ -248,6 +249,9 @@ public class AddFriend extends AppCompatActivity {
                         //連接
                         FFadapter = new FFListAdapter(AddFriend.this, modelList);
                         recyclerView.setAdapter(FFadapter);
+
+                        //隱藏『設定』鍵
+                        btnSetting.setVisibility(View.INVISIBLE);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

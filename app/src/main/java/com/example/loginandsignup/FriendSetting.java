@@ -1,23 +1,45 @@
 package com.example.loginandsignup;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FriendSetting extends AppCompatActivity {
     private Button btnBack;
     private Button editSetting;
     private Button updateSetting,cancelSetting;
     private EditText inputPeriod;
+    private TextView textViewPeriod;
     private Spinner inputStatus;
-    private static int period = 1;  //須在幾分鐘內確認訊息,default一分鐘
+    private static int period;  //須在幾分鐘內確認訊息
+
+    FirebaseAuth mAuth;
+    FirebaseFirestore db;
+    String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +48,24 @@ public class FriendSetting extends AppCompatActivity {
 
         btnBack = findViewById(R.id.btnBacktoFriendList);
         editSetting = findViewById(R.id.EditFriendSettingButton);
+        textViewPeriod = findViewById(R.id.period);
+
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
+        //從Firestore取period的值
+        uid = mAuth.getCurrentUser().getUid();
+        db.collection("Users").document(uid)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.exists()){
+                            period = documentSnapshot.getLong("CheckPeriod").intValue();
+                        }
+                    }
+                });
+        textViewPeriod.setText(String.valueOf(period));
 
         editSetting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,6 +84,7 @@ public class FriendSetting extends AppCompatActivity {
     }
 
     public static int getPeriod(){
+        Log.d("TAG", "getPeriod is " + period);
         return period;
     }
 
@@ -76,9 +117,14 @@ public class FriendSetting extends AppCompatActivity {
                 {
                     period = Integer.parseInt(inputPeriod.getText().toString().trim());
 
+                    //更新至Firestore
+                    updatePeriod(period);
+
                     Toast.makeText(FriendSetting.this, "已設定訊息須在"+period+"分鐘內確認", Toast.LENGTH_LONG).show();
                     dialog.dismiss();
-                    throw new NumberFormatException("period should be integer!");
+
+                    //更新、顯示period
+                    textViewPeriod.setText(String.valueOf(period));
                 }
                 catch (NumberFormatException e)
                 {
@@ -94,5 +140,29 @@ public class FriendSetting extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+    }
+
+    private void updatePeriod(int newPeriod) {
+        db.collection("Users").document(uid)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if(documentSnapshot.exists()){
+                        DocumentReference documentReference = db.collection("Users").document(uid);
+                        Map<String,Object> SaveUserProfile = new HashMap<>();
+                        SaveUserProfile.put("CheckPeriod",newPeriod);
+
+                        documentReference.set(SaveUserProfile, SetOptions.merge())
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Log.d("SaveUserProfile","Successful:User CheckPeriod is updated for " + uid);
+                                        }else {
+                                            Log.w("SaveUserProfile","Fail:",task.getException());
+                                        }
+                                    }
+                                });
+                    }
+                });
     }
 }

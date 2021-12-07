@@ -355,7 +355,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         };
 
         period = FriendSetting.getPeriod();
-        timer.schedule(timerTask, 1000, period * 1000 * 60);    //從現在起過1000ms後，每5000ms執行一次
+        timer.schedule(timerTask, 1000, 5 * 1000);    //從現在起過1000ms後，每5000ms執行一次
     }
 
     private void startTimerCheck(AlertDialog alert, String Sender_ID, String Message_ID) {
@@ -366,14 +366,16 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         timerTaskCheckMSG = new TimerTask() {
             @Override
             public void run() {
-                //是否超過五分鐘還未確認
+                //是否超過period分鐘還未確認
                 alert.dismiss();
-                sendMessageCheck(Sender_ID, "訊息超過五分鐘未被確認");
+                sendMessageCheck(Sender_ID, "訊息未在" + period + "分鐘內被確認");
                 deleteMessage(Message_ID);
             }
         };
 
-        timerCheckMSG.schedule(timerTaskCheckMSG, 1000 * 60 * 5);    //從現在起過五分鐘才執行
+        period = FriendSetting.getPeriod();
+        Log.d("TAG", "Timer getPeriod is " + period);
+        timerCheckMSG.schedule(timerTaskCheckMSG, 1000 * 60 * period);    //從現在起過period分鐘才執行
     }
 
     private void sendOnChannel(String title, String text) {
