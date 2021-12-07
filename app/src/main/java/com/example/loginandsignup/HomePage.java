@@ -204,11 +204,16 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         firebaseAuth = FirebaseAuth.getInstance();
         UserID = firebaseAuth.getCurrentUser().getUid();
 
-        createNotificationChannel();
+        //初始化outOfRange為0
+        outOfRange(UserID, "0");
+
         notificationManager = NotificationManagerCompat.from(this);
 
         //每5秒檢查是否有新訊息
         startTimer();
+
+        //若好友超出範圍則發出通知
+        outOfRangeNotification();
 
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
@@ -271,6 +276,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                 }
             }
         });
+
 
 
             //when the user is moving the map, move = 0
@@ -382,19 +388,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         notificationManager.notify(1, notification);
     }
 
-    private void createNotificationChannel() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationChannel channel = new NotificationChannel(
-                    channel_ID,
-                    "channel",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            channel.setDescription("This is channel!!!!");
-
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
-        }
-    }
 
     private void checkMessage(String message, String Message_ID, String Sender_ID, Boolean Send_Back){
         Handler handler = new Handler();
@@ -633,13 +626,43 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                     mMap.addMarker(options);
 
-                    //if current user is identified as BeCare
-                    if(identify.equals("BeCare")){
-                        //send time and location to friend who's identify is "TakeCare"
-                        sendTimeAndLocation(location.getLatitude(),location.getLongitude(),UserID);
-                        //detect user's range
-                        stayInRange(location.getLatitude(), location.getLongitude());
-                    }
+                    //存取使用者的identify
+                    firestoredb.collection("Users").document(UserID)
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if(documentSnapshot.exists()){
+                                        identify = documentSnapshot.getString("identify");
+                                        if(identify.equals("TakeCare")){
+                                            if(statusChecked == 0){
+                                                checkStatus();
+                                                tempTime = calendar.get(Calendar.MINUTE);
+                                            }else if(calendar.get(Calendar.MINUTE)-tempTime>=5
+                                                    || calendar.get(Calendar.MINUTE)-tempTime<=-5){
+                                                checkStatus();
+                                                statusChecked = 1;
+                                            }
+                                        }else if(identify.equals("BeCare")){ //if current user is identified as BeCare
+                                                //send time and location to friend who's identify is "TakeCare"
+                                                sendStatusAndLocation(location.getLatitude(),location.getLongitude(),UserID);
+                                                //detect user's range
+                                                stayInRange(location.getLatitude(), location.getLongitude());
+                                            }
+                                    }else{
+                                        Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull @NotNull Exception e) {
+                                    Toast.makeText(HomePage.this,"Fail:"
+                                            +e.getMessage(),Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+
 
                     if(addresLatLng != null){
                         mMap.addMarker(new MarkerOptions()
@@ -669,8 +692,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                         if(locationResult != null && locationResult.getLocations().size() > 0){
                             int index = locationResult.getLocations().size()-1;
                             mMap.clear();   //clear the old location marker on the map
+                            //get current latitude and longitude
                             userLatLong = new LatLng(locationResult.getLocations().get(index).getLatitude()
                                     ,locationResult.getLocations().get(index).getLongitude());
+
+                            //mark current location on the map page
                             MarkerOptions options = new MarkerOptions().position(userLatLong)
                                     .title("Your location");
                             options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
@@ -679,27 +705,49 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                     new LatLng(locationResult.getLocations().get(index).getLatitude(),
                                             locationResult.getLocations().get(index).getLongitude())
                                     , zoomLevel));
+
+                            //存取使用者的identify
+                            firestoredb.collection("Users").document(UserID)
+                                    .get()
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                            if(documentSnapshot.exists()){
+                                                identify = documentSnapshot.getString("identify");
+                                                if(identify.equals("TakeCare")){
+                                                    if(statusChecked == 0){
+                                                        checkStatus();
+                                                        tempTime = calendar.get(Calendar.MINUTE);
+                                                    }else if(calendar.get(Calendar.MINUTE)-tempTime>=5
+                                                            || calendar.get(Calendar.MINUTE)-tempTime<=-5){
+                                                        checkStatus();
+                                                        statusChecked = 1;
+                                                    }
+                                                }else if(identify.equals("BeCare")){
+                                                    //send time and location to friend who's identify is "TakeCare"
+                                                    sendStatusAndLocation(locationResult.getLocations().get(index).getLatitude()
+                                                            ,locationResult.getLocations().get(index).getLongitude(),UserID);
+                                                    //detect user's range
+                                                    stayInRange(locationResult.getLocations().get(index).getLatitude()
+                                                            , locationResult.getLocations().get(index).getLongitude());
+                                                }
+                                            }else{
+                                                Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull @NotNull Exception e) {
+                                            Toast.makeText(HomePage.this,"Fail:"
+                                                    +e.getMessage(),Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+
+
                         }
                     }
                 }, Looper.getMainLooper());
-        //get current location at the first time when the app was opened
-//        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-//        try{
-//            Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-//            mMap.clear();   //clear the old location marker on the map
-//            MarkerOptions options = new MarkerOptions().position(new LatLng(lastLocation.getLatitude(),
-//                    lastLocation.getLongitude())).title("Your location");
-//            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-//            mMap.addMarker(options);
-//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), zoomLevel));
-//            if(identify.equals("BeCare")){
-//                //send time and location to friend who's identify is "TakeCare"
-//                sendTimeAndLocation(lastLocation.getLatitude(),lastLocation.getLongitude(),UserID);
-//            }
-//        }catch (SecurityException e){
-//            e.printStackTrace();
-//        }
 
 
 
@@ -1080,8 +1128,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                         distance = R * c * 1000; // convert to meters
 
 
+
                                         if(!sended_msg && max_msgsize<=5){
                                             if(distance>range) {
+                                                outOfRange(UserID, "1");
                                                 max_msgsize++;
                                                 sendMassage(max_msgsize, Latitude, Longitude
                                                         , target_name, dbContactOne, dbContactTwo);
@@ -1095,6 +1145,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                             if(calendar.get(Calendar.HOUR_OF_DAY)-send_hourofday==1 && (60+calendar.get(Calendar.MINUTE))-send_min>=5 )sended_msg=false;
                                             else if(calendar.get(Calendar.HOUR_OF_DAY)==send_hourofday && calendar.get(Calendar.MINUTE)-send_min>=5)sended_msg=false;
                                         }
+
+
 
                                     }
                                 }
@@ -1135,7 +1187,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
                 try {
                     LocationSettingsResponse response = task.getResult(ApiException.class);
-                    Toast.makeText(HomePage.this, "GPS is already tured on", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HomePage.this, "GPS is already turned on", Toast.LENGTH_SHORT).show();
 
                 } catch (ApiException e) {
 
@@ -1210,7 +1262,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
      * @param Longitude the longitude of current user
      * @param UserID the data ID of current user
      */
-    private void sendTimeAndLocation(double Latitude, double Longitude, String UserID){
+    private void sendStatusAndLocation(double Latitude, double Longitude, String UserID){
         //傳送時間與位置
         firestoredb = FirebaseFirestore.getInstance();
         firestoredb.collection("Users").document(UserID).collection("Friend")
@@ -1219,46 +1271,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     @Override
                     public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
-                            friendId = documentSnapshot.getString("id");
-                            firestoredb.collection("Users").document(friendId)
-                                    .collection("Friend")
-                                    .get()
-                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
-                                            for(DocumentSnapshot fDocumentSnapshot:task.getResult()){
-                                                tId = fDocumentSnapshot.getString("id");
-                                                if(tId.equals(UserID)){
-                                                    DocumentReference documentReference =
-                                                            firestoredb.collection("Users")
-                                                                    .document(friendId).collection("Friend")
-                                                                    .document(fDocumentSnapshot.getId());
-                                                    Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
-                                                    SaveUserProfile.put("Status", "1");
-                                                    SaveUserProfile.put("Latitude",Double.toString(Latitude));
-                                                    SaveUserProfile.put("Longitude",Double.toString(Longitude));
-                                                    documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull @NotNull Task<Void> task) {
-                                                            if(task.isSuccessful()){
-                                                                Log.d("SaveUserProfile","Successful:User Profile is created for " + friendId);
-                                                            }else {
-                                                                Log.w("SaveUserProfile","Fail:",task.getException());
-                                                            }
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull @NotNull Exception e) {
-                                            Toast.makeText(HomePage.this,"Fail:"
-                                                    +e.getMessage(),Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-
+                            friendId = documentSnapshot.getString("uidFriend");
+                            setStatus(Latitude, Longitude, friendId);
                         }
                     }
                 })
@@ -1271,6 +1285,50 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                 });
     }
 
+    private void setStatus(double Latitude, double Longitude, String friendId){
+        firestoredb.collection("Users").document(friendId)
+                .collection("Friend")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        for(DocumentSnapshot fDocumentSnapshot:task.getResult()){
+                            tId = fDocumentSnapshot.getString("uidFriend");
+                            if(tId.equals(UserID)){
+                                DocumentReference documentReference =
+                                        firestoredb.collection("Users")
+                                                .document(friendId).collection("Friend")
+                                                .document(fDocumentSnapshot.getId());
+                                Map<String,Object> StatusAndLocation = new HashMap<String, Object>();
+                                StatusAndLocation.put("Status", "1");
+                                StatusAndLocation.put("Latitude",Double.toString(Latitude));
+                                StatusAndLocation.put("Longitude",Double.toString(Longitude));
+                                documentReference.update(StatusAndLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Log.d("StatusAndLocation","Successful:User Profile is created for " + friendId);
+                                        }else {
+                                            Log.w("StatusAndLocation","Fail:",task.getException());
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(HomePage.this,"Fail:"
+                                +e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    /**
+     * check the status from friends
+     */
     private void checkStatus(){
         firestoredb = FirebaseFirestore.getInstance();
         firestoredb.collection("Users").document(UserID).collection("Friend")
@@ -1334,6 +1392,102 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     public void onFailure(@NonNull @NotNull Exception e) {
                         Toast.makeText(HomePage.this,"Fail:"
                                 +e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    /**
+     * set "0" to Out of range in database if user is staying inside of the range,
+     * and set "1" to Out of range in database if user is staying outside of the range,
+     * @param UserID the account id of current user
+     * @param outOfRange the status if the current user is out of range
+     */
+    private void outOfRange(String UserID, String outOfRange){
+        firestoredb = FirebaseFirestore.getInstance();
+        firestoredb.collection("Users").document(UserID).collection("Friend")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        for(DocumentSnapshot documentSnapshot:task.getResult()){
+                            friendId = documentSnapshot.getString("uidFriend");
+                            setFriendOutOfRange(friendId, outOfRange);
+
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(HomePage.this,"Fail:"
+                                +e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    public void setFriendOutOfRange(String friendId, String outOfRange){
+        firestoredb = FirebaseFirestore.getInstance();
+        firestoredb.collection("Users").document(friendId)
+                .collection("Friend")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task1) {
+                        for(DocumentSnapshot fDocumentSnapshot:task1.getResult()){
+                            tId = fDocumentSnapshot.getString("uidFriend");
+                            if(tId.equals(UserID)){
+                                DocumentReference documentReference =
+                                        firestoredb.collection("Users")
+                                                .document(friendId).collection("Friend")
+                                                .document(fDocumentSnapshot.getId());
+                                Map<String,Object> outOfRangeDb = new HashMap<String, Object>();
+                                outOfRangeDb.put("Out of range", outOfRange);
+                                documentReference.update(outOfRangeDb).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull @NotNull Task<Void> task1) {
+                                        if(task1.isSuccessful()){
+                                            Log.d("SaveUserProfile","Successful:User Profile is created for " + friendId);
+                                        }else {
+                                            Log.w("SaveUserProfile","Fail:",task1.getException());
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(HomePage.this,"Fail:"
+                                +e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    public void outOfRangeNotification(){
+        firestoredb = FirebaseFirestore.getInstance();
+        firestoredb.collection("Users").document(UserID).collection("Friend")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        for(DocumentSnapshot documentSnapshot:task.getResult()){
+                            if(documentSnapshot.getString("Out of range")!=null){
+                                if(documentSnapshot.getString("Out of range").equals("1")){
+                                    Notification notification = new NotificationCompat.Builder(HomePage.this, NotificationHelper.channel_ID)
+                                            .setSmallIcon(R.drawable.ic_message)
+                                            .setContentTitle("使用者"+documentSnapshot.getString("friendName")+"超出範圍")
+                                            .setContentText("所在位置為經度 "
+                                                    + documentSnapshot.getString("Longitude") + " ,緯度 "
+                                                    + documentSnapshot.getString("Latitude"))
+                                            .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                                            .build();
+                                    notificationManager.notify(2, notification);
+                                }
+                            }
+                        }
                     }
                 });
     }

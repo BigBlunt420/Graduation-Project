@@ -7,6 +7,11 @@
         <item>250</item>
         <item>300</item>
     </string-array>
+    <string-array name="status">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+    </string-array>
     <string name="app_name">Care Bot</string>
     <string name="title_activity_maps">Map</string>
     <string name="navigation_drawer_open">OpenNavigationDrawer</string>
