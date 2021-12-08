@@ -322,7 +322,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                         Sender_ID = documentSnapshot.getString("messageSender");
                                         Send_Back = documentSnapshot.getBoolean("SendBack");
 
-                                        period = getPeriod(Sender_ID);
+                                        if(identify.equals("BeCare")){
+                                            period = getPeriod(Sender_ID);
+                                        }else {
+                                            period = 5;
+                                        }
                                         senderName = getSenderName(Sender_ID);
 
                                         sendOnChannel(senderName, message);
