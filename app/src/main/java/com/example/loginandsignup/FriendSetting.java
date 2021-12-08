@@ -35,7 +35,7 @@ public class FriendSetting extends AppCompatActivity {
     private EditText inputPeriod;
     private TextView textViewPeriod;
     private Spinner inputStatusPeriod;
-    private static int period;  //須在幾分鐘內確認訊息
+    private static String period;  //須在幾分鐘內確認訊息
 
     FirebaseAuth mAuth;
     FirebaseFirestore db;
@@ -48,7 +48,7 @@ public class FriendSetting extends AppCompatActivity {
 
         btnBack = findViewById(R.id.btnBacktoFriendList);
         editSetting = findViewById(R.id.EditFriendSettingButton);
-        textViewPeriod = findViewById(R.id.period);
+        textViewPeriod = findViewById(R.id.textViewperiod);
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -61,11 +61,13 @@ public class FriendSetting extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if(documentSnapshot.exists()){
-                            period = documentSnapshot.getLong("CheckPeriod").intValue();
+                            period = documentSnapshot.getString("CheckPeriod");
+//                            period = documentSnapshot.getLong("CheckPeriod").intValue();
                         }
                     }
                 });
-        textViewPeriod.setText(String.valueOf(period));
+//        textViewPeriod.setText(String.valueOf(period));
+        textViewPeriod.setText(period);
 
         editSetting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,11 +83,6 @@ public class FriendSetting extends AppCompatActivity {
                 finish();
             }
         });
-    }
-
-    public static int getPeriod(){
-        Log.d("TAG", "getPeriod is " + period);
-        return period;
     }
 
     private void friendSetting() {
@@ -115,17 +112,25 @@ public class FriendSetting extends AppCompatActivity {
             public void onClick(View v) {
                 try
                 {
-                    period = Integer.parseInt(inputPeriod.getText().toString().trim());
+//                    period = Integer.parseInt(inputPeriod.getText().toString().trim());
+//
+//                    updateStatus(inputStatusPeriod.getSelectedItem().toString());
+//                    //更新至Firestore
+//                    updatePeriod(period);
+
+                    int checkPeriodInt = Integer.parseInt(inputPeriod.getText().toString().trim());
 
                     updateStatus(inputStatusPeriod.getSelectedItem().toString());
                     //更新至Firestore
-                    updatePeriod(period);
+                    updatePeriod(String.valueOf(checkPeriodInt));
 
                     Toast.makeText(FriendSetting.this, "已設定訊息須在"+period+"分鐘內確認", Toast.LENGTH_LONG).show();
                     dialog.dismiss();
 
                     //更新、顯示period
-                    textViewPeriod.setText(String.valueOf(period));
+//                    textViewPeriod.setText(String.valueOf(period));
+                    period = inputPeriod.getText().toString().trim();
+                    textViewPeriod.setText(period);
                 }
                 catch (NumberFormatException e)
                 {
@@ -159,16 +164,16 @@ public class FriendSetting extends AppCompatActivity {
         });
     }
 
-    private void updatePeriod(int newPeriod) {
+    private void updatePeriod(String newPeriod) {
         db.collection("Users").document(uid)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if(documentSnapshot.exists()){
                         DocumentReference documentReference = db.collection("Users").document(uid);
-                        Map<String,Object> SaveUserProfile = new HashMap<>();
-                        SaveUserProfile.put("CheckPeriod",newPeriod);
+                        Map<String,Object> SaveUserPeriod = new HashMap<>();
+                        SaveUserPeriod.put("CheckPeriod",newPeriod);
 
-                        documentReference.set(SaveUserProfile, SetOptions.merge())
+                        documentReference.set(SaveUserPeriod, SetOptions.merge())
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull @NotNull Task<Void> task) {

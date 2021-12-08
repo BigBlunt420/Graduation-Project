@@ -322,8 +322,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                         Sender_ID = documentSnapshot.getString("messageSender");
                                         Send_Back = documentSnapshot.getBoolean("SendBack");
 
-                                        sendOnChannel(getSenderName(Sender_ID), message);
-                                        checkMessage(message, Message_ID, Sender_ID, Send_Back);
+                                        period = getPeriod(Sender_ID);
+                                        senderName = getSenderName(Sender_ID);
+
+                                        sendOnChannel(senderName, message);
+                                        checkMessage(message, senderName, Message_ID, Sender_ID, Send_Back);
 
                                         //已發通知了，所以messageSent = true
                                         DocumentReference documentReference = firestoredb.collection("Users").document(UserID)
@@ -354,7 +357,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
             }
         };
 
-        period = FriendSetting.getPeriod();
         timer.schedule(timerTask, 1000, 5 * 1000);    //從現在起過1000ms後，每5000ms執行一次
     }
 
@@ -373,13 +375,35 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
             }
         };
 
-        period = FriendSetting.getPeriod();
-        Log.d("TAG", "Timer getPeriod is " + period);
         timerCheckMSG.schedule(timerTaskCheckMSG, 1000 * 60 * period);    //從現在起過period分鐘才執行
     }
 
+    private int getPeriod(String Sender_ID) {
+        firestoredb = FirebaseFirestore.getInstance();
+        firestoredb.collection("Users").document(Sender_ID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.exists()){
+                            String periodFromDB = documentSnapshot.getString("CheckPeriod");
+                            period = Integer.parseInt(periodFromDB);
+//                            period = documentSnapshot.getLong("CheckPeriod").intValue();
+                        }else{
+                            Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(HomePage.this,"Fail:"+e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
+        return period;
+    }
+
     private void sendOnChannel(String title, String text) {
-//        Toast.makeText(this, "send on channel",Toast.LENGTH_LONG).show();
         Notification notification = new NotificationCompat.Builder(this, NotificationHelper.channel_ID)
                 .setSmallIcon(R.drawable.ic_message)
                 .setContentTitle(title)
@@ -391,7 +415,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     }
 
 
-    private void checkMessage(String message, String Message_ID, String Sender_ID, Boolean Send_Back){
+    private void checkMessage(String message, String senderName, String Message_ID, String Sender_ID, Boolean Send_Back){
         Handler handler = new Handler();
         handler.postDelayed(new Runnable(){
             @Override
@@ -399,6 +423,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                 //過一秒後要做的事情
                 AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
 
+                builder.setTitle(senderName+" : ");
                 builder.setMessage(message);
 
 
@@ -428,12 +453,23 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     }
 
     private String getSenderName(String Sender_ID) {
+        firestoredb = FirebaseFirestore.getInstance();
         firestoredb.collection("Users").document(Sender_ID)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        senderName = documentSnapshot.getString("Username");
+                        if(documentSnapshot.exists()){
+                            senderName = documentSnapshot.getString("Username");
+                        }else{
+                            Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(HomePage.this,"Fail:"+e.getMessage(),Toast.LENGTH_LONG).show();
                     }
                 });
         return senderName;

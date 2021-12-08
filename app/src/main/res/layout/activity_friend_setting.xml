@@ -60,12 +60,12 @@
                     android:textColor="@color/black"
                     android:textSize="30sp"
                     android:text="須在"
-                    app:layout_constraintEnd_toStartOf="@+id/period"
+                    app:layout_constraintEnd_toStartOf="@+id/textViewperiod"
                     app:layout_constraintTop_toBottomOf="@+id/Text"
                     tools:ignore="MissingConstraints" />
 
                 <TextView
-                    android:id="@+id/period"
+                    android:id="@+id/textViewperiod"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
@@ -88,7 +88,7 @@
                     android:textColor="@color/black"
                     android:textSize="30sp"
                     android:text="分鐘內確認訊息"
-                    app:layout_constraintStart_toEndOf="@+id/period"
+                    app:layout_constraintStart_toEndOf="@+id/textViewperiod"
                     app:layout_constraintTop_toBottomOf="@+id/Text"
                     tools:ignore="MissingConstraints" />
 
@@ -101,7 +101,7 @@
                         android:textSize="30sp"
                         app:layout_constraintEnd_toEndOf="@+id/period_2"
                         app:layout_constraintStart_toStartOf="@+id/period_1"
-                        app:layout_constraintTop_toBottomOf="@+id/period"
+                        app:layout_constraintTop_toBottomOf="@+id/textViewperiod"
                         tools:ignore="MissingConstraints"
                         tools:text="status" />
 
