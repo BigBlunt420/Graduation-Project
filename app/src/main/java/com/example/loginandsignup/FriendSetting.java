@@ -34,7 +34,7 @@ public class FriendSetting extends AppCompatActivity {
     private Button updateSetting,cancelSetting;
     private EditText inputPeriod;
     private TextView textViewPeriod;
-    private Spinner inputStatus;
+    private Spinner inputStatusPeriod;
     private static int period;  //須在幾分鐘內確認訊息
 
     FirebaseAuth mAuth;
@@ -95,7 +95,7 @@ public class FriendSetting extends AppCompatActivity {
         View myView = inflater.inflate(R.layout.friend_setting,null);
         builder.setView(myView);
 
-        inputStatus = myView.findViewById(R.id.inputStatus);
+        inputStatusPeriod = myView.findViewById(R.id.inputStatusPeriod);
         inputPeriod = myView.findViewById(R.id.inputPeriod);
         updateSetting = myView.findViewById(R.id.updateSetting);
         cancelSetting = myView.findViewById(R.id.cancelSetting);
@@ -103,7 +103,7 @@ public class FriendSetting extends AppCompatActivity {
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this,R.array.status
                 , android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        inputStatus.setAdapter(adapter);
+        inputStatusPeriod.setAdapter(adapter);
 
         androidx.appcompat.app.AlertDialog dialog = builder.create();
         dialog.setCancelable(false);
@@ -117,6 +117,7 @@ public class FriendSetting extends AppCompatActivity {
                 {
                     period = Integer.parseInt(inputPeriod.getText().toString().trim());
 
+                    updateStatus(inputStatusPeriod.getSelectedItem().toString());
                     //更新至Firestore
                     updatePeriod(period);
 
@@ -138,6 +139,22 @@ public class FriendSetting extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+            }
+        });
+    }
+
+    private void updateStatus(String statusPeriod){
+        DocumentReference documentReference = db.collection("Users").document(uid);
+        Map<String,Object> SavePeriod = new HashMap<String, Object>();
+        SavePeriod.put("Check status period", statusPeriod);
+        documentReference.update(SavePeriod).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Log.d("SavePeriod","Successful:User Profile is created for " + uid);
+                }else {
+                    Log.w("SavePeriod","Fail:",task.getException());
+                }
             }
         });
     }
