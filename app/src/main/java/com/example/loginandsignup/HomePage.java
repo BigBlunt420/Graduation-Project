@@ -327,10 +327,29 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                         }else {
                                             period = 5;
                                         }
-                                        senderName = getSenderName(Sender_ID);
 
-                                        sendOnChannel(senderName, message);
-                                        checkMessage(message, senderName, Message_ID, Sender_ID, Send_Back);
+                                        firestoredb = FirebaseFirestore.getInstance();
+                                        firestoredb.collection("Users").document(Sender_ID)
+                                                .get()
+                                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                        if(documentSnapshot.exists()){
+                                                            senderName = documentSnapshot.getString("Username");
+                                                            sendOnChannel(senderName, message);
+                                                            checkMessage(message, senderName, Message_ID, Sender_ID, Send_Back);
+
+                                                        }else{
+                                                            Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
+                                                        }
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull @NotNull Exception e) {
+                                                        Toast.makeText(HomePage.this,"Fail:"+e.getMessage(),Toast.LENGTH_LONG).show();
+                                                    }
+                                                });
 
                                         //已發通知了，所以messageSent = true
                                         DocumentReference documentReference = firestoredb.collection("Users").document(UserID)
@@ -454,29 +473,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                 startTimerCheck(alert, Sender_ID, Message_ID);
 
             }}, 1000);
-    }
-
-    private String getSenderName(String Sender_ID) {
-        firestoredb = FirebaseFirestore.getInstance();
-        firestoredb.collection("Users").document(Sender_ID)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if(documentSnapshot.exists()){
-                            senderName = documentSnapshot.getString("Username");
-                        }else{
-                            Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull @NotNull Exception e) {
-                        Toast.makeText(HomePage.this,"Fail:"+e.getMessage(),Toast.LENGTH_LONG).show();
-                    }
-                });
-        return senderName;
     }
 
     private void sendMessageCheck(String Sender_ID, String checkMessage) {
