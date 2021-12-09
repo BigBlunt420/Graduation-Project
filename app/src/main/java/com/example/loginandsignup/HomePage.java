@@ -140,6 +140,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     String choice;
     private String identify = "";
     private String friendIdentify = "";
+    private int statusPeriod = 5;
 
     //variables for getting the times and date of the searched schedule
     private String getDate;
@@ -183,6 +184,9 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
     private Timer timerCheckMSG = null; //訊息是否確認的計時器
     private TimerTask timerTaskCheckMSG = null;
+
+    private Timer timerStatus = null;
+    private TimerTask timerTaskStatus = null;
     private int period;     //須在幾分鐘內確認訊息, default一分鐘
 
 
@@ -203,6 +207,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
         firebaseAuth = FirebaseAuth.getInstance();
         UserID = firebaseAuth.getCurrentUser().getUid();
+        createNotificationChannel();
 
         //初始化outOfRange為0
         outOfRange(UserID, "0");
@@ -437,6 +442,19 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         notificationManager.notify(1, notification);
     }
 
+    private void createNotificationChannel() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel channel = new NotificationChannel(
+                    channel_ID,
+                    "channel",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.setDescription("This is channel!!!!");
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+    }
 
     private void checkMessage(String message, String senderName, String Message_ID, String Sender_ID, Boolean Send_Back){
         Handler handler = new Handler();
@@ -1368,70 +1386,92 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
      * check the status from friends
      */
     private void checkStatus(){
-        firestoredb = FirebaseFirestore.getInstance();
-        firestoredb.collection("Users").document(UserID).collection("Friend")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+        if(timerStatus == null){
+            timerStatus = new Timer();
+        }
+        timerTaskStatus = new TimerTask() {
+            @Override
+            public void run() {
+                firestoredb = FirebaseFirestore.getInstance();
+                firestoredb.collection("Users").document(UserID).collection("Friend")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
 
-                        for(DocumentSnapshot documentSnapshot:task.getResult()){
-                            friendStatus = documentSnapshot.getString("Status");
-                            if(friendStatus != null && friendStatus.equals("0")){
-                                //出現dialog訊息
-                                Handler handler = new Handler();
-                                handler.postDelayed(new Runnable(){
-                                    @Override
-                                    public void run() {
-                                        //過一秒後要做的事情
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
-                                        builder.setMessage(documentSnapshot.getString("friendName")+"手機功能異常\n"
-                                                +"最後更新位置為：\n經度：" + documentSnapshot.getString("Longitude")
-                                                +"\n緯度：" + documentSnapshot.getString("Latitude"));
-                                        //點選空白處不會返回
-                                        builder.setCancelable(false);
+                                for(DocumentSnapshot documentSnapshot:task.getResult()){
+                                    friendStatus = documentSnapshot.getString("Status");
+                                    if(friendStatus != null && friendStatus.equals("0")){
+                                        //出現dialog訊息
+                                        Handler handler = new Handler();
+                                        handler.postDelayed(new Runnable(){
+                                            @Override
+                                            public void run() {
+                                                //過一秒後要做的事情
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+                                                builder.setMessage(documentSnapshot.getString("friendName")+"手機功能異常\n"
+                                                        +"最後更新位置為：\n經度：" + documentSnapshot.getString("Longitude")
+                                                        +"\n緯度：" + documentSnapshot.getString("Latitude"));
+                                                //點選空白處不會返回
+                                                builder.setCancelable(false);
 
-                                        builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
-                                                //按下是之後要做的事
-                                                dialog.dismiss();
+                                                builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        //按下是之後要做的事
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+
+                                                AlertDialog alert = builder.create();
+                                                alert.show();
+
+                                            }}, 1000);
+
+                                    }
+                                    DocumentReference documentReference =
+                                            firestoredb.collection("Users")
+                                                    .document(UserID).collection("Friend")
+                                                    .document(documentSnapshot.getId());
+                                    Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
+                                    SaveUserProfile.put("Status", "0");
+                                    documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                Log.d("SaveUserProfile","Successful:User Profile is created for " + friendId);
+                                            }else {
+                                                Log.w("SaveUserProfile","Fail:",task.getException());
                                             }
-                                        });
+                                        }
+                                    });
 
-                                        AlertDialog alert = builder.create();
-                                        alert.show();
-
-                                    }}, 1000);
+                                }
 
                             }
-                            DocumentReference documentReference =
-                                    firestoredb.collection("Users")
-                                            .document(UserID).collection("Friend")
-                                            .document(documentSnapshot.getId());
-                            Map<String,Object> SaveUserProfile = new HashMap<String, Object>();
-                            SaveUserProfile.put("Status", "0");
-                            documentReference.update(SaveUserProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull @NotNull Task<Void> task) {
-                                    if(task.isSuccessful()){
-                                        Log.d("SaveUserProfile","Successful:User Profile is created for " + friendId);
-                                    }else {
-                                        Log.w("SaveUserProfile","Fail:",task.getException());
-                                    }
-                                }
-                            });
-
-                        }
-
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull @NotNull Exception e) {
+                                Toast.makeText(HomePage.this,"Fail:"
+                                        +e.getMessage(),Toast.LENGTH_LONG).show();
+                            }
+                        });
+                firestoredb.collection("Users").document(UserID)
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onFailure(@NonNull @NotNull Exception e) {
-                        Toast.makeText(HomePage.this,"Fail:"
-                                +e.getMessage(),Toast.LENGTH_LONG).show();
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.getString("Check status period")!=null){
+                            statusPeriod = Integer.valueOf(documentSnapshot.getString("Check status period"));
+                        }
                     }
                 });
+            }
+
+        };
+
+
+
+        timerStatus.schedule(timerTaskStatus, 1000 * 60 * statusPeriod);
     }
 
     /**
