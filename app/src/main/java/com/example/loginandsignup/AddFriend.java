@@ -156,6 +156,8 @@ public class AddFriend extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
+        showSettingButton();        //BeCare不需顯示設定
+
         showFriendList();
 
         addNewFriend.setOnClickListener(new View.OnClickListener() {
@@ -172,6 +174,30 @@ public class AddFriend extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void showSettingButton() {
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
+
+        progressDialog.setTitle("資料載入中...");
+        progressDialog.show();
+        if(mAuth.getCurrentUser() != null){
+            uid = mAuth.getCurrentUser().getUid();
+        }
+
+        //判斷，如果是被照顧者就不顯示設定鍵
+        db.collection("Users").document(uid)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.getString("identify").equals("BeCare")){
+                            btnSetting.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                });
     }
 
 
@@ -195,7 +221,6 @@ public class AddFriend extends AppCompatActivity {
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
                             if(documentSnapshot.getString("friendIdentify").equals("BeCare")){
                                 fIdentify = "被照顧者";
-                                btnSetting.setVisibility(View.INVISIBLE);
                             }else {
                                 fIdentify = "照顧者";
                             }
@@ -221,6 +246,8 @@ public class AddFriend extends AppCompatActivity {
     }
 
     public void showFFList(String UserID){
+        //隱藏『設定』鍵
+        btnSetting.setVisibility(View.INVISIBLE);
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
@@ -250,9 +277,6 @@ public class AddFriend extends AppCompatActivity {
                         //連接
                         FFadapter = new FFListAdapter(AddFriend.this, modelList);
                         recyclerView.setAdapter(FFadapter);
-
-                        //隱藏『設定』鍵
-                        btnSetting.setVisibility(View.INVISIBLE);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

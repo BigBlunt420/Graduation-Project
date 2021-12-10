@@ -124,7 +124,6 @@ public class FriendSetting extends AppCompatActivity {
                     //更新至Firestore
                     updatePeriod(String.valueOf(checkPeriodInt));
 
-                    Toast.makeText(FriendSetting.this, "已設定訊息須在"+period+"分鐘內確認", Toast.LENGTH_LONG).show();
                     dialog.dismiss();
 
                     //更新、顯示period
@@ -178,6 +177,7 @@ public class FriendSetting extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull @NotNull Task<Void> task) {
                                         if(task.isSuccessful()){
+                                            Toast.makeText(FriendSetting.this, "已設定訊息須在"+newPeriod+"分鐘內確認", Toast.LENGTH_LONG).show();
                                             Log.d("SaveUserProfile","Successful:User CheckPeriod is updated for " + uid);
                                         }else {
                                             Log.w("SaveUserProfile","Fail:",task.getException());

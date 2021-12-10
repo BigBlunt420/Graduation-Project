@@ -69,6 +69,6 @@ android:id="@+id/drawer_layout">
         android:textColor="@color/white"
         android:padding="10dp"
         android:layout_marginLeft="325dp"
-        android:layout_marginBottom="675dp"/>
+        android:layout_marginBottom="675dp" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
