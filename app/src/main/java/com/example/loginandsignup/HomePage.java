@@ -212,6 +212,9 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
         //初始化outOfRange為0
         outOfRange(UserID, "0");
 
+        //檢查好友手機狀態
+        checkStatus();
+
         notificationManager = NotificationManagerCompat.from(this);
 
         //每5秒檢查是否有新訊息
@@ -631,16 +634,6 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if(documentSnapshot.exists()){
                             identify = documentSnapshot.getString("identify");
-                            if(identify.equals("TakeCare")){
-                                if(statusChecked == 0){
-                                    checkStatus();
-                                    tempTime = calendar.get(Calendar.MINUTE);
-                                }else if(calendar.get(Calendar.MINUTE)-tempTime>=5
-                                        || calendar.get(Calendar.MINUTE)-tempTime<=-5){
-                                    checkStatus();
-                                    statusChecked = 1;
-                                }
-                            }
                         }else{
                             Toast.makeText(HomePage.this,"此用戶不存在!",Toast.LENGTH_LONG).show();
                         }
@@ -690,16 +683,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     if(documentSnapshot.exists()){
                                         identify = documentSnapshot.getString("identify");
-                                        if(identify.equals("TakeCare")){
-                                            if(statusChecked == 0){
-                                                checkStatus();
-                                                tempTime = calendar.get(Calendar.MINUTE);
-                                            }else if(calendar.get(Calendar.MINUTE)-tempTime>=5
-                                                    || calendar.get(Calendar.MINUTE)-tempTime<=-5){
-                                                checkStatus();
-                                                statusChecked = 1;
-                                            }
-                                        }else if(identify.equals("BeCare")){ //if current user is identified as BeCare
+
+                                        if(identify.equals("BeCare")){ //if current user is identified as BeCare
                                                 //send time and location to friend who's identify is "TakeCare"
                                                 sendStatusAndLocation(location.getLatitude(),location.getLongitude(),UserID);
                                                 //detect user's range
@@ -770,16 +755,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                                             if(documentSnapshot.exists()){
                                                 identify = documentSnapshot.getString("identify");
-                                                if(identify.equals("TakeCare")){
-                                                    if(statusChecked == 0){
-                                                        checkStatus();
-                                                        tempTime = calendar.get(Calendar.MINUTE);
-                                                    }else if(calendar.get(Calendar.MINUTE)-tempTime>=5
-                                                            || calendar.get(Calendar.MINUTE)-tempTime<=-5){
-                                                        checkStatus();
-                                                        statusChecked = 1;
-                                                    }
-                                                }else if(identify.equals("BeCare")){
+                                                if(identify.equals("BeCare")){
                                                     //send time and location to friend who's identify is "TakeCare"
                                                     sendStatusAndLocation(locationResult.getLocations().get(index).getLatitude()
                                                             ,locationResult.getLocations().get(index).getLongitude(),UserID);
@@ -1393,6 +1369,16 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
             @Override
             public void run() {
                 firestoredb = FirebaseFirestore.getInstance();
+                firestoredb.collection("Users").document(UserID)
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.getString("Check status period")!=null){
+                            statusPeriod = Integer.valueOf(documentSnapshot.getString("Check status period"));
+                            identify = documentSnapshot.getString("identify");
+                        }
+                    }
+                });
                 firestoredb.collection("Users").document(UserID).collection("Friend")
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1456,22 +1442,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                                         +e.getMessage(),Toast.LENGTH_LONG).show();
                             }
                         });
-                firestoredb.collection("Users").document(UserID)
-                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if(documentSnapshot.getString("Check status period")!=null){
-                            statusPeriod = Integer.valueOf(documentSnapshot.getString("Check status period"));
-                        }
-                    }
-                });
             }
 
         };
 
-
-
-        timerStatus.schedule(timerTaskStatus, 1000 * 60 * statusPeriod);
+        timerStatus.schedule(timerTaskStatus, 1000,1000 * 60 * statusPeriod);
     }
 
     /**
