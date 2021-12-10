@@ -62,12 +62,12 @@ public class FriendSetting extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if(documentSnapshot.exists()){
                             period = documentSnapshot.getString("CheckPeriod");
+                            textViewPeriod.setText(period);
 //                            period = documentSnapshot.getLong("CheckPeriod").intValue();
                         }
                     }
                 });
 //        textViewPeriod.setText(String.valueOf(period));
-        textViewPeriod.setText(period);
 
         editSetting.setOnClickListener(new View.OnClickListener() {
             @Override
