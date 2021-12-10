@@ -195,6 +195,7 @@ public class AddFriend extends AppCompatActivity {
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
                             if(documentSnapshot.getString("friendIdentify").equals("BeCare")){
                                 fIdentify = "被照顧者";
+                                btnSetting.setVisibility(View.INVISIBLE);
                             }else {
                                 fIdentify = "照顧者";
                             }
