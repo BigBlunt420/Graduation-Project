@@ -322,40 +322,54 @@ public class AddFriend extends AppCompatActivity {
                                         //不能加自己好友
                                         edtID.setError("錯誤號碼");
                                     }else{
-                                        Handler handler = new Handler();
-                                        handler.postDelayed(new Runnable(){
-
+                                        //確認是否已是好友
+                                        db.collection("Users").document(uid)
+                                                .collection("Friend").whereEqualTo("friendPhone", userPhone)
+                                                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                             @Override
-                                            public void run() {
+                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                if(queryDocumentSnapshots.isEmpty()){
+                                                    //還不是好友
+                                                    Handler handler = new Handler();
+                                                    handler.postDelayed(new Runnable(){
 
-                                                //過四秒後要做的事情
-                                                AlertDialog.Builder builder = new AlertDialog.Builder(AddFriend.this);
+                                                        @Override
+                                                        public void run() {
 
-                                                builder.setMessage("是否加入好友？");
-                                                //點選空白處不會返回
-                                                builder.setCancelable(false);
+                                                            //過四秒後要做的事情
+                                                            AlertDialog.Builder builder = new AlertDialog.Builder(AddFriend.this);
 
-                                                builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int id) {
-                                                        //按下是之後要做的事
-                                                        dialog.dismiss();
-                                                        checkFriendExist(uidFriend);
-                                                        startActivity(new Intent(AddFriend.this,AddFriend.class));
-                                                    }
-                                                });
+                                                            builder.setMessage("是否加入好友？");
+                                                            //點選空白處不會返回
+                                                            builder.setCancelable(false);
 
-                                                builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int id) {
-                                                        //按下否之後要做的事
-                                                        dialog.dismiss();
-                                                        startActivity(new Intent(AddFriend.this,AddFriend.class));
-                                                    }
-                                                });
+                                                            builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialog, int id) {
+                                                                    //按下是之後要做的事
+                                                                    dialog.dismiss();
+                                                                    checkFriendExist(uidFriend);
+                                                                    startActivity(new Intent(AddFriend.this,AddFriend.class));
+                                                                }
+                                                            });
 
-                                                AlertDialog alert = builder.create();
-                                                alert.show();
+                                                            builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialog, int id) {
+                                                                    //按下否之後要做的事
+                                                                    dialog.dismiss();
+                                                                    startActivity(new Intent(AddFriend.this,AddFriend.class));
+                                                                }
+                                                            });
 
-                                            }}, 1000);
+                                                            AlertDialog alert = builder.create();
+                                                            alert.show();
+
+                                                        }}, 1000);
+                                                }else {
+                                                    //已是好友
+                                                    edtID.setError("已是好友");
+                                                }
+                                            }
+                                        });
                                     }
                                 }
                             }
