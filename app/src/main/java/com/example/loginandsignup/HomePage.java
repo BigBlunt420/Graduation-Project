@@ -1387,7 +1387,8 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
                                 for(DocumentSnapshot documentSnapshot:task.getResult()){
                                     friendStatus = documentSnapshot.getString("Status");
-                                    if(friendStatus != null && friendStatus.equals("0")){
+                                    if(friendStatus != null && friendStatus.equals("0")
+                                            && documentSnapshot.getString("friendIdentify").equals("BeCare")){
                                         //出現dialog訊息
                                         Handler handler = new Handler();
                                         handler.postDelayed(new Runnable(){
