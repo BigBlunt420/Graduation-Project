@@ -1264,6 +1264,9 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                         ".\n目前"+target_name+"已偏離一定距離，請盡快與其聯繫。"+
                         "\n如要關閉提醒請刪除此行程。\n使用者位置：緯度"+latitude+"經度"+longitude
                 ,null,null);
+
+        Toast.makeText(HomePage.this, "Message sent successfully", Toast.LENGTH_SHORT).show();
+
     }
 
     /**
