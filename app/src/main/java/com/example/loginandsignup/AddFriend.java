@@ -226,6 +226,7 @@ public class AddFriend extends AppCompatActivity {
                             }
                             fModel model = new fModel(
                                     documentSnapshot.getString("id"),
+                                    documentSnapshot.getString("uidFriend"),
                                     documentSnapshot.getString("friendName"),
                                     documentSnapshot.getString("friendPhone"),
                                     fIdentify);
@@ -269,6 +270,7 @@ public class AddFriend extends AppCompatActivity {
                             }
                             fModel model = new fModel(
                                     documentSnapshot.getString("id"),
+                                    documentSnapshot.getString("uidFriend"),
                                     documentSnapshot.getString("friendName"),
                                     documentSnapshot.getString("friendPhone"),
                                     fIdentify);
