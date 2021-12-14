@@ -7,7 +7,9 @@ import android.app.NotificationChannel;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -95,7 +97,38 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
                         if (which == 1){
                             //刪除資料
                             dbid = modelList.get(position).getId();
-                            deleteData(dbid);
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable(){
+
+                                @Override
+                                public void run() {
+
+                                    //過四秒後要做的事情
+                                    androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(addFriend);
+
+                                    builder.setMessage("是否刪除好友？");
+                                    //點選空白處不會返回
+                                    builder.setCancelable(false);
+
+                                    builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            //按下是之後要做的事
+                                            dialog.dismiss();
+                                            deleteData(dbid);
+                                        }
+                                    });
+
+                                    builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            //按下否之後要做的事
+                                            dialog.dismiss();
+                                        }
+                                    });
+
+                                    androidx.appcompat.app.AlertDialog alert = builder.create();
+                                    alert.show();
+
+                                }}, 1000);
                         }
                     }
                 }).create().show();
@@ -110,21 +143,51 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
         firebaseAuth = FirebaseAuth.getInstance();
         UserID = firebaseAuth.getCurrentUser().getUid();
 
-        DocumentReference doc= firestoredb.collection("Users").document(UserID).collection("Friend").document(id);
-        doc.delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        addFriend.showFriendList();
-                        Log.d("DeleteFriend","Successful:User Profile is deleted for " + UserID);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull @NotNull Exception e) {
-                        Log.w("DeleteFriend","Fail:"+e.getMessage());
-                    }
-                });
+
+        //在好友那裡刪掉自己
+        firestoredb.collection("Users").document(UserID).collection("Friend").document(id)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists()){
+                    String uidFriend = documentSnapshot.getString("uidFriend");
+                    DocumentReference docFriend= firestoredb.collection("Users").document(uidFriend)
+                            .collection("Friend").document(id);
+                    docFriend.delete()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Log.d("DeleteFriend","Successful:User Profile is deleted for " + uidFriend);
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull @NotNull Exception e) {
+                                    Log.w("DeleteFriend","Fail:"+e.getMessage());
+                                }
+                            });
+
+                    //刪自己的好友
+                    DocumentReference doc= firestoredb.collection("Users").document(UserID).collection("Friend").document(id);
+                    doc.delete()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    addFriend.showFriendList();
+                                    Log.d("DeleteFriend","Successful:User Profile is deleted for " + UserID);
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull @NotNull Exception e) {
+                                    Log.w("DeleteFriend","Fail:"+e.getMessage());
+                                }
+                            });
+                }
+            }
+        });
+
+
     }
 
 

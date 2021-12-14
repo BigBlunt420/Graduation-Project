@@ -225,7 +225,7 @@ public class AddFriend extends AppCompatActivity {
                                 fIdentify = "照顧者";
                             }
                             fModel model = new fModel(
-                                    documentSnapshot.getString("uidFriend"),
+                                    documentSnapshot.getString("id"),
                                     documentSnapshot.getString("friendName"),
                                     documentSnapshot.getString("friendPhone"),
                                     fIdentify);
@@ -454,5 +454,6 @@ public class AddFriend extends AppCompatActivity {
                     }
                 });
 
+        showFriendList();
     }
 }
