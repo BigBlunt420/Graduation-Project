@@ -149,7 +149,7 @@ public class FriendListForSchedule extends AppCompatActivity {
                         Friend.clear();
                         //顯示資料
                         for(DocumentSnapshot documentSnapshot:task.getResult()){
-                            String id = documentSnapshot.getString("id");
+                            String id = documentSnapshot.getString("uidFriend");
                             String ffName = documentSnapshot.getString("friendName");
                             Friend.add(new Friend(id,ffName));
                         }

@@ -121,6 +121,7 @@ public class scheduleList extends AppCompatActivity {
                 startActivity(new Intent(scheduleList.this,HomePage.class));
             }
         });
+
     }
 
     public void showScheduleList() {
