@@ -40,7 +40,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycle_view"
                     android:layout_width="match_parent"
-                    android:layout_height="809dp"
+                    android:layout_height="674dp"
                     tools:ignore="MissingConstraints" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
