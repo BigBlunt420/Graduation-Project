@@ -188,6 +188,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     private Timer timerStatus = null;
     private TimerTask timerTaskStatus = null;
     private int period;     //須在幾分鐘內確認訊息, default一分鐘
+    private boolean NoCheckToast = false;
 
 
     @Override
@@ -401,6 +402,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
             public void run() {
                 //是否超過period分鐘還未確認
                 alert.dismiss();
+                NoCheckToast = true;
                 sendMessageCheck(Sender_ID, "訊息未在" + period + "分鐘內被確認");
                 deleteMessage(Message_ID);
             }
@@ -481,9 +483,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
 
                         //Send_Back是true才需要回傳告知對方訊息已被確認
                         if(Send_Back){
-                            sendMessageCheck(Sender_ID, "訊息已被確認");
+                            if(!NoCheckToast){
+                                sendMessageCheck(Sender_ID, "訊息已被確認");
+                            }
                         }
-
                         deleteMessage(Message_ID);
                     }
                 });
@@ -491,7 +494,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                 AlertDialog alert = builder.create();
                 alert.show();
 
-                startTimerCheck(alert, Sender_ID, Message_ID);
+                //Send_Back是true才需要計時
+                if(Send_Back){
+                    startTimerCheck(alert, Sender_ID, Message_ID);
+                }
 
             }}, 1000);
     }

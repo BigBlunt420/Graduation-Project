@@ -90,7 +90,7 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0){
                             //傳訊息
-                            dbid = modelList.get(position).getId();
+                            dbid = modelList.get(position).getR_ID();
 //                            Toast.makeText(addFriend, dbid,Toast.LENGTH_LONG).show();
                             sendMSG(dbid);
                         }
