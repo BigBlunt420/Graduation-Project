@@ -982,7 +982,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
                 String Describe = inputDescribe.getText().toString().trim();
                 //檢查起始時間和結束時間
                 while(year==setYear && month==setMonth&& day==setDay) {
-                    if (starthour < hour || (starthour == hour && startminute < minute)) {
+                    if (starthour < hour || starthour == hour && startminute < minute) {
                         inputStartTime.requestFocus();
                         inputStartTime.setError("起始時間已過");
                         return;
@@ -1262,13 +1262,11 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback, A
     private void sendMassage(int max_msgsize, double latitude, double longitude,
                              String target_name,String dbContactOne, String dbContactTwo){
         SmsManager smsManager = SmsManager.getDefault();
-        smsManager.sendTextMessage(dbContactOne,null,"目前傳送簡訊數量: "+max_msgsize+
-                        ".\n目前" +target_name+"已偏離一定距離，請盡快與其聯繫。"
-                        + "\n如要關閉提醒請刪除此行程。\n使用者位置：緯度"+latitude+"經度"+longitude
+        smsManager.sendTextMessage(dbContactOne,null,target_name+"已偏離範圍，請盡快與其聯繫。"
+                        + "\n如要關閉提醒請刪除此行程。\n使用者位置：\n緯度"+latitude+"\n經度"+longitude
                 ,null,null);
-        smsManager.sendTextMessage(dbContactTwo,null,"目前傳送簡訊數量: "+max_msgsize+
-                        ".\n目前"+target_name+"已偏離一定距離，請盡快與其聯繫。"+
-                        "\n如要關閉提醒請刪除此行程。\n使用者位置：緯度"+latitude+"經度"+longitude
+        smsManager.sendTextMessage(dbContactTwo,null,target_name+"已偏離範圍，請盡快與其聯繫。"+
+                        "\n如要關閉提醒請刪除此行程。\n使用者位置：\n緯度"+latitude+"\n經度"+longitude
                 ,null,null);
 
         Toast.makeText(HomePage.this, "Message sent successfully", Toast.LENGTH_SHORT).show();
