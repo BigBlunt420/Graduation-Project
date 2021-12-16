@@ -75,7 +75,7 @@ public class FriendAdapter extends RecyclerView.Adapter<fViewHolder> implements 
         viewHolder.setOnClickListener(new fViewHolder.ClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                dbid = modelList.get(position).getId();
+                dbid = modelList.get(position).getR_ID();
                 addFriend.showFFList(dbid);
             }
 
