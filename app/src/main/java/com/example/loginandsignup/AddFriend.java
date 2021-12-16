@@ -249,6 +249,7 @@ public class AddFriend extends AppCompatActivity {
     public void showFFList(String UserID){
         //隱藏『設定』鍵
         btnSetting.setVisibility(View.INVISIBLE);
+        addNewFriend.setVisibility(View.INVISIBLE);
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
